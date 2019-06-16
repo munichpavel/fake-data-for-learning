@@ -28,7 +28,7 @@ setup(
     version='0.1.0',
     author="Paul Larsen",
     author_email='munichpavel@gmail.com',
-    url='https://github.com/munichpavel/fake_data_for_learning',
+    url='https://github.com/munichpavel/fake-data-for-learning',
     packages=find_packages(include=['fake_data_for_learning']),
     include_package_data=True,
     install_requires=requirements,
