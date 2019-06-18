@@ -2,36 +2,34 @@
 
 """Main module."""
 import numpy as np
-from itertools import product
 
-class GraphProbabilityTable:
-    r'''
-    Probability table for a node in a Bayesian network for
-    a discrete random variable X = (X_0, ..., X_{m-1}) admitting
-    a graph decomposition G
+from scipy.stats._distn_infrastructure import rv_sample
+
+class BayesianNodeRV(rv_sample):
     '''
-    
-    def __init__(self, pt, I, J, K, r):
-        self.pt = pt
-        self.I = I
-        self.J  = J
-        self.K = K
-        self.r = r
+    See https://github.com/scipy/scipy/issues/8057 for why simple
+    subclassing from rv_discrete does not work
+    '''
+    def __new__(cls, *args, **kwds):
+        return super(BayesianNodeRV, cls).__new__(cls)
+
+    def __init__(self, name, pt, input_vars=None):
+        super()
+        self.name=name
+        self.pk = pt
+        self.xk = self._set_xk(pt)
+        self.input_vars = input_vars
+        self.pmf = self._set_pmf(name, pt, input_vars)
+        
+
+    def _set_xk(self, pt):
+        return np.array(range(pt.size)).reshape(pt.shape)
 
 
-    def embed_pt(self):
-        r'''
-        Embed the probability table of a vertex of (X, G) into the ambient space of the 
-        probability table of X, i.e. in R^{r_0} x ... x R^{r_{m-1}}, where |X_i| = r_i,
-        i.e. each component $X_i$ can take on $r_i$ distinct values.
-        '''
-        res = np.zeros(self.r)
-        pt_support_points = [range(r_i) for r_i in self.r]
-
-        for idx in product(*pt_support_points):
-            idx_ij = np.array(idx)[self.I + self.J]
-
-            res[idx] = self.pt[tuple(idx_ij)]
-
-        return res
-    
+    def _set_pmf(self, name, pt, input_vars):
+        def pmf(k, input_vals):
+            if k == 0:
+                return 0.2
+            elif k == 1:
+                return 0.8
+        return pmf

@@ -1,3 +1,5 @@
+# Fake data for learning TODOs
+
 Test independence, binary model
 Test binary conditional embeddings of 2 vars, X0 -> X1
 
@@ -14,5 +16,14 @@ Test binary conditional embeddings of 2 vars, X0 -> X1
 
 Write sanity checks for graph probability tables, e.g.
 * I, J, K partition[m] for some m
+~~Package arguments better: s and [m] are same for all GPTs in BN (see refactor TODO below)~~
 
-Package arguments better: s and [m] are same for all GPTs in BN
+## Branch local-tables
+~~remove embedding tests, as this is non-local~~
+~~refactor interface so only local input needed~~
+~~add fake extra arguments, e.g. node_var, input_vars (DROPPED)~~
+test set xk, rv outcomes
+extend class to conditional rvs
+* ~~make init work~~
+* ~~dummy make pmf as a function of input vars~~
+* make pmf real
