@@ -27,7 +27,11 @@ Write sanity checks for graph probability tables, e.g.
 ~~at least somewhat meaningful test that can call random~~
 extend class to conditional rvs
 * make init work
-* keep real pmf if no parents, else overwrite with dummy pmf
-* dummy make pmf as a function of input vars
-* change arg names
-* make pmf real
+* ~~add somewhat meaningful rvs test~~
+* make rvs work
+* ~~keep real pmf if no parents, else overwrite with dummy pmf (DEPPED)~~
+* ~~dummy make pmf as a function of input vars (DEPPED)~~
+* ~~change arg names (DEPPED)~~
+* ~~make pmf real (DEPPED)~~
+
+* add test for valueerror if dims of pt and var + parent vars incompatible

@@ -30,7 +30,6 @@ class TestBNRVX1cX0:
         assert self.rv0.pmf(1) == 0.9
 
     def test_rvs(self):
-        # 
         assert set(self.rv0.rvs(size=10)).issubset(set(self.rv0._xk))
 
     # X1 | X0
@@ -38,4 +37,10 @@ class TestBNRVX1cX0:
         [0.2, 0.7],
         [0.8, 0.3]
     ])
+
     rv1c0 = BNRV('X1', pt_X1cX0, parents=['X0'])
+
+    def test_rvs_1c0(self):
+        assert set(self.rv1c0.rvs(size=10)).issubset(set(self.rv1c0._xk))
+
+
