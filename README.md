@@ -1,8 +1,8 @@
 # fake-data-for-learning
 
-Interesting fake multivariate data is not as easy to generate as it should be. Textbooks typically give definitions, two examples (multinomial and multivariate normal) and then proceed with proving stuff. One dimensional distributions can be combined, but here as well the source of examples is relatively sparse: products of distributions or copulas.
+Interesting fake multivariate data is not as easy to generate as it should be. Textbooks typically give definitions, two examples (multinomial and multivariate normal) and then proceed to proving stuff. One dimensional distributions can be combined, but here as well the source of examples is also relatively sparse: products of distributions or copulas.
 
-For machine learning experimentation, it is useful to have an unlimited supply of interesting fake data, where my interesting I mean that we know certain properties of the data and want to test if the algorithm can pick this up. A great potential source of such data is graphical models.
+For machine learning experimentation, it is useful to have an unlimited supply of interesting fake data, where by interesting I mean that we know certain properties of the data and want to test if the algorithm can pick this up. A great potential source of such data is graphical models.
 
 The goal of this package is to make it easy to generate interesting fake data. We start with Bayesian networks (also known as directed graphical models).
 
