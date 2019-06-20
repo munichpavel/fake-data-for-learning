@@ -8,17 +8,17 @@ class BayesianNodeRV:
     '''
     Sample-able random variable corresponding to node of a discrete Bayesian network.
     '''
-    def __init__(self, name, pt, values=None, parents=None):
+    def __init__(self, name, cpt, values=None, parents=None):
         
         self.name=name
-        self.pt = pt
+        self.cpt = cpt
         self.parents = parents
-        self.values = self._set_values(pt, values)
+        self.values = self._set_values(cpt, values)
 
 
-    def _set_values(self, pt, values):
+    def _set_values(self, cpt, values):
         if values is None:
-            return np.array(range(pt.shape[0]))
+            return np.array(range(cpt.shape[0]))
         else:
             return values
 
@@ -33,7 +33,7 @@ class BayesianNodeRV:
         np.random.seed(seed)
 
         if self.parents is None:
-            return np.random.choice(self.values, size, p=self.pt)
+            return np.random.choice(self.values, size, p=self.cpt)
         else:
             res = np.random.choice(self.values, size, p=self.get_pt(parent_values))
             return res
@@ -41,10 +41,10 @@ class BayesianNodeRV:
 
     def get_pt(self, parent_values=None):
         if parent_values is None:
-            return self.pt
+            return self.cpt
         else:
-            s = [slice(None)] * len(self.pt.shape)
+            s = [slice(None)] * len(self.cpt.shape)
             for idx, p in enumerate(self.parents):
                 s[idx + 1] = parent_values[p]
-            return self.pt[tuple(s)]
+            return self.cpt[tuple(s)]
  
