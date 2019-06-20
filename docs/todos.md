@@ -22,8 +22,12 @@ Write sanity checks for graph probability tables, e.g.
 ~~remove embedding tests, as this is non-local~~
 ~~refactor interface so only local input needed~~
 ~~add fake extra arguments, e.g. node_var, input_vars (DROPPED)~~
-test set xk, rv outcomes
+~~test set xk, rv outcomes~~
+~~test pmf outcomes~~
+~~at least somewhat meaningful test that can call random~~
 extend class to conditional rvs
-* ~~make init work~~
-* ~~dummy make pmf as a function of input vars~~
+* make init work
+* keep real pmf if no parents, else overwrite with dummy pmf
+* dummy make pmf as a function of input vars
+* change arg names
 * make pmf real

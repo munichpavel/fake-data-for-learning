@@ -16,7 +16,6 @@ class BayesianNodeRV(rv_sample):
         self.name=name
         self.parents = parents
         self._xk = self._set_xk(pt)
-        self._
         super().__init__(self, values=(self._xk, pt), *args, **kwds)
 
  

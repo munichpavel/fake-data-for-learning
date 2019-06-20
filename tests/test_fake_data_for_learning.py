@@ -25,13 +25,17 @@ class TestBNRVX1cX0:
         '''Test setting rv_discrete outcomes member xk'''
         np.testing.assert_equal(self.rv0.xk, np.array([0,1]))
 
+    def test_rv_pmf(self):
+        assert self.rv0.pmf(0) == 0.1
+        assert self.rv0.pmf(1) == 0.9
+
+    def test_rvs(self):
+        # 
+        assert set(self.rv0.rvs(size=10)).issubset(set(self.rv0._xk))
+
     # X1 | X0
     pt_X1cX0 = np.array([
         [0.2, 0.7],
         [0.8, 0.3]
     ])
-    rv1c0 = BNRV('X1', pt_X1cX0, input_vars=['X0'])
-
-    def test_crv_pmf(self):
-        assert self.rv1c0.pmf(0, {'X0': 0}) == 0.2
-        assert self.rv1c0.pmf(1, {'X0': 0}) == 0.8
+    rv1c0 = BNRV('X1', pt_X1cX0, parents=['X0'])
