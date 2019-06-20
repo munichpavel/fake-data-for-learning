@@ -11,12 +11,13 @@ class BayesianNodeRV(rv_sample):
     See https://github.com/scipy/scipy/issues/8057 for why simple
     subclassing from rv_discrete does not work
     '''
-    def __init__(self, name, pt, *args, parents=None, **kwargs):
+    def __init__(self, name, pt, *args, parents=None, **kwds):
         
         self.name=name
         self.parents = parents
         self._xk = self._set_xk(pt)
-        super().__init__(self, values=(self._xk, pt), *args, **kwargs)
+        self._
+        super().__init__(self, values=(self._xk, pt), *args, **kwds)
 
  
     def _set_xk(self, pt):
