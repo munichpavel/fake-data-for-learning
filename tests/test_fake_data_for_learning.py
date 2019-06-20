@@ -6,6 +6,7 @@ from itertools import product
 
 from fake_data_for_learning import BayesianNodeRV as BNRV
 
+
 class TestBNRVX0:
     #X0
     pt_X0 = np.array([0.1, 0.9])
@@ -37,7 +38,6 @@ class TestBNRVX0:
 
 
 
-
 class TestBNRVX1cX0:
     r'''
     Test the bayesian node random variable of X = (X0, X1)
@@ -62,8 +62,14 @@ class TestBNRVX1cX0:
 
     rv1c0 = BNRV('X1', pt_X1cX0, parents=['X0'])
 
+    def test_set_values_1c0(self):
+        np.testing.assert_equal(self.rv1c0.values, np.array([0,1]))
+
+
     def test_rvs_1c0(self):
-        assert isinstance(self.rv1c0.rvs(seed=42, parent_values={'X0': 1}), np.int64)
+        draw = self.rv1c0.rvs(parent_values={'X0': 1})
+        assert isinstance(draw, np.int64)
+
 
     def test_get_pt(self):
         res = self.rv1c0.get_pt(parent_values={'X0': 1})

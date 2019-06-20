@@ -45,4 +45,4 @@ Will not copy rv_discrete, just use np.random.choice
 
 Extend to conditional rvs
 * ~~Dummy implementation~~
-* Non-dummy implementation
+* ~~Non-dummy implementation~~
