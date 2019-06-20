@@ -26,8 +26,8 @@ class TestBNRVX1cX0:
         np.testing.assert_equal(self.rv0.values, np.array([0,1]))
 
 
-    # def test_rvs(self):
-    #     assert set(self.rv0.rvs(size=100)).issubset(set(self.rv0.values))
+    def test_rvs(self):
+        assert set(self.rv0.rvs(size=100)).issubset(set(self.rv0.values))
 
     # # X1 | X0
     # pt_X1cX0 = np.array([

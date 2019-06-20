@@ -34,7 +34,8 @@ extend class to conditional rvs
 ## Forget about derived class from scipy
 Will copy api of rv_discrete, but subclassing is not worth the trouble
 
-* make init work
-* add somewhat meaningful rvs test
+* ~~make init work (DEPPED)~~
+* ~~add somewhat meaningful rvs test~~
+* ~~dummy implementation of rvs~~
 * make rvs work
 * add test for valueerror if dims of pt and var + parent vars incompatible

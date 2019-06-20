@@ -19,7 +19,7 @@ class BayesianNodeRV:
         return np.array(range(pt.size)).reshape(pt.shape)
 
 
-    # def rvs(self, size=None):
-    #     return [self.values[0]]
+    def rvs(self, size=None):
+        return [self.values[0]]
 
  
