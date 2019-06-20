@@ -12,10 +12,11 @@ class BayesianNodeRV:
     def __init__(self, name, pt, values=None, parents=None):
         
         self.name=name
+        self.pt = pt
         self.parents = parents
         self.values = self._set_values(pt, values)
-        self.pt = pt
- 
+
+
     def _set_values(self, pt, values):
         if values is None:
             return np.array(range(pt.size)).reshape(pt.shape)
@@ -31,6 +32,7 @@ class BayesianNodeRV:
             Random variates of given `size`.
         '''
         np.random.seed(seed)
-        res = np.random.choice(self.values, size, p=self.pt, )
+        res = np.random.choice(self.values, size, p=self.pt)
+        
         return res
  

@@ -23,7 +23,11 @@ class TestBNRVX0:
 
     rv0_char = BNRV('X0', pt_X0, values=['down', 'up'])
 
-    
+    def test_set_values(self):
+        assert len(self.rv0.values) == 2
+        assert set(self.rv0_char.values) == set(['down', 'up'])
+
+
 
 class TestBNRVX1cX0:
     r'''
