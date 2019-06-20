@@ -40,7 +40,7 @@ Will not copy rv_discrete, just use np.random.choice
 * ~~dummy implementation of rvs~~
 * make rvs work
 * ~~allow non-default values~~
-* add get_pt method (mainly for testing)
+* ~~add get_pt method~~
 * add test for valueerror if dims of pt and var + parent vars incompatible
 
 Extend to conditional rvs
