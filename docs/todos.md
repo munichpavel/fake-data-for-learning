@@ -26,12 +26,15 @@ Write sanity checks for graph probability tables, e.g.
 ~~test pmf outcomes~~
 ~~at least somewhat meaningful test that can call random~~
 extend class to conditional rvs
-* make init work
-* ~~add somewhat meaningful rvs test~~
-* make rvs work
 * ~~keep real pmf if no parents, else overwrite with dummy pmf (DEPPED)~~
 * ~~dummy make pmf as a function of input vars (DEPPED)~~
 * ~~change arg names (DEPPED)~~
 * ~~make pmf real (DEPPED)~~
 
+## Forget about derived class from scipy
+Will copy api of rv_discrete, but subclassing is not worth the trouble
+
+* make init work
+* add somewhat meaningful rvs test
+* make rvs work
 * add test for valueerror if dims of pt and var + parent vars incompatible
