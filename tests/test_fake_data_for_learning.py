@@ -28,6 +28,11 @@ class TestBNRVX0:
         assert set(self.rv0_char.values) == set(['down', 'up'])
 
 
+    def test_rvs(self):
+        assert isinstance(self.rv0.rvs(seed=42), np.int64)
+        assert len(self.rv0.rvs(size=100)) == 100
+
+
 
 class TestBNRVX1cX0:
     r'''
@@ -43,15 +48,7 @@ class TestBNRVX1cX0:
     #X0
     pt_X0 = np.array([0.1, 0.9])
     rv0 = BNRV('X0', pt_X0)
-
-    def test_set_values(self):
-        '''Test setting rv_discrete outcomes member xk'''
-        np.testing.assert_equal(self.rv0.values, np.array([0,1]))
-
-
-    def test_rvs(self):
-        assert isinstance(self.rv0.rvs(seed=42), np.int64)
-        assert len(self.rv0.rvs(size=100)) == 100
+    
  
     # # X1 | X0
     # pt_X1cX0 = np.array([
