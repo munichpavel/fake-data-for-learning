@@ -50,15 +50,15 @@ class TestBNRVX1cX0:
     rv0 = BNRV('X0', pt_X0)
     
  
-    # # X1 | X0
-    # pt_X1cX0 = np.array([
-    #     [0.2, 0.7],
-    #     [0.8, 0.3]
-    # ])
+    # X1 | X0
+    pt_X1cX0 = np.array([
+        [0.2, 0.7],
+        [0.8, 0.3]
+    ])
 
-    # rv1c0 = BNRV('X1', pt_X1cX0, parents=['X0'])
+    rv1c0 = BNRV('X1', pt_X1cX0, parents=['X0'])
 
-    # def test_rvs_1c0(self):
-    #     assert set(self.rv1c0.rvs(size=10)).issubset(set(self.rv1c0._xk))
+    def test_rvs_1c0(self):
+        assert isinstance(self.rv1c0.rvs(seed=42), np.int64)
 
 
