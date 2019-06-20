@@ -20,6 +20,12 @@ class BayesianNodeRV:
 
 
     def rvs(self, size=None):
-        return [self.values[0]]
+        '''
+        Returns
+        -------
+        rvs : ndarray or scalar
+            Random variates of given `size`.
+        '''
+        return np.array(size * [self.values[0]])
 
  

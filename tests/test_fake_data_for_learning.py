@@ -27,6 +27,7 @@ class TestBNRVX1cX0:
 
 
     def test_rvs(self):
+        assert len(self.rv0.rvs(size=100)) == 100
         assert set(self.rv0.rvs(size=100)).issubset(set(self.rv0.values))
 
     # # X1 | X0
