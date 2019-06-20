@@ -16,7 +16,7 @@ class TestBNRVX0:
         np.testing.assert_equal(self.rv0.values, np.array([0,1]))
 
 
-    def test_rvs(self):
+    def test_default_rvs(self):
         assert isinstance(self.rv0.rvs(seed=42), np.int64)
         assert len(self.rv0.rvs(size=100)) == 100
 
@@ -24,13 +24,13 @@ class TestBNRVX0:
     rv0_char = BNRV('X0', pt_X0, values=['down', 'up'])
 
     def test_set_values(self):
-        assert len(self.rv0.values) == 2
+        assert len(self.rv0_char.values) == 2
         assert set(self.rv0_char.values) == set(['down', 'up'])
 
 
     def test_rvs(self):
-        assert isinstance(self.rv0.rvs(seed=42), np.int64)
-        assert len(self.rv0.rvs(size=100)) == 100
+        assert isinstance(self.rv0_char.rvs(seed=42), str)
+
 
 
 
