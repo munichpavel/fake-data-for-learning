@@ -6,6 +6,25 @@ from itertools import product
 
 from fake_data_for_learning import BayesianNodeRV as BNRV
 
+class TestBNRVX0:
+    #X0
+    pt_X0 = np.array([0.1, 0.9])
+    rv0 = BNRV('X0', pt_X0)
+
+    def test_default_set_values(self):
+        '''Test setting outcome values if None as argument'''
+        np.testing.assert_equal(self.rv0.values, np.array([0,1]))
+
+
+    def test_rvs(self):
+        assert isinstance(self.rv0.rvs(seed=42), np.int64)
+        assert len(self.rv0.rvs(size=100)) == 100
+
+
+    rv0_char = BNRV('X0', pt_X0, values=['down', 'up'])
+
+    
+
 class TestBNRVX1cX0:
     r'''
     Test the bayesian node random variable of X = (X0, X1)
@@ -27,9 +46,9 @@ class TestBNRVX1cX0:
 
 
     def test_rvs(self):
+        assert isinstance(self.rv0.rvs(seed=42), np.int64)
         assert len(self.rv0.rvs(size=100)) == 100
-        assert set(self.rv0.rvs(size=100)).issubset(set(self.rv0.values))
-
+ 
     # # X1 | X0
     # pt_X1cX0 = np.array([
     #     [0.2, 0.7],
