@@ -6,8 +6,7 @@ import numpy as np
 
 class BayesianNodeRV:
     '''
-    Inspired by rv_discrete of scipy.stats, follows api, except for
-    * values here is for the values taken by a RV, not the tuple (xk, pk) of rv_discrete
+    Sample-able random variable corresponding to node of a discrete Bayesian network.
     '''
     def __init__(self, name, pt, values=None, parents=None):
         
@@ -33,6 +32,6 @@ class BayesianNodeRV:
         '''
         np.random.seed(seed)
         res = np.random.choice(self.values, size, p=self.pt)
-        
+
         return res
  
