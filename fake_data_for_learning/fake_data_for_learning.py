@@ -22,8 +22,17 @@ class BayesianNodeRV:
         else:
             return values
 
+    def get_pt(self, parent_values=None):
+        if parent_values is None:
+            return self.pt
+        else:
+            s = [slice(None)] * len(self.pt.shape)
+            print(self.parents)
+            for idx, p in enumerate(self.parents):
+                s[idx + 1] = parent_values[p]
+            return self.pt[tuple(s)]
 
-    def rvs(self, size=None, seed=42):
+    def rvs(self, parent_values=None, size=None, seed=42):
         '''
         Returns
         -------
@@ -31,7 +40,9 @@ class BayesianNodeRV:
             Random variates of given `size`.
         '''
         np.random.seed(seed)
-        res = np.random.choice(self.values, size, p=self.pt)
 
-        return res
+        if self.parents is None:
+            return np.random.choice(self.values, size, p=self.pt)
+        else:
+            return np.int64(0)
  

@@ -32,10 +32,17 @@ extend class to conditional rvs
 * ~~make pmf real (DEPPED)~~
 
 ## Forget about derived class from scipy
-Will copy api of rv_discrete, but subclassing is not worth the trouble
+~~Will copy api of rv_discrete, but subclassing is not worth the trouble (DEPPED)~~
+Will not copy rv_discrete, just use np.random.choice
 
 * ~~make init work (DEPPED)~~
 * ~~add somewhat meaningful rvs test~~
 * ~~dummy implementation of rvs~~
 * make rvs work
+* ~~allow non-default values~~
+* add get_pt method (mainly for testing)
 * add test for valueerror if dims of pt and var + parent vars incompatible
+
+Extend to conditional rvs
+* ~~Dummy implementation~~
+* Non-dummy implementation

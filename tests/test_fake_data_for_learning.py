@@ -20,6 +20,10 @@ class TestBNRVX0:
         assert isinstance(self.rv0.rvs(seed=42), np.int64)
         assert len(self.rv0.rvs(size=100)) == 100
 
+    
+    def test_get_pt(self):
+        np.testing.assert_equal(self.rv0.get_pt(), self.pt_X0)
+
 
     rv0_char = BNRV('X0', pt_X0, values=['down', 'up'])
 
@@ -59,6 +63,11 @@ class TestBNRVX1cX0:
     rv1c0 = BNRV('X1', pt_X1cX0, parents=['X0'])
 
     def test_rvs_1c0(self):
-        assert isinstance(self.rv1c0.rvs(seed=42), np.int64)
+        assert isinstance(self.rv1c0.rvs(seed=42, parent_values={'X0': 1}), np.int64)
+
+    def test_get_pt(self):
+        res = self.rv1c0.get_pt(parent_values={'X0': 1})
+        np.testing.assert_equal(res, self.pt_X1cX0[:, 1])
+
 
 
