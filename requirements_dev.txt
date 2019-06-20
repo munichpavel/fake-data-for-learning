@@ -11,4 +11,5 @@ pytest-runner
 jupyter
 numpy
 pylint
+rope
 -e .

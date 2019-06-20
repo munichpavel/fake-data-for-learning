@@ -2,36 +2,49 @@
 
 """Main module."""
 import numpy as np
-from itertools import product
 
-class GraphProbabilityTable:
-    r'''
-    Probability table for a node in a Bayesian network for
-    a discrete random variable X = (X_0, ..., X_{m-1}) admitting
-    a graph decomposition G
+
+class BayesianNodeRV:
     '''
-    
-    def __init__(self, pt, I, J, K, r):
+    Sample-able random variable corresponding to node of a discrete Bayesian network.
+    '''
+    def __init__(self, name, pt, values=None, parents=None):
+        
+        self.name=name
         self.pt = pt
-        self.I = I
-        self.J  = J
-        self.K = K
-        self.r = r
+        self.parents = parents
+        self.values = self._set_values(pt, values)
 
 
-    def embed_pt(self):
-        r'''
-        Embed the probability table of a vertex of (X, G) into the ambient space of the 
-        probability table of X, i.e. in R^{r_0} x ... x R^{r_{m-1}}, where |X_i| = r_i,
-        i.e. each component $X_i$ can take on $r_i$ distinct values.
-        '''
-        res = np.zeros(self.r)
-        pt_support_points = [range(r_i) for r_i in self.r]
+    def _set_values(self, pt, values):
+        if values is None:
+            return np.array(range(pt.shape[0]))
+        else:
+            return values
 
-        for idx in product(*pt_support_points):
-            idx_ij = np.array(idx)[self.I + self.J]
-
-            res[idx] = self.pt[tuple(idx_ij)]
-
-        return res
     
+    def rvs(self, parent_values=None, size=None, seed=42):
+        '''
+        Returns
+        -------
+        rvs : ndarray or scalar
+            Random variates of given `size`.
+        '''
+        np.random.seed(seed)
+
+        if self.parents is None:
+            return np.random.choice(self.values, size, p=self.pt)
+        else:
+            res = np.random.choice(self.values, size, p=self.get_pt(parent_values))
+            return res
+    
+
+    def get_pt(self, parent_values=None):
+        if parent_values is None:
+            return self.pt
+        else:
+            s = [slice(None)] * len(self.pt.shape)
+            for idx, p in enumerate(self.parents):
+                s[idx + 1] = parent_values[p]
+            return self.pt[tuple(s)]
+ 
