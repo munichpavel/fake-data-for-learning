@@ -46,3 +46,12 @@ Will not copy rv_discrete, just use np.random.choice
 Extend to conditional rvs
 * ~~Dummy implementation~~
 * ~~Non-dummy implementation~~
+
+## Sample from network
+* ~~Test for FakeDataBayesianNetwork init, vars~~
+  * ~~dummy implementation~~
+  * ~~real implementation~~
+  * ~~test for vars in parents, missing as rvs, value error~~
+    
+* Test for adjacency matrix
+* Test for sampling using adjacency matrix

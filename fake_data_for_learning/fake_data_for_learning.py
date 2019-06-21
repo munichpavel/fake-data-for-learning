@@ -10,7 +10,7 @@ class BayesianNodeRV:
     '''
     def __init__(self, name, cpt, values=None, parents=None):
         
-        self.name=name
+        self.name = name
         self.cpt = cpt
         self.parents = parents
         self.values = self._set_values(cpt, values)
@@ -47,4 +47,31 @@ class BayesianNodeRV:
             for idx, p in enumerate(self.parents):
                 s[idx + 1] = parent_values[p]
             return self.cpt[tuple(s)]
- 
+
+
+class FakeDataBayesianNetwork:
+    '''
+    Sample-able Bayesian network comprised up of BayesianNetworkRV's
+    '''
+    def __init__(self, *args):
+        self._bnrvs = args
+        self.node_names = self._set_node_names()
+
+    
+    def _set_node_names(self):
+
+        node_names = []
+        parent_names = []
+
+        for rv in self._bnrvs:
+            node_names.append(rv.name)
+            if rv.parents is not None:
+                parent_names += rv.parents
+
+        missing_nodes = set(parent_names) - set(node_names)
+
+        if missing_nodes != set():
+            raise ValueError('Missing nodes from network: {}'.format(missing_nodes))
+        
+        return node_names
+

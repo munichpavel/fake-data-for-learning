@@ -5,6 +5,7 @@ import numpy as np
 from itertools import product
 
 from fake_data_for_learning import BayesianNodeRV as BNRV
+from fake_data_for_learning import FakeDataBayesianNetwork as FDBN
 
 
 class TestBNRVX0:
@@ -44,14 +45,10 @@ class TestBNRVX1cX0:
     where
     * X0, X1 are binary
     * X admits the graph X0 -> X1
-    * X0 has (marinalized) probability table (0.1, 0.9)^t
     * X1 | X0 has conditional probability table
         (0.2, 0.7)
         (0.8, 0.3)
     '''
-    #X0
-    pt_X0 = np.array([0.1, 0.9])
-    rv0 = BNRV('X0', pt_X0)
     
  
     # X1 | X0
@@ -76,4 +73,29 @@ class TestBNRVX1cX0:
         np.testing.assert_equal(res, self.pt_X1cX0[:, 1])
 
 
+class TestFakeDataBayesianNetwork:
+
+    #X0
+    pt_X0 = np.array([0.1, 0.9])
+    rv0 = BNRV('X0', pt_X0)
+
+    # X1 | X0
+    pt_X1cX0 = np.array([
+        [0.2, 0.7],
+        [0.8, 0.3]
+    ])
+
+    rv1c0 = BNRV('X1', pt_X1cX0, parents=['X0'])
+
+
+    def test_missing_names(self):
+        with pytest.raises(ValueError):
+            FDBN(self.rv1c0)
+
+
+    bn = FDBN(rv0, rv1c0)
+
+    def test_node_names(self):
+        assert len(self.bn.node_names) == 2
+        assert set(self.bn.node_names) == set(['X0', 'X1'])
 
