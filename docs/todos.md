@@ -83,6 +83,12 @@ Extend to conditional rvs
     * ~~dummy implementation~~
     * ~~working implementation~~
     * ~~refactor~~
+  * ~~dummy implementation~~
+  * working implementation
+    * ~~real implementation~~
+    * refactor with recursion???
+    * fix coersion to int for rvs from eve nodes
+
 
 
 * clean up utility find zero and non-zero column indices

@@ -70,6 +70,7 @@ class BayesianNodeRV:
             s = [slice(None)] * len(self.cpt.shape)
             for idx, p in enumerate(self.parent_names):
                 s[idx] = parent_values[p]
+            print(s)
             return self.cpt[tuple(s)]
 
 
@@ -128,12 +129,45 @@ class FakeDataBayesianNetwork:
         res = list(np.array(self.node_names)[eve_idx])
         return res
 
+    def rvs(self, seed=42):
+        res = np.array(len(self.node_names) * [np.nan])
+        # First sample eve nodes
+        idx_sample_next = np.array([self.node_names.index(eve) for eve in self._eve_node_names])
+
+        sample_dict = {}
+        while np.isnan(res).any():
+            for idx in idx_sample_next:
+                node = self._bnrvs[idx]
+                res[idx] = node.rvs(sample_dict, seed=42)
+            sample_dict = self._sample_array_to_dict(res) 
+
+            idx_sample_next = ut.get_pure_descendent_idx(idx_sample_next, self.adjacency_matrix)
+     
+        return res
+
     def _sample_eves(self, seed=42):
         res = np.array(len(self.node_names) * [np.nan])
         
+        sampled_idx = []
         for eve in self._eve_node_names:
             idx = self.node_names.index(eve)
+            sampled_idx.append(idx)
             node = self._bnrvs[idx]
             res[idx] = node.rvs(seed)
 
-        return res
+        return res, sampled_idx
+
+    def _sample_array_to_dict(self, res_array):
+        '''
+        Convert sampled result array of form (x0, ..., xn)
+        to dict of form {'X0': x0, ..., 'Xn': xn}
+        '''
+
+        sample_dict = {}
+        idx_sampled = np.where(~np.isnan(res_array))[0]
+        for idx in idx_sampled:
+            sample_dict[self.node_names[idx]] = int(res_array[idx])
+
+        return sample_dict
+
+ 
