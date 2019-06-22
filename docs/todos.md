@@ -70,4 +70,4 @@ Extend to conditional rvs
 * Test for sampling using adjacency matrix
   * test for eve nodes
     * ~~Add equality method for bayenian network rvs~~
-    * rename parent argument to parent_names, because that is what it is
+    * ~~rename parent argument to parent_names, because that is what it is~~
