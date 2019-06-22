@@ -30,7 +30,6 @@ class BayesianNodeRV:
         self.parent_names = parent_names
         self.values = self._set_values(cpt, values)
 
-    
     def __eq__(self, other):
   
         if self.__class__ != other.__class__: 
@@ -42,14 +41,12 @@ class BayesianNodeRV:
             np.array_equal(self.values, other.values)
         )
 
-
     def _set_values(self, cpt, values):
         if values is None:
             return np.array(range(cpt.shape[0]))
         else:
             return values
-
-    
+ 
     def rvs(self, parent_values=None, size=None, seed=42):
         '''
         Returns
@@ -65,7 +62,6 @@ class BayesianNodeRV:
             res = np.random.choice(self.values, size, p=self.get_pt(parent_values))
             return res
     
-
     def get_pt(self, parent_values=None):
         if parent_values is None:
             return self.cpt
@@ -101,7 +97,6 @@ class FakeDataBayesianNetwork:
         self.node_names = self._set_node_names()
         self.adjacency_matrix = self.calc_adjacency_matrix()
         self._eve_node_names = self._set_eve_node_names()
-
     
     def _set_node_names(self):
 
@@ -119,7 +114,7 @@ class FakeDataBayesianNetwork:
             raise ValueError('Missing nodes from network: {}'.format(missing_nodes))
         
         return node_names
-
+ 
     def calc_adjacency_matrix(self):
         
         res = np.zeros((len(self._bnrvs), len(self._bnrvs)), dtype=int)
@@ -127,7 +122,6 @@ class FakeDataBayesianNetwork:
             for j, node_j in enumerate(self._bnrvs):
                 res[i,j] = self._name_in_list(node_i.name, node_j.parent_names)
         return res
-
 
     @staticmethod
     def _name_in_list(name, l):
@@ -138,14 +132,9 @@ class FakeDataBayesianNetwork:
         res = name in l
         return res
 
-
     def _set_eve_node_names(self):
         res = []
         for rv in self._bnrvs:
             if rv.parent_names is None:
                 res.append(rv.name)
         return res
-    
-
-
-

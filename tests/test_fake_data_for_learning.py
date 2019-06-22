@@ -18,27 +18,23 @@ class TestBNRVX0:
         other_rv0 = BNRV('X0', self.pt_X0)
         assert self.rv0 == other_rv0
 
-
     def test_default_set_values(self):
         '''Test setting outcome values if None as argument'''
         np.testing.assert_equal(self.rv0.values, np.array([0,1]))
 
-
     def test_default_rvs(self):
         assert isinstance(self.rv0.rvs(seed=42), np.int64)
         assert len(self.rv0.rvs(size=100)) == 100
-
     
     def test_get_pt(self):
         np.testing.assert_equal(self.rv0.get_pt(), self.pt_X0)
 
-
     rv0_char = BNRV('X0', pt_X0, values=['down', 'up'])
+
 
     def test_set_values(self):
         assert len(self.rv0_char.values) == 2
         assert set(self.rv0_char.values) == set(['down', 'up'])
-
 
     def test_rvs(self):
         assert isinstance(self.rv0_char.rvs(seed=42), str)
@@ -70,11 +66,9 @@ class TestBNRVX1cX0:
     def test_set_values_1c0(self):
         np.testing.assert_equal(self.rv1c0.values, np.array([0,1]))
 
-
     def test_rvs_1c0(self):
         draw = self.rv1c0.rvs(parent_values={'X0': 1})
         assert isinstance(draw, np.int64)
-
 
     def test_get_pt(self):
         res = self.rv1c0.get_pt(parent_values={'X0': 1})
@@ -118,7 +112,6 @@ class TestBNRVX2cX0X1:
         draw = self.rv2c01.rvs(parent_values={'X0': 0, 'X1': 0})
         assert isinstance(draw, np.int64)
 
-
     def test_get_pt(self):
         res = self.rv2c01.get_pt(parent_values={'X0': 0, 'X1': 0})
         np.testing.assert_equal(res, self.pt_X2cX0X1[0, 0, :])
@@ -144,11 +137,9 @@ class TestFakeDataBayesianNetwork:
 
     rv1c0 = BNRV('X1', pt_X1cX0, parent_names=['X0'])
 
-
     def test_missing_names(self):
         with pytest.raises(ValueError):
             FDBN(self.rv1c0)
-
 
     bn = FDBN(rv0, rv1c0)
 
@@ -156,13 +147,11 @@ class TestFakeDataBayesianNetwork:
         assert len(self.bn.node_names) == 2
         assert set(self.bn.node_names) == set(['X0', 'X1'])
 
-
     def test_name_in_list(self):
         assert self.bn._name_in_list('bob', None) == 0
         assert self.bn._name_in_list('alice', ['alice', 'bob']) == 1
     
- 
-    def test_adjacency(self):
+     def test_adjacency(self):
         expected_adjacency = np.array([
             [0, 1],
             [0, 0]
