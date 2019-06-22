@@ -198,3 +198,47 @@ class TestFakeDataBayesianNetwork:
 
     def test_eve_node_names(self):
         assert sorted(self.bn2c01._eve_node_names) == ['X0', 'X1']
+
+    def test_sample_eves(self):
+        # rv0 and rv1 are eves to be sampled first
+        expected_was_sampled = np.array([True, True, False])
+        sample = self.bn2c01._sample_eves(seed=42)
+        np.testing.assert_equal(~np.isnan(sample), expected_was_sampled)
+
+    ###############################
+    #  Bayesian network 
+    # X0 -> X2 <- X1
+    #        |
+    #         --> X3
+                
+    # X0, X1, X2, X3 binary
+    ###############################
+    # X3 | X2
+    cpt_X3cX2 = np.array([
+        [0.25, 0.75],
+        [0., 1.]
+    ])
+    rv_3c2 = BNRV('X3', cpt=cpt_X3cX2, parent_names=['X2'])
+    bn3c2c01 = FDBN(rv0, rv1, rv2c01, rv_3c2)
+
+    def test_3c2c01_adjacency(self):
+        expected_adjacency = np.array([
+            [0, 0, 1, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1],
+            [0, 0, 0, 0]
+        ])
+
+        np.testing.assert_equal(
+            self.bn3c2c01.adjacency_matrix,
+            expected_adjacency
+        )
+
+    def test_3c2c01_eve_node_names(self):
+        assert sorted(self.bn2c01._eve_node_names) == ['X0', 'X1']
+
+    def test_2c2c01_sample_eves(self):
+        # rv0 and rv1 are eves to be sampled first
+        expected_was_sampled = np.array([True, True, False, False])
+        sample = self.bn3c2c01._sample_eves(seed=42)
+        np.testing.assert_equal(~np.isnan(sample), expected_was_sampled)

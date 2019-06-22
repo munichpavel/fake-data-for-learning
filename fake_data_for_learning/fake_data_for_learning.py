@@ -89,8 +89,6 @@ class FakeDataBayesianNetwork:
         Adjanency matrix of the Bayesian network's graph
     _eve_node_names: list of strings
         Node variable names without parents
-
-    
     '''
     def __init__(self, *args):
         self._bnrvs = args
@@ -137,4 +135,13 @@ class FakeDataBayesianNetwork:
         for rv in self._bnrvs:
             if rv.parent_names is None:
                 res.append(rv.name)
+        return res
+
+    def _sample_eves(self, seed=42):
+        res = np.array(len(self.node_names) * [np.nan])
+        for eve in self._eve_node_names:
+            idx = self.node_names.index(eve)
+            node = self._bnrvs[idx]
+            res[idx] = node.rvs(seed)
+
         return res
