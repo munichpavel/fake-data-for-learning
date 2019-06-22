@@ -99,3 +99,18 @@ class TestFakeDataBayesianNetwork:
         assert len(self.bn.node_names) == 2
         assert set(self.bn.node_names) == set(['X0', 'X1'])
 
+
+    def test_name_in_list(self):
+        assert self.bn._name_in_list('bob', None) == 0
+        assert self.bn._name_in_list('alice', ['alice', 'bob']) == 1
+    
+ 
+    def test_adjacency(self):
+        expected_adjacency = np.array([
+            [0, 1],
+            [0, 0]
+        ])
+        np.testing.assert_equal(
+            self.bn.adjacency_matrix,
+            expected_adjacency
+        )

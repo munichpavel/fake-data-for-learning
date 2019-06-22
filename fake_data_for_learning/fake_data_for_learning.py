@@ -56,6 +56,7 @@ class FakeDataBayesianNetwork:
     def __init__(self, *args):
         self._bnrvs = args
         self.node_names = self._set_node_names()
+        self.adjacency_matrix = self.calc_adjacency_matrix()
 
     
     def _set_node_names(self):
@@ -74,4 +75,24 @@ class FakeDataBayesianNetwork:
             raise ValueError('Missing nodes from network: {}'.format(missing_nodes))
         
         return node_names
+
+    def calc_adjacency_matrix(self):
+        
+        res = np.zeros((len(self._bnrvs), len(self._bnrvs)), dtype=int)
+        for i, node_i in enumerate(self._bnrvs):
+            for j, node_j in enumerate(self._bnrvs):
+                res[i,j] = self._name_in_list(node_i.name, node_j.parents)
+        return res
+
+
+    @staticmethod
+    def _name_in_list(name, l):
+        '''Return 1 if name is in list l, else 0'''
+        if l is None:
+             return 0
+        
+        res = name in l
+        return res
+
+
 

@@ -52,6 +52,11 @@ Extend to conditional rvs
   * ~~dummy implementation~~
   * ~~real implementation~~
   * ~~test for vars in parents, missing as rvs, value error~~
-    
+
 * Test for adjacency matrix
+  * ~~dummy implementation~~
+  * ~~real implementation~~
+    * ~~name in list~~
+    * more tests
+    * refactor
 * Test for sampling using adjacency matrix
