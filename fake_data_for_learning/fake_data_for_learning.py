@@ -23,8 +23,6 @@ class BayesianNodeRV:
 
     parents: list, optional
         list of parent node random variable names. Default is None, i.e. no parents
-
-    
     '''
     def __init__(self, name, cpt, values=None, parent_names=None):
         self.name = name
@@ -81,6 +79,7 @@ class BayesianNodeRV:
 class FakeDataBayesianNetwork:
     '''
     Sample-able Bayesian network comprised up of BayesianNetworkRV's
+
     Parameters
     -----------
     args : tuple of BayesianNetworkRV's (BNRVs)
