@@ -16,7 +16,7 @@ The goal of this package is to make it easy to generate interesting fake data. W
 
 ## Related packages
 
-This package exists because I became tired of googling for existing implementations of how I wanted to generate fake data. In the development process, I have however found other packages that with the same core functionality plus many other features, such as
+This package exists because I became tired of googling for existing implementations of how I wanted to generate fake data. In the development process, I have however found other packages that with the same core functionality (plus many other features), such as
 
 * [Pranab Ghosh](https://github.com/pranab)'s [avenir](https://github.com/pranab/avenir)
 * The [pgmpy](http://pgmpy.org/index.html) class [```BayesianModelSampling```](http://pgmpy.org/sampling.html#bayesian-model-samplers)
