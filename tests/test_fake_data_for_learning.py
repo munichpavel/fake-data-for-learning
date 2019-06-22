@@ -151,7 +151,7 @@ class TestFakeDataBayesianNetwork:
         assert self.bn._name_in_list('bob', None) == 0
         assert self.bn._name_in_list('alice', ['alice', 'bob']) == 1
     
-     def test_adjacency(self):
+    def test_adjacency(self):
         expected_adjacency = np.array([
             [0, 1],
             [0, 0]
