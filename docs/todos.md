@@ -66,4 +66,4 @@ Extend to conditional rvs
     * refactor
 
 * ~~Refactor cpt definition for easier data entry if more than one parent~~
-* ~Test for sampling using adjacency matrix~
+* Test for sampling using adjacency matrix
