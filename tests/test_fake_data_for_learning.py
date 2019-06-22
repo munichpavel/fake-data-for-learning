@@ -247,3 +247,13 @@ class TestFakeDataBayesianNetwork:
 def test_name_in_list():
         assert ut.name_in_list('bob', None) == 0
         assert ut.name_in_list('alice', ['alice', 'bob']) == 1
+
+
+def test_zero_column_idx():
+    X = np.array([
+        [0, 1, 0],
+        [0, 1, 0],
+        [0, 0, 0]
+    ])
+    expected_idx = np.array([0, 2])
+    np.testing.assert_equal(ut.zero_column_idx(X), expected_idx)

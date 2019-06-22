@@ -124,7 +124,7 @@ class FakeDataBayesianNetwork:
 
     def _set_eve_node_names(self):
         '''Find eve nodes as zero columns of adjacency matrix'''
-        eve_idx = np.where(~self.adjacency_matrix.any(axis=0))[0]
+        eve_idx = ut.zero_column_idx(self.adjacency_matrix)
         res = list(np.array(self.node_names)[eve_idx])
         return res
 

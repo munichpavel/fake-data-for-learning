@@ -75,3 +75,6 @@ Extend to conditional rvs
     * ~~Dummy implementation~~
     * Real implemnentation
     * refactor (e.g. using adjancy matrix)
+      * ~~add find zero col idx util function~~
+        * ~~dummy implementation (oops, I forgot)~~
+        * ~~real implementation~~
