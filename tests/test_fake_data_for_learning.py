@@ -13,6 +13,12 @@ class TestBNRVX0:
     pt_X0 = np.array([0.1, 0.9])
     rv0 = BNRV('X0', pt_X0)
 
+
+    def test_equality(self):
+        other_rv0 = BNRV('X0', self.pt_X0)
+        assert self.rv0 == other_rv0
+
+
     def test_default_set_values(self):
         '''Test setting outcome values if None as argument'''
         np.testing.assert_equal(self.rv0.values, np.array([0,1]))
@@ -121,6 +127,11 @@ class TestBNRVX2cX0X1:
 
 class TestFakeDataBayesianNetwork:
 
+    ###############################
+    #  Bayesian network X0 -> X1
+    # X0, X1 binary
+    ###############################
+    
     #X0
     pt_X0 = np.array([0.1, 0.9])
     rv0 = BNRV('X0', pt_X0)
@@ -161,6 +172,13 @@ class TestFakeDataBayesianNetwork:
             expected_adjacency
         )
 
+    # def test_eve_nodes(self):
+    #     assert self.bn._eve_nodes == {self.rv0}
+
+    ###############################
+    #  Bayesian network X0 -> X2 <- X1
+    # X0, X1, X2 binary
+    ###############################
     # X1
     pt_X1 = np.array([0.75, 0.25])
     rv1 = BNRV('X1', pt_X1)
@@ -191,3 +209,4 @@ class TestFakeDataBayesianNetwork:
             self.bn2c01.adjacency_matrix,
             expected_adjacency
         )
+

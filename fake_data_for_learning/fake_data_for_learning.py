@@ -25,15 +25,22 @@ class BayesianNodeRV:
         list of parent node random variable names. Default is None, i.e. no parents
     '''
     def __init__(self, name, cpt, values=None, parents=None):
-        '''
-        
-
-        '''
-        
         self.name = name
         self.cpt = cpt
         self.parents = parents
         self.values = self._set_values(cpt, values)
+
+    
+    def __eq__(self, other):
+  
+        if self.__class__ != other.__class__: 
+            return False
+        return (
+            self.name == other.name and
+            np.array_equal(self.cpt, other.cpt) and
+            self.parents == other.parents and
+            np.array_equal(self.values, other.values)
+        )
 
 
     def _set_values(self, cpt, values):
@@ -77,6 +84,7 @@ class FakeDataBayesianNetwork:
         self._bnrvs = args
         self.node_names = self._set_node_names()
         self.adjacency_matrix = self.calc_adjacency_matrix()
+        #self._eve_nodes = self._set_eve_nodes()
 
     
     def _set_node_names(self):
@@ -113,6 +121,11 @@ class FakeDataBayesianNetwork:
         
         res = name in l
         return res
+
+    # def _set_eve_nodes(self):
+    #     pt_X0 = np.array([0.1, 0.9])
+    #     return {BayesianNodeRV('X0', pt_X0)}
+    
 
 
 
