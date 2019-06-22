@@ -71,10 +71,11 @@ Extend to conditional rvs
   * test for eve node names
     * ~~Add equality method for bayenian network rvs (Not needed in retrospect)~~
     * ~~rename parent argument to parent_names, because that is what it is~~
-  * Test sampling eves
+  * Test sampling eves (maybe to be depped)
     * ~~Dummy implementation~~
-    * Real implemnentation
-    * refactor (e.g. using adjancy matrix)
+    * ~~Real implemnentation
+    * ~~refactor (e.g. using adjancy matrix)~~
       * ~~add find zero col idx util function~~
         * ~~dummy implementation (oops, I forgot)~~
         * ~~real implementation~~
+  * Test full sampling
