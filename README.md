@@ -14,6 +14,13 @@ The goal of this package is to make it easy to generate interesting fake data. W
 
 ## Features
 
+## Related packages
+
+This package exists because I became tired of googling for existing implementations of how I wanted to generate fake data. In the development process, I have however found other packages that with the same core functionality plus many other features, such as
+
+* [Pranab Ghosh](https://github.com/pranab)'s [avenir](https://github.com/pranab/avenir)
+* The [pgmpy](http://pgmpy.org/index.html) class [```BayesianModelSampling```](http://pgmpy.org/sampling.html#bayesian-model-samplers)
+
 ## Credits
 
 This package was created with [Cookiecutter](https://github.com/audreyr/cookiecutter) and the [munichpavel fork](https://github.com/munichpavel/cookiecutter-pypackage) of the [audreyr/cookiecutter-pypackage](https://github.com/audreyr/cookiecutter-pypackage) project template.
