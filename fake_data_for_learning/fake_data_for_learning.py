@@ -2,6 +2,7 @@
 
 """Main module."""
 import numpy as np
+from . import utils as ut
 
 
 class BayesianNodeRV:
@@ -118,27 +119,18 @@ class FakeDataBayesianNetwork:
         res = np.zeros((len(self._bnrvs), len(self._bnrvs)), dtype=int)
         for i, node_i in enumerate(self._bnrvs):
             for j, node_j in enumerate(self._bnrvs):
-                res[i,j] = self._name_in_list(node_i.name, node_j.parent_names)
-        return res
-
-    @staticmethod
-    def _name_in_list(name, l):
-        '''Return 1 if name is in list l, else 0'''
-        if l is None:
-             return 0
-        
-        res = name in l
+                res[i,j] = ut.name_in_list(node_i.name, node_j.parent_names)
         return res
 
     def _set_eve_node_names(self):
-        res = []
-        for rv in self._bnrvs:
-            if rv.parent_names is None:
-                res.append(rv.name)
+        '''Find eve nodes as zero columns of adjacency matrix'''
+        eve_idx = np.where(~self.adjacency_matrix.any(axis=0))[0]
+        res = list(np.array(self.node_names)[eve_idx])
         return res
 
     def _sample_eves(self, seed=42):
         res = np.array(len(self.node_names) * [np.nan])
+        
         for eve in self._eve_node_names:
             idx = self.node_names.index(eve)
             node = self._bnrvs[idx]

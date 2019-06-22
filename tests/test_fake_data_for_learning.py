@@ -6,6 +6,7 @@ from itertools import product
 
 from fake_data_for_learning import BayesianNodeRV as BNRV
 from fake_data_for_learning import FakeDataBayesianNetwork as FDBN
+import fake_data_for_learning.utils as ut
 
 
 class TestBNRVX0:
@@ -146,10 +147,6 @@ class TestFakeDataBayesianNetwork:
     def test_node_names(self):
         assert len(self.bn.node_names) == 2
         assert set(self.bn.node_names) == set(['X0', 'X1'])
-
-    def test_name_in_list(self):
-        assert self.bn._name_in_list('bob', None) == 0
-        assert self.bn._name_in_list('alice', ['alice', 'bob']) == 1
     
     def test_adjacency(self):
         expected_adjacency = np.array([
@@ -242,3 +239,11 @@ class TestFakeDataBayesianNetwork:
         expected_was_sampled = np.array([True, True, False, False])
         sample = self.bn3c2c01._sample_eves(seed=42)
         np.testing.assert_equal(~np.isnan(sample), expected_was_sampled)
+
+
+###############
+# Test utils
+###############
+def test_name_in_list():
+        assert ut.name_in_list('bob', None) == 0
+        assert ut.name_in_list('alice', ['alice', 'bob']) == 1
