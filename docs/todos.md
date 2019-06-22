@@ -82,4 +82,7 @@ Extend to conditional rvs
   * add get_pure_descendents function
     * ~~dummy implementation~~
     * ~~working implementation~~
-    * refactor
+    * ~~refactor~~
+
+
+* clean up utility find zero and non-zero column indices
