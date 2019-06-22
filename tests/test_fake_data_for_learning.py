@@ -172,9 +172,6 @@ class TestFakeDataBayesianNetwork:
             expected_adjacency
         )
 
-    # def test_eve_nodes(self):
-    #     assert self.bn._eve_nodes == {self.rv0}
-
     ###############################
     #  Bayesian network X0 -> X2 <- X1
     # X0, X1, X2 binary
@@ -210,3 +207,5 @@ class TestFakeDataBayesianNetwork:
             expected_adjacency
         )
 
+    def test_eve_node_names(self):
+        assert sorted(self.bn2c01._eve_node_names) == ['X0', 'X1']

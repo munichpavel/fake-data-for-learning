@@ -23,6 +23,8 @@ class BayesianNodeRV:
 
     parents: list, optional
         list of parent node random variable names. Default is None, i.e. no parents
+
+    
     '''
     def __init__(self, name, cpt, values=None, parent_names=None):
         self.name = name
@@ -79,12 +81,27 @@ class BayesianNodeRV:
 class FakeDataBayesianNetwork:
     '''
     Sample-able Bayesian network comprised up of BayesianNetworkRV's
+    Parameters
+    -----------
+    args : tuple of BayesianNetworkRV's (BNRVs)
+        BayesianNetworkRV's that make up the Bayesian network
+
+    (Other) Attributes
+    ------------------
+    node_names : list of strings
+        Node variable names of the BNRVs
+    adjacency_matrix : numpy array
+        Adjanency matrix of the Bayesian network's graph
+    _eve_node_names: list of strings
+        Node variable names without parents
+
+    
     '''
     def __init__(self, *args):
         self._bnrvs = args
         self.node_names = self._set_node_names()
         self.adjacency_matrix = self.calc_adjacency_matrix()
-        #self._eve_nodes = self._set_eve_nodes()
+        self._eve_node_names = self._set_eve_node_names()
 
     
     def _set_node_names(self):
@@ -122,9 +139,13 @@ class FakeDataBayesianNetwork:
         res = name in l
         return res
 
-    # def _set_eve_nodes(self):
-    #     pt_X0 = np.array([0.1, 0.9])
-    #     return {BayesianNodeRV('X0', pt_X0)}
+
+    def _set_eve_node_names(self):
+        res = []
+        for rv in self._bnrvs:
+            if rv.parent_names is None:
+                res.append(rv.name)
+        return res
     
 
 

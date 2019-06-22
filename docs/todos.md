@@ -68,6 +68,6 @@ Extend to conditional rvs
 * ~~Refactor cpt definition for easier data entry if more than one parent~~
 
 * Test for sampling using adjacency matrix
-  * test for eve nodes
-    * ~~Add equality method for bayenian network rvs~~
+  * test for eve node names
+    * ~~Add equality method for bayenian network rvs (Not needed in retrospect)~~
     * ~~rename parent argument to parent_names, because that is what it is~~
