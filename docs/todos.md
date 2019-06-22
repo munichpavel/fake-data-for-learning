@@ -19,6 +19,7 @@ Write sanity checks for graph probability tables, e.g.
 ~~Package arguments better: s and [m] are same for all GPTs in BN (see refactor TODO below)~~
 
 ## Branch local-tables
+
 ~~remove embedding tests, as this is non-local~~
 ~~refactor interface so only local input needed~~
 ~~add fake extra arguments, e.g. node_var, input_vars (DROPPED)~~
@@ -31,7 +32,10 @@ extend class to conditional rvs
 * ~~change arg names (DEPPED)~~
 * ~~make pmf real (DEPPED)~~
 
+MERGED INTO MASTER 
+
 ## Forget about derived class from scipy
+
 ~~Will copy api of rv_discrete, but subclassing is not worth the trouble (DEPPED)~~
 Will not copy rv_discrete, just use np.random.choice
 
@@ -48,6 +52,7 @@ Extend to conditional rvs
 * ~~Non-dummy implementation~~
 
 ## Sample from network
+
 * ~~Test for FakeDataBayesianNetwork init, vars~~
   * ~~dummy implementation~~
   * ~~real implementation~~
@@ -57,8 +62,8 @@ Extend to conditional rvs
   * ~~dummy implementation~~
   * ~~real implementation~~
     * ~~name in list~~
-    * more tests
+    * ~more tests~
     * refactor
 
 * ~~Refactor cpt definition for easier data entry if more than one parent~~
-* Test for sampling using adjacency matrix
+* ~Test for sampling using adjacency matrix~

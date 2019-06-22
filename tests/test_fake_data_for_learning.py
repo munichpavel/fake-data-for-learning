@@ -160,3 +160,34 @@ class TestFakeDataBayesianNetwork:
             self.bn.adjacency_matrix,
             expected_adjacency
         )
+
+    # X1
+    pt_X1 = np.array([0.75, 0.25])
+    rv1 = BNRV('X1', pt_X1)
+
+    # X2 | X0, X1
+    pt_X2cX0X1 = np.array([
+        [
+            [0., 1.0],
+            [0.2, 0.8]
+        ],
+        [
+            [0.5, 0.5],
+            [0.3, 0.7]
+        ]
+    ])
+
+    rv2c01 = BNRV('X2', pt_X2cX0X1, parents=['X0', 'X1'])
+
+    bn2c01 = FDBN(rv0, rv1, rv2c01)
+    
+    def test_2c01_adjacency(self):
+        expected_adjacency = np.array([
+            [0, 0, 1],
+            [0, 0, 1],
+            [0, 0, 0]
+        ])
+        np.testing.assert_equal(
+            self.bn2c01.adjacency_matrix,
+            expected_adjacency
+        )
