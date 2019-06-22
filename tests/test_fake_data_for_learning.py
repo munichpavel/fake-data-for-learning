@@ -257,3 +257,36 @@ def test_zero_column_idx():
     ])
     expected_idx = np.array([0, 2])
     np.testing.assert_equal(ut.zero_column_idx(X), expected_idx)
+
+
+def test_get_pure_descendent_idx():
+    # Test with graph
+    # X0        X1--
+    # |         |   |
+    #  -> X2 <--    |
+    #      |        |
+    # X3 <- -> X4 <-
+    X = np.array([
+        [0, 0, 1, 0, 0],
+        [0, 0, 1, 0, 1],
+        [0, 0, 0, 1, 1],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0]
+    ])
+
+    # Pure descendent of X0, X1 is X2
+    np.testing.assert_equal(
+        ut.get_pure_descendent_idx(np.array([0,1]), X),
+        np.array([2])
+    )
+    # Pure descendent of X2 is X3
+    np.testing.assert_equal(
+        ut.get_pure_descendent_idx(np.array([2]), X),
+        np.array([3])
+    )
+
+    # No pure descendents of X1
+    np.testing.assert_equal(
+        ut.get_pure_descendent_idx(np.array([1]), X),
+        np.array([])
+    )

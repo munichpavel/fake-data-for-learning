@@ -78,4 +78,8 @@ Extend to conditional rvs
       * ~~add find zero col idx util function~~
         * ~~dummy implementation (oops, I forgot)~~
         * ~~real implementation~~
-  * Test full sampling
+* ancestral sampling
+  * add get_pure_descendents function
+    * ~~dummy implementation~~
+    * ~~working implementation~~
+    * refactor
