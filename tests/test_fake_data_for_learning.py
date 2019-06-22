@@ -65,7 +65,7 @@ class TestBNRVX1cX0:
         [0.7, 0.3]
     ])
 
-    rv1c0 = BNRV('X1', pt_X1cX0, parents=['X0'])
+    rv1c0 = BNRV('X1', pt_X1cX0, parent_names=['X0'])
 
     def test_set_values_1c0(self):
         np.testing.assert_equal(self.rv1c0.values, np.array([0,1]))
@@ -112,7 +112,7 @@ class TestBNRVX2cX0X1:
     ])
 
 
-    rv2c01 = BNRV('X2', pt_X2cX0X1, parents=['X0', 'X1'])
+    rv2c01 = BNRV('X2', pt_X2cX0X1, parent_names=['X0', 'X1'])
 
     def test_rvs_2c00(self):
         draw = self.rv2c01.rvs(parent_values={'X0': 0, 'X1': 0})
@@ -142,7 +142,7 @@ class TestFakeDataBayesianNetwork:
         [0.7, 0.3]
     ])
 
-    rv1c0 = BNRV('X1', pt_X1cX0, parents=['X0'])
+    rv1c0 = BNRV('X1', pt_X1cX0, parent_names=['X0'])
 
 
     def test_missing_names(self):
@@ -195,7 +195,7 @@ class TestFakeDataBayesianNetwork:
         ]
     ])
 
-    rv2c01 = BNRV('X2', pt_X2cX0X1, parents=['X0', 'X1'])
+    rv2c01 = BNRV('X2', pt_X2cX0X1, parent_names=['X0', 'X1'])
 
     bn2c01 = FDBN(rv0, rv1, rv2c01)
     

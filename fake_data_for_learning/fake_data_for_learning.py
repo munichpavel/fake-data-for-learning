@@ -24,10 +24,10 @@ class BayesianNodeRV:
     parents: list, optional
         list of parent node random variable names. Default is None, i.e. no parents
     '''
-    def __init__(self, name, cpt, values=None, parents=None):
+    def __init__(self, name, cpt, values=None, parent_names=None):
         self.name = name
         self.cpt = cpt
-        self.parents = parents
+        self.parent_names = parent_names
         self.values = self._set_values(cpt, values)
 
     
@@ -38,7 +38,7 @@ class BayesianNodeRV:
         return (
             self.name == other.name and
             np.array_equal(self.cpt, other.cpt) and
-            self.parents == other.parents and
+            self.parent_names == other.parent_names and
             np.array_equal(self.values, other.values)
         )
 
@@ -59,7 +59,7 @@ class BayesianNodeRV:
         '''
         np.random.seed(seed)
 
-        if self.parents is None:
+        if self.parent_names is None:
             return np.random.choice(self.values, size, p=self.cpt)
         else:
             res = np.random.choice(self.values, size, p=self.get_pt(parent_values))
@@ -71,7 +71,7 @@ class BayesianNodeRV:
             return self.cpt
         else:
             s = [slice(None)] * len(self.cpt.shape)
-            for idx, p in enumerate(self.parents):
+            for idx, p in enumerate(self.parent_names):
                 s[idx] = parent_values[p]
             return self.cpt[tuple(s)]
 
@@ -94,8 +94,8 @@ class FakeDataBayesianNetwork:
 
         for rv in self._bnrvs:
             node_names.append(rv.name)
-            if rv.parents is not None:
-                parent_names += rv.parents
+            if rv.parent_names is not None:
+                parent_names += rv.parent_names
 
         missing_nodes = set(parent_names) - set(node_names)
 
@@ -109,7 +109,7 @@ class FakeDataBayesianNetwork:
         res = np.zeros((len(self._bnrvs), len(self._bnrvs)), dtype=int)
         for i, node_i in enumerate(self._bnrvs):
             for j, node_j in enumerate(self._bnrvs):
-                res[i,j] = self._name_in_list(node_i.name, node_j.parents)
+                res[i,j] = self._name_in_list(node_i.name, node_j.parent_names)
         return res
 
 
