@@ -7,8 +7,28 @@ import numpy as np
 class BayesianNodeRV:
     '''
     Sample-able random variable corresponding to node of a discrete Bayesian network.
+
+    Parameters
+    ----------
+    name : string
+        Node variable name
+    cpt: numpy array
+        (Conditional) probability array. NB: We depart from normal convention on the assignment of the 
+        array dimensions. In this class, the node variable (aka dependent, not conditioned on) corresponds
+        to the LAST componend of array indexing. E.g. For a 2-d array cpt, this means that the ROWS must sum to 1,
+        not the columns, as is otherwise standard. This choice is to make cpt definition in numpy more human-readable.
+
+    values: list, optional
+        list of values random variable will take. Default is [0, cpt.shape[-1])
+
+    parents: list, optional
+        list of parent node random variable names. Default is None, i.e. no parents
     '''
     def __init__(self, name, cpt, values=None, parents=None):
+        '''
+        
+
+        '''
         
         self.name = name
         self.cpt = cpt
@@ -45,7 +65,7 @@ class BayesianNodeRV:
         else:
             s = [slice(None)] * len(self.cpt.shape)
             for idx, p in enumerate(self.parents):
-                s[idx + 1] = parent_values[p]
+                s[idx] = parent_values[p]
             return self.cpt[tuple(s)]
 
 

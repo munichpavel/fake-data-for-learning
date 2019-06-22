@@ -46,15 +46,17 @@ class TestBNRVX1cX0:
     * X0, X1 are binary
     * X admits the graph X0 -> X1
     * X1 | X0 has conditional probability table
-        (0.2, 0.7)
-        (0.8, 0.3)
+        np.array([
+            [0.2, 0.8],
+            [0.7, 0.3]
+        ])
     '''
     
  
     # X1 | X0
     pt_X1cX0 = np.array([
-        [0.2, 0.7],
-        [0.8, 0.3]
+        [0.2, 0.8],
+        [0.7, 0.3]
     ])
 
     rv1c0 = BNRV('X1', pt_X1cX0, parents=['X0'])
@@ -70,7 +72,51 @@ class TestBNRVX1cX0:
 
     def test_get_pt(self):
         res = self.rv1c0.get_pt(parent_values={'X0': 1})
-        np.testing.assert_equal(res, self.pt_X1cX0[:, 1])
+        np.testing.assert_equal(res, self.pt_X1cX0[1, :])
+
+
+class TestBNRVX2cX0X1:
+    r'''
+    Test the bayesian node random variable X = (X0, X1, X2)
+    where
+    * X0, X1, X2 are binary
+    * X admits the graph X0 -> X2 <- X1
+    * X2 | X0, X1 has conditional probability table
+        np.array([
+            [
+                [0., 1.],
+                [0.5, 0.5]
+            ],
+            [
+                [0.9, 0.1],
+                [0.3, 0.7]
+            ]
+        ])
+    '''
+    # X2 | X0, X1
+    pt_X2cX0X1 = np.array([
+        [
+            [0., 1.],
+            [0.5, 0.5]
+        ],
+        [
+            [0.9, 0.1],
+            [0.3, 0.7]
+        ]
+    ])
+
+
+    rv2c01 = BNRV('X2', pt_X2cX0X1, parents=['X0', 'X1'])
+
+    def test_rvs_2c00(self):
+        draw = self.rv2c01.rvs(parent_values={'X0': 0, 'X1': 0})
+        assert isinstance(draw, np.int64)
+
+
+    def test_get_pt(self):
+        res = self.rv2c01.get_pt(parent_values={'X0': 0, 'X1': 0})
+        np.testing.assert_equal(res, self.pt_X2cX0X1[0, 0, :])
+
 
 
 class TestFakeDataBayesianNetwork:
@@ -81,8 +127,8 @@ class TestFakeDataBayesianNetwork:
 
     # X1 | X0
     pt_X1cX0 = np.array([
-        [0.2, 0.7],
-        [0.8, 0.3]
+        [0.2, 0.8],
+        [0.7, 0.3]
     ])
 
     rv1c0 = BNRV('X1', pt_X1cX0, parents=['X0'])
