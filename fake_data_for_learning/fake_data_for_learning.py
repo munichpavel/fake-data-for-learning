@@ -130,8 +130,11 @@ class FakeDataBayesianNetwork:
         return res
 
     def rvs(self, seed=42):
+        '''
+        Ancestral sampling from Bayesian network.
+        '''
         res = np.array(len(self.node_names) * [np.nan])
-        # First sample eve nodes
+        # First get eve node component indices
         idx_sample_next = np.array([self.node_names.index(eve) for eve in self._eve_node_names])
 
         sample_dict = {}
@@ -148,7 +151,7 @@ class FakeDataBayesianNetwork:
     def _sample_array_to_dict(self, res_array):
         '''
         Convert sampled result array of form (x0, ..., xn)
-        to dict of form {'X0': x0, ..., 'Xn': xn}
+        to dict of form {'X0': x0, ..., 'Xn': xn}.
         '''
 
         sample_dict = {}
