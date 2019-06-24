@@ -196,12 +196,6 @@ class TestFakeDataBayesianNetwork:
     def test_eve_node_names(self):
         assert sorted(self.bn2c01._eve_node_names) == ['X0', 'X1']
 
-    def test_sample_eves(self):
-        # rv0 and rv1 are eves to be sampled first
-        expected_was_sampled = np.array([True, True, False])
-        sample, _ = self.bn2c01._sample_eves(seed=42)
-        np.testing.assert_equal(~np.isnan(sample), expected_was_sampled)
-
     ###############################
     #  Bayesian network 
     # X0 -> X2 <- X1
@@ -233,12 +227,6 @@ class TestFakeDataBayesianNetwork:
 
     def test_3c2c01_eve_node_names(self):
         assert sorted(self.bn2c01._eve_node_names) == ['X0', 'X1']
-
-    def test_3c2c01_sample_eves(self):
-        # rv0 and rv1 are eves to be sampled first
-        expected_was_sampled = np.array([True, True, False, False])
-        sample, _ = self.bn3c2c01._sample_eves(seed=42)
-        np.testing.assert_equal(~np.isnan(sample), expected_was_sampled)
 
     def test_3c2c01_rvs(self):
         expected_was_sampled = np.array(4 * [True])

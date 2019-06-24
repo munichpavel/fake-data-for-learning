@@ -145,18 +145,6 @@ class FakeDataBayesianNetwork:
      
         return res
 
-    def _sample_eves(self, seed=42):
-        res = np.array(len(self.node_names) * [np.nan])
-        
-        sampled_idx = []
-        for eve in self._eve_node_names:
-            idx = self.node_names.index(eve)
-            sampled_idx.append(idx)
-            node = self._bnrvs[idx]
-            res[idx] = node.rvs(seed)
-
-        return res, sampled_idx
-
     def _sample_array_to_dict(self, res_array):
         '''
         Convert sampled result array of form (x0, ..., xn)
