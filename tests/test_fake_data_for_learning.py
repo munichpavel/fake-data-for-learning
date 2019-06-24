@@ -23,9 +23,18 @@ class TestBNRVX0:
         '''Test setting outcome values if None as argument'''
         np.testing.assert_equal(self.rv0.values, np.array([0,1]))
 
-    def test_default_rvs(self):
+    def test_default_rv_values(self):
         assert isinstance(self.rv0.rvs(seed=42), np.int64)
         assert len(self.rv0.rvs(size=100)) == 100
+
+        # Verify sample result for fixed seed
+        expected_draw_X0 = 1
+        assert self.rv0.rvs(seed=42) == expected_draw_X0
+
+    def test_rv_argument_handling(self):
+        expected_draw_X0 = 1
+        # Test handling of extraneous connditioned values
+        assert self.rv0.rvs(parent_values={'X1': 1}, seed=42) == expected_draw_X0
     
     def test_get_pt(self):
         np.testing.assert_equal(self.rv0.get_pt(), self.pt_X0)
@@ -54,8 +63,6 @@ class TestBNRVX1cX0:
             [0.7, 0.3]
         ])
     '''
-    
- 
     # X1 | X0
     pt_X1cX0 = np.array([
         [0.2, 0.8],
@@ -68,8 +75,17 @@ class TestBNRVX1cX0:
         np.testing.assert_equal(self.rv1c0.values, np.array([0,1]))
 
     def test_rvs_1c0(self):
-        draw = self.rv1c0.rvs(parent_values={'X0': 1})
+        draw = self.rv1c0.rvs(parent_values={'X0': 1}, seed=42)
         assert isinstance(draw, np.int64)
+        # Verify result for fixed seed
+        expected_X1cX0_draw = 0
+        assert draw == expected_X1cX0_draw
+
+    def test_rvs_argument_handling_1c0(self):
+        expected_X1cX0_draw = 0
+        # Test handling of extraneous conditioned values
+        draw = self.rv1c0.rvs(parent_values={'X0': 1, 'X2': 42}, seed=42)
+        assert draw == expected_X1cX0_draw
 
     def test_get_pt(self):
         res = self.rv1c0.get_pt(parent_values={'X0': 1})
