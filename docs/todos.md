@@ -86,9 +86,8 @@ Extend to conditional rvs
   * ~~dummy implementation~~
   * working implementation
     * ~~real implementation~~
-    * refactor with recursion???
+    * ~~refactor with recursion??? (Nope)~~
     * fix coersion to int for rvs from eve nodes
 
-
-
+* Add output networkx graph, print it
 * clean up utility find zero and non-zero column indices

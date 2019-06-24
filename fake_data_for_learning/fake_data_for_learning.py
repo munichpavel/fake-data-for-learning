@@ -48,7 +48,7 @@ class BayesianNodeRV:
         else:
             return values
  
-    def rvs(self, parent_values=None, size=None, seed=42):
+    def rvs(self, parent_values=None, size=None, seed=None):
         '''
         Returns
         -------
@@ -70,7 +70,6 @@ class BayesianNodeRV:
             s = [slice(None)] * len(self.cpt.shape)
             for idx, p in enumerate(self.parent_names):
                 s[idx] = parent_values[p]
-            print(s)
             return self.cpt[tuple(s)]
 
 
@@ -129,7 +128,7 @@ class FakeDataBayesianNetwork:
         res = list(np.array(self.node_names)[eve_idx])
         return res
 
-    def rvs(self, seed=42):
+    def rvs(self, seed=None):
         '''
         Ancestral sampling from Bayesian network.
         '''
@@ -139,9 +138,10 @@ class FakeDataBayesianNetwork:
 
         sample_dict = {}
         while np.isnan(res).any():
+            # Sample next round of nodes given values in sample_dict
             for idx in idx_sample_next:
                 node = self._bnrvs[idx]
-                res[idx] = node.rvs(sample_dict, seed=42)
+                res[idx] = node.rvs(sample_dict, seed=seed)
             sample_dict = self._sample_array_to_dict(res) 
 
             idx_sample_next = ut.get_pure_descendent_idx(idx_sample_next, self.adjacency_matrix)
