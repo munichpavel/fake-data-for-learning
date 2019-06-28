@@ -176,22 +176,25 @@ class TestFakeDataBayesianNetwork:
 
     ###############################
     #  Bayesian network X0 -> X2 <- X1
-    # X0, X1, X2 binary
+    # X0, X2 binary, X1 ternary
     ###############################
     # X1
-    pt_X1 = np.array([0.75, 0.25])
+    pt_X1 = np.array([0.7, 0.2, 0.1])
     rv1 = BNRV('X1', pt_X1)
 
     # X2 | X0, X1
     pt_X2cX0X1 = np.array([
         [
             [0., 1.0],
-            [0.2, 0.8]
+            [0.2, 0.8],
+            [0.1, 0.9]
         ],
         [
             [0.5, 0.5],
-            [0.3, 0.7]
-        ]
+            [0.3, 0.7],
+            [0.9, 0.1]
+        ],
+
     ])
 
     rv2c01 = BNRV('X2', pt_X2cX0X1, parent_names=['X0', 'X1'])
@@ -261,15 +264,15 @@ class TestFakeDataBayesianNetwork:
 
     
 
-    # def test_bn_matrix_dimensions(self):
-    #     # X1 | X0
-    #     pt_X1cX0_wrong_dims = np.array([
-    #         [0.2, 0.8],
-    #         [0.7, 0.3]
-    #     ])
-    #     rv1c0_wrong_dims = BNRV('X1', pt_X1cX0_wrong_dims, parent_names=['X0'])
-    #     with pytest.raises(ValueError):
-    #         FDBN(self.rv0, rv1c0_wrong_dims)
+    def test_bn_matrix_dimensions(self):
+        # X1 | X0
+        pt_X1cX0_wrong_dims = np.array([
+            [0.2, 0.8],
+            [0.7, 0.3],
+        ])
+        rv1c0_wrong_dims = BNRV('X1', pt_X1cX0_wrong_dims, parent_names=['X0'])
+        with pytest.raises(ValueError):
+            FDBN(self.rv0, rv1c0_wrong_dims)
 
 
 

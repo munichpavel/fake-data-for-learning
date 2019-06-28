@@ -2,6 +2,8 @@
 
 """Main module."""
 import numpy as np
+import networkx as nx
+
 from . import utils as ut
 
 
@@ -96,6 +98,7 @@ class FakeDataBayesianNetwork:
         self.node_names = self._set_node_names()
         self.adjacency_matrix = self.calc_adjacency_matrix()
         self._eve_node_names = self._set_eve_node_names()
+        self._validate_bn()
     
     def _set_node_names(self):
 
@@ -113,7 +116,26 @@ class FakeDataBayesianNetwork:
             raise ValueError('Missing nodes from network: {}'.format(missing_nodes))
         
         return node_names
- 
+
+    def _validate_bn(self):
+        for idx, rv in enumerate(self._bnrvs):
+            parent_idxs = ut.get_parent_idx(idx, self.adjacency_matrix)
+            expected_cpt_dims = self._get_expected_cpt_dims(parent_idxs, len(rv.values))
+            if rv.cpt.shape != tuple(expected_cpt_dims):
+                raise ValueError(
+                    'Conditional probability table dimensions {} of {} inconsistent with parent values {}'.format(
+                    rv.cpt.shape, rv.name, expected_cpt_dims)
+                )
+
+    def _get_expected_cpt_dims(self, parent_idxs, child_value_length):
+        expected_cpt_dims = []
+        for parent_idx in parent_idxs:
+            expected_cpt_dims.append(len(self._bnrvs[parent_idx].values))
+
+        # append node value length
+        expected_cpt_dims.append(child_value_length)
+        return expected_cpt_dims
+
     def calc_adjacency_matrix(self):
         
         res = np.zeros((len(self._bnrvs), len(self._bnrvs)), dtype=int)
@@ -161,4 +183,8 @@ class FakeDataBayesianNetwork:
 
         return sample_dict
 
- 
+    def get_graph(self):
+        return nx.from_numpy_matrix(self.adjacency_matrix, create_using=nx.DiGraph)
+
+    def draw_graph(self):
+        nx.draw(self.get_graph(), with_labels=True)

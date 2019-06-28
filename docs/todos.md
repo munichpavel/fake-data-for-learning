@@ -92,4 +92,6 @@ Extend to conditional rvs
 * ~~Add output networkx graph, print it~~
 * Ensure dimensions are correct
 * ~~Add get parent indices function~~
+* ~~raise value error for inconsistent cpts~~
+
 * clean up utility find zero and non-zero column indices
