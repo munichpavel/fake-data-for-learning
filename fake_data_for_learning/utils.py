@@ -16,6 +16,13 @@ def zero_column_idx(X):
     return np.where(~X.any(axis=0))[0]
 
 
+def get_parent_idx(child_idx, adjacency_matrix):
+    '''Return list of index positions of parents of node at child_idx in adjacency matrix'''
+    res = np.nonzero(adjacency_matrix[:, child_idx])[0]
+    return res.tolist()
+
+
+
 def get_pure_descendent_idx(parent_idx, adjacency_matrix):
     r'''
     Return column ids of descendents having only parent_idx as parents.

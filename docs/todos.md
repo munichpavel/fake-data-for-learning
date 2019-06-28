@@ -89,5 +89,7 @@ Extend to conditional rvs
     * ~~refactor with recursion??? (Nope)~~
     * fix coersion to int for rvs from eve nodes
 
-* Add output networkx graph, print it
+* ~~Add output networkx graph, print it~~
+* Ensure dimensions are correct
+* ~~Add get parent indices function~~
 * clean up utility find zero and non-zero column indices

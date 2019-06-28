@@ -250,6 +250,28 @@ class TestFakeDataBayesianNetwork:
         np.testing.assert_equal(~np.isnan(sample), expected_was_sampled)
 
 
+    ###############################
+    #  Bayesian network X0 -> X1
+    # X0 tertiary, X1 binary
+    ###############################
+    
+    #X0
+    pt_X0 = np.array([0.1, 0.7, 0.2])
+    rv0 = BNRV('X0', pt_X0)
+
+    
+
+    # def test_bn_matrix_dimensions(self):
+    #     # X1 | X0
+    #     pt_X1cX0_wrong_dims = np.array([
+    #         [0.2, 0.8],
+    #         [0.7, 0.3]
+    #     ])
+    #     rv1c0_wrong_dims = BNRV('X1', pt_X1cX0_wrong_dims, parent_names=['X0'])
+    #     with pytest.raises(ValueError):
+    #         FDBN(self.rv0, rv1c0_wrong_dims)
+
+
 
 ###############
 # Test utils
@@ -268,6 +290,16 @@ def test_zero_column_idx():
     expected_idx = np.array([0, 2])
     np.testing.assert_equal(ut.zero_column_idx(X), expected_idx)
 
+
+def test_parent_idx():
+    X = np.array([
+        [0, 0, 1],
+        [0, 0, 1],
+        [0, 0, 0]
+    ])    
+
+    assert ut.get_parent_idx(2, X) == [0,1]
+    assert ut.get_parent_idx(0, X) == []
 
 def test_get_pure_descendent_idx():
     # Test with graph
