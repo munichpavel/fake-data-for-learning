@@ -14,6 +14,8 @@ The goal of this package is to make it easy to generate interesting fake data. W
 
 ## Features
 
+See the demo notebook [bayesian-network.ipynb](notebooks/bayesian-network.ipynb) for feature examples.
+
 ## Related packages
 
 This package exists because I became tired of googling for existing implementations of how I wanted to generate fake data. In the development process, I have however found other packages that with the same core functionality (plus many other features), such as
