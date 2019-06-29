@@ -100,7 +100,9 @@ Extend to conditional rvs
     * add internal representation to NodeRV
         * ~~dummy implementation~~
         * ~~real implementation~~
-        * test for le transform ordering (stuck with sklearn labelencoder ordering)
+        * ~~test for le transform ordering (stuck with sklearn labelencoder ordering)~~
         * untrick external values
-        * validate non-default values to preserve trick
+        * ~~validate non-default values to preserve trick~~
+    * ~~fake implementation of get_pt for non-default values~~
+    * real implementation of get_pt for non-default values
 * clean up utility find zero and non-zero column indices
