@@ -3,8 +3,11 @@
 """Main module."""
 import numpy as np
 import networkx as nx
+from sklearn.preprocessing import LabelEncoder
 
 from . import utils as ut
+
+from .utils import trick_external_value_separator
 
 
 class BayesianNodeRV:
@@ -31,7 +34,7 @@ class BayesianNodeRV:
         self.name = name
         self.cpt = cpt
         self.parent_names = parent_names
-        self.values = self._set_values(cpt, values)
+        self._set_values(cpt, values)
 
     def __eq__(self, other):
   
@@ -46,10 +49,40 @@ class BayesianNodeRV:
 
     def _set_values(self, cpt, values):
         if values is None:
-            return np.array(range(cpt.shape[0]))
+            self.values = np.array(range(cpt.shape[0]))
+            self.le = None
+            self._values = self.values
+        
         else:
-            return values
- 
+            self._set_nondefault_values(values)
+
+    def _set_nondefault_values(self, values):
+        # external values representation
+        self._validate_nondefault_values(values)
+        self.values = values
+
+        # label encoder
+        le = LabelEncoder()
+        # Hack to trick out sklearn's baked in sort order
+        tricked_external_values = []
+        for val in values:
+            tricked_external_values.append(ut.get_trick_external_value(val, values))
+        le.fit(tricked_external_values)
+        self.le = le
+
+        # internal values representation
+        self._values = le.transform(tricked_external_values)
+
+    def _validate_nondefault_values(self, values):
+        for val in values:
+            print(trick_external_value_separator)
+            if trick_external_value_separator in val:
+                raise ValueError(
+                    'The character {} is not permitted in values'
+                    .format(trick_external_value_separator)
+                ) 
+    
+
     def rvs(self, parent_values=None, size=None, seed=None):
         '''
         Returns
@@ -71,8 +104,11 @@ class BayesianNodeRV:
         else:
             s = [slice(None)] * len(self.cpt.shape)
             for idx, p in enumerate(self.parent_names):
-                s[idx] = parent_values[p]
+                parent_internal_value = ut.get_internal_value(parent_values[p])
+                s[idx] = parent_internal_value
+                #s[idx] = parent_values[p]
             return self.cpt[tuple(s)]
+
 
 
 class FakeDataBayesianNetwork:
@@ -118,6 +154,9 @@ class FakeDataBayesianNetwork:
         return node_names
 
     def _validate_bn(self):
+        '''Check for consistency of node random variables in Bayesian network'''
+
+        # Check consistency of conditional probability tables between parents and children
         for idx, rv in enumerate(self._bnrvs):
             parent_idxs = ut.get_parent_idx(idx, self.adjacency_matrix)
             expected_cpt_dims = self._get_expected_cpt_dims(parent_idxs, len(rv.values))

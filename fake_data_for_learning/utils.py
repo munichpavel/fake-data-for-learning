@@ -1,14 +1,50 @@
 '''Utility functions for fake_data_for_learning'''
 import numpy as np
+import string
 
+trick_external_value_separator = '_'
 
 def name_in_list(name, l):
     '''Return 1 if name is in list l, else 0'''
     if l is None:
             return 0
-    
     res = name in l
     return res
+
+
+def get_trick_external_value(val, values):
+        idx = values.index(val)
+        return (
+            string.ascii_letters[idx] + 
+            trick_external_value_separator + 
+            val
+        )
+
+def untrick_external_value(val):
+    return val.split('_')[-1]
+
+
+def get_internal_value(external_value):
+    '''
+    Translate external value representation to internal one
+
+    Parameters
+    ----------
+    external_value: int or dict of form {'value': int, 'le': fitted label encoder}
+        External value to be translated into internal representation
+
+    Returns
+    -------
+    res : int
+        Internal (integer) representation of external value
+
+    '''
+
+    if isinstance(external_value, np.int):
+        return external_value
+    else:
+        return 1
+
 
 
 def zero_column_idx(X):

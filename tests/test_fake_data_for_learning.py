@@ -4,6 +4,8 @@ import pytest
 import numpy as np
 from itertools import product
 
+from sklearn.preprocessing import LabelEncoder
+
 from fake_data_for_learning import BayesianNodeRV as BNRV
 from fake_data_for_learning import FakeDataBayesianNetwork as FDBN
 import fake_data_for_learning.utils as ut
@@ -39,12 +41,22 @@ class TestBNRVX0:
     def test_get_pt(self):
         np.testing.assert_equal(self.rv0.get_pt(), self.pt_X0)
 
-    rv0_char = BNRV('X0', pt_X0, values=['down', 'up'])
-
+    # Test non-default random variable values
+    rv0_char = BNRV('X0', pt_X0, values=['up', 'down'])
 
     def test_set_values(self):
         assert len(self.rv0_char.values) == 2
-        assert set(self.rv0_char.values) == set(['down', 'up'])
+        assert set(self.rv0_char.values) == set(['up', 'down'])
+        # Ordering of internal representation must match initial value ordering
+        np.testing.assert_equal(
+            self.rv0_char._values,
+            np.array([0, 1])
+        )
+
+    def test_wonky_nondef_values(self):
+        with pytest.raises(ValueError):
+            BNRV('X0', self.pt_X0, values=['up_up_away', 'down'])
+
 
     def test_rvs(self):
         assert isinstance(self.rv0_char.rvs(seed=42), str)
@@ -82,6 +94,7 @@ class TestBNRVX1cX0:
         assert draw == expected_X1cX0_draw
 
     def test_rvs_argument_handling_1c0(self):
+        # Verify result for fixed seed
         expected_X1cX0_draw = 0
         # Test handling of extraneous conditioned values
         draw = self.rv1c0.rvs(parent_values={'X0': 1, 'X2': 42}, seed=42)
@@ -91,6 +104,24 @@ class TestBNRVX1cX0:
         res = self.rv1c0.get_pt(parent_values={'X0': 1})
         np.testing.assert_equal(res, self.pt_X1cX0[1, :])
 
+    # With non-devault values for X0
+    pt_X0 = np.array([0.1, 0.9])
+    rv0_char = BNRV('X0', pt_X0, values=['up', 'down'])
+
+    def test_get_pt_nondef(self):
+        # parent values has external value and label encoder
+        res = self.rv1c0.get_pt(
+            parent_values={
+                'X0': {
+                    'value': 'down',
+                    'le': self.rv0_char.le
+                }
+            }
+        )
+        np.testing.assert_equal(res, self.pt_X1cX0[1, :])
+        
+        
+        
 
 class TestBNRVX2cX0X1:
     r'''
@@ -173,6 +204,16 @@ class TestFakeDataBayesianNetwork:
             self.bn.adjacency_matrix,
             expected_adjacency
         )
+
+    # # With non-default valued outocomes
+    # rv0_nondef = BNRV('X0', pt_X0, values=['a', 'b'])
+    # rv1c0_nondef = BNRV('X1', pt_X1cX0, parent_names=['X0'], values=['male', 'female'])
+
+    # bn_nondef = FDBN(rv0_nondef, rv1c0_nondef)
+    # def test_rvs_type_nondef_values(self):
+    #     sample = self.bn_nondef.rvs(seed=42)
+    #     assert sample.dtype.type is np.unicode_
+
 
     ###############################
     #  Bayesian network X0 -> X2 <- X1
@@ -273,7 +314,6 @@ class TestFakeDataBayesianNetwork:
         rv1c0_wrong_dims = BNRV('X1', pt_X1cX0_wrong_dims, parent_names=['X0'])
         with pytest.raises(ValueError):
             FDBN(self.rv0, rv1c0_wrong_dims)
-
 
 
 ###############

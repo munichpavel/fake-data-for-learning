@@ -90,8 +90,17 @@ Extend to conditional rvs
     * fix coersion to int for rvs from eve nodes
 
 * ~~Add output networkx graph, print it~~
-* Ensure dimensions are correct
-* ~~Add get parent indices function~~
-* ~~raise value error for inconsistent cpts~~
-
+* ~~Ensure node conditional probability table dimensions are consistent~~
+    * ~~Add get parent indices function~~
+    * ~~raise value error for inconsistent cpts~~
+* Sample arbitrary-ish values from BN (strings)
+    * Convert parent values to internal (int) representation
+    * Separate internal and external representation OR convert at end or rvs???
+    * ~~parent values class to pass into get_pt, can initialize from dict as before, but also has labelencoder method (NOPE)~~
+    * add internal representation to NodeRV
+        * ~~dummy implementation~~
+        * ~~real implementation~~
+        * test for le transform ordering (stuck with sklearn labelencoder ordering)
+        * untrick external values
+        * validate non-default values to preserve trick
 * clean up utility find zero and non-zero column indices
