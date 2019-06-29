@@ -104,7 +104,7 @@ class TestBNRVX1cX0:
 
     # With non-devault values for X0
     pt_X0 = np.array([0.1, 0.9])
-    rv0_char = BNRV('X0', pt_X0, values=['up', 'down'])
+    rv0_nondef = BNRV('X0', pt_X0, values=['up', 'down'])
 
     def test_get_pt_nondef(self):
         # parent values has external value and label encoder
@@ -112,7 +112,7 @@ class TestBNRVX1cX0:
             parent_values={
                 'X0': {
                     'value': 'down',
-                    'le': self.rv0_char.le
+                    'le': self.rv0_nondef.le
                 }
             }
         )
