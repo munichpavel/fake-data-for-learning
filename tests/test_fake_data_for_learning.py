@@ -16,7 +16,6 @@ class TestBNRVX0:
     pt_X0 = np.array([0.1, 0.9])
     rv0 = BNRV('X0', pt_X0)
 
-
     def test_equality(self):
         other_rv0 = BNRV('X0', self.pt_X0)
         assert self.rv0 == other_rv0
@@ -118,8 +117,6 @@ class TestBNRVX1cX0:
             }
         )
         np.testing.assert_equal(res, self.pt_X1cX0[1, :])
-        
-        
         
 
 class TestBNRVX2cX0X1:

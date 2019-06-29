@@ -43,7 +43,10 @@ def get_internal_value(external_value):
     if isinstance(external_value, np.int):
         return external_value
     else:
-        return 1
+        value = external_value.get('value')
+        le = external_value.get('le')
+        untricked_values = [untrick_external_value(tv) for tv in le.classes_]
+        return untricked_values.index(value)
 
 
 

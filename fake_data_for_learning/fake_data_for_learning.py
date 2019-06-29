@@ -98,6 +98,13 @@ class BayesianNodeRV:
             return res
     
     def get_pt(self, parent_values=None):
+        '''
+        Parameters
+        ----------
+        parent_values: None, dict of ints of form {'node_name': int}, 
+                or dict of dicts with entries 'node_name': {'value': int, 'le': fitted label encoder}
+            Values of parent nodes to get relevant 1-d submatrix of the (conditional) probability table
+        '''
         if parent_values is None:
             return self.cpt
         else:

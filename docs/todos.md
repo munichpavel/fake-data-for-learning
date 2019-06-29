@@ -103,6 +103,8 @@ Extend to conditional rvs
         * ~~test for le transform ordering (stuck with sklearn labelencoder ordering)~~
         * untrick external values
         * ~~validate non-default values to preserve trick~~
-    * ~~fake implementation of get_pt for non-default values~~
-    * real implementation of get_pt for non-default values
+    * get_pt for non-default values
+        * ~~fake implementation of get internal value~~
+        * ~~real implementation of get internal value~~
+        * ~~real implementation of get_pt for non-default values~~
 * clean up utility find zero and non-zero column indices
