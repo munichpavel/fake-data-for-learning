@@ -52,7 +52,6 @@ class BayesianNodeRV:
             self.values = np.array(range(cpt.shape[0]))
             self.le = None
             self._values = self.values
-        
         else:
             self._set_nondefault_values(values)
 
