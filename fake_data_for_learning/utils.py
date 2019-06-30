@@ -40,14 +40,13 @@ def get_internal_value(external_value):
 
     '''
 
-    if isinstance(external_value, np.int):
+    if isinstance(external_value, np.int) or isinstance(external_value, np.int64):
         return external_value
     else:
         value = external_value.get('value')
         le = external_value.get('le')
         untricked_values = [untrick_external_value(tv) for tv in le.classes_]
         return untricked_values.index(value)
-
 
 
 def zero_column_idx(X):
@@ -91,3 +90,12 @@ def get_pure_descendent_idx(parent_idx, adjacency_matrix):
 def non_zero_column_idx(X):
     '''Return array with column indices of non-0 columns'''
     return np.where(X.any(axis=0))[0]
+
+def flatten_samples_dict(x):
+    res = {}
+    for key, val in x.items():
+        if isinstance(val, np.int) or isinstance(val, np.int64):
+            res[key] = val
+        else:
+            res[key] = val.get('value')            
+    return res

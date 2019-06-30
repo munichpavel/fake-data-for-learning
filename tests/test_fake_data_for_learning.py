@@ -2,6 +2,7 @@
 
 import pytest
 import numpy as np
+import pandas as pd
 from itertools import product
 
 from sklearn.preprocessing import LabelEncoder
@@ -117,7 +118,7 @@ class TestBNRVX1cX0:
             }
         )
         np.testing.assert_equal(res, self.pt_X1cX0[1, :])
-        
+
 
 class TestBNRVX2cX0X1:
     r'''
@@ -201,14 +202,15 @@ class TestFakeDataBayesianNetwork:
             expected_adjacency
         )
 
-    # # With non-default valued outocomes
-    # rv0_nondef = BNRV('X0', pt_X0, values=['a', 'b'])
-    # rv1c0_nondef = BNRV('X1', pt_X1cX0, parent_names=['X0'], values=['male', 'female'])
+    # With non-default valued outcomes
+    rv0_nondef = BNRV('X0', pt_X0, values=['a', 'b'])
+    rv1c0_nondef = BNRV('X1', pt_X1cX0, parent_names=['X0'], values=['male', 'female'])
 
-    # bn_nondef = FDBN(rv0_nondef, rv1c0_nondef)
-    # def test_rvs_type_nondef_values(self):
-    #     sample = self.bn_nondef.rvs(seed=42)
-    #     assert sample.dtype.type is np.unicode_
+    bn_nondef = FDBN(rv0_nondef, rv1c0_nondef)
+    def test_rvs_type_nondef_values(self):
+        sample = self.bn_nondef.rvs(seed=42)
+        expected_sample = pd.DataFrame({'X0': 'b', 'X1': 'male'}, index=range(1), columns=('X0', 'X1'))
+        pd.testing.assert_frame_equal(sample, expected_sample)
 
 
     ###############################
@@ -285,7 +287,7 @@ class TestFakeDataBayesianNetwork:
         assert sorted(self.bn2c01._eve_node_names) == ['X0', 'X1']
 
     def test_3c2c01_rvs(self):
-        expected_was_sampled = np.array(4 * [True])
+        expected_was_sampled = np.array([4 * [True]])
         sample = self.bn3c2c01.rvs(seed=42)
         np.testing.assert_equal(~np.isnan(sample), expected_was_sampled)
 
@@ -371,3 +373,12 @@ def test_get_pure_descendent_idx():
         ut.get_pure_descendent_idx(np.array([1]), X),
         np.array([])
     )
+
+def test_flatten_samples_dict():
+    samples_dict = {
+        'X0': 1, 
+        'X1': {'value': 'b', 'le': 'proxy_string_for_label_encoder'}
+    }
+    expected_result = {'X0': 1, 'X1': 'b'}
+
+    assert ut.flatten_samples_dict(samples_dict) == expected_result

@@ -107,4 +107,12 @@ Extend to conditional rvs
         * ~~fake implementation of get internal value~~
         * ~~real implementation of get internal value~~
         * ~~real implementation of get_pt for non-default values~~
+        * ~~whole thing doomed by possiblity of mixed types in sample results array~~
+      
+
+    * sample rvs for non-default values
+        * ~~first real implementation~~
+        * ~~flatten values dict utility function (to be refactored away)~~
+        * refactor values passing to eliminate dict messes
 * clean up utility find zero and non-zero column indices
+* refactor parent_values, sample_dict interface (class???)

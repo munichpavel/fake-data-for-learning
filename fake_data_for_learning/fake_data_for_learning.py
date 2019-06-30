@@ -2,6 +2,7 @@
 
 """Main module."""
 import numpy as np
+import pandas as pd
 import networkx as nx
 from sklearn.preprocessing import LabelEncoder
 
@@ -81,7 +82,6 @@ class BayesianNodeRV:
                     .format(trick_external_value_separator)
                 ) 
     
-
     def rvs(self, parent_values=None, size=None, seed=None):
         '''
         Returns
@@ -118,7 +118,7 @@ class BayesianNodeRV:
 
 
 class FakeDataBayesianNetwork:
-    '''
+    r'''
     Sample-able Bayesian network comprised up of BayesianNetworkRV's
 
     Parameters
@@ -160,7 +160,7 @@ class FakeDataBayesianNetwork:
         return node_names
 
     def _validate_bn(self):
-        '''Check for consistency of node random variables in Bayesian network'''
+        r'''Check for consistency of node random variables in Bayesian network'''
 
         # Check consistency of conditional probability tables between parents and children
         for idx, rv in enumerate(self._bnrvs):
@@ -190,43 +190,92 @@ class FakeDataBayesianNetwork:
         return res
 
     def _set_eve_node_names(self):
-        '''Find eve nodes as zero columns of adjacency matrix'''
+        r'''Find eve nodes as zero columns of adjacency matrix'''
         eve_idx = ut.zero_column_idx(self.adjacency_matrix)
         res = list(np.array(self.node_names)[eve_idx])
         return res
 
     def rvs(self, seed=None):
-        '''
-        Ancestral sampling from Bayesian network.
-        '''
-        res = np.array(len(self.node_names) * [np.nan])
-        # First get eve node component indices
-        idx_sample_next = np.array([self.node_names.index(eve) for eve in self._eve_node_names])
-
-        sample_dict = {}
-        while np.isnan(res).any():
-            # Sample next round of nodes given values in sample_dict
-            for idx in idx_sample_next:
-                node = self._bnrvs[idx]
-                res[idx] = node.rvs(sample_dict, seed=seed)
-            sample_dict = self._sample_array_to_dict(res) 
-
-            idx_sample_next = ut.get_pure_descendent_idx(idx_sample_next, self.adjacency_matrix)
+        r'''Ancestral sampling from the Bayesian network'''
+        samples_dict = {}
+        sample_next_names = self._eve_node_names
+        while set(samples_dict.keys()) != set(self.node_names):
+            for node_name in sample_next_names:
+                node = self._bnrvs[self.node_names.index(node_name)]
+                print(samples_dict)
+                sample = node.rvs(samples_dict, seed=seed)
+                if isinstance(sample, np.int) or isinstance(sample, np.int64):
+                    samples_dict[node_name] = sample
+                else:
+                    samples_dict[node_name] = {'value': sample, 'le': node.le}
      
-        return res
+            idx_current_names = np.array([self.node_names.index(name) for name in sample_next_names])
+            idx_next_names = ut.get_pure_descendent_idx(idx_current_names, self.adjacency_matrix)
+            sample_next_names = [self.node_names[idx] for idx in idx_next_names]
+
+        res = ut.flatten_samples_dict(samples_dict)
+        return pd.DataFrame(res, index=range(1), columns=self.node_names)
+
+        # samples_dict = {}
+        # sample_next_names = self._eve_node_names
+        # while set(samples_dict.keys()) != set(self.node_names):
+        #     for node_name in sample_next_names:
+        #         node = self._bnrvs[self.node_names.index(node_name)]
+        #         samples_dict[node_name] = node.rvs(samples_dict, seed=seed)
+            
+        #     idx_next_names = np.array([self.node_names.index(name) for name in sample_next_names])
+        #     sample_next_names = ut.get_pure_descendent_idx(idx_next_names, self.adjacency_matrix)
+
+        # return samples_dict
+
+    
+
+
+    # def rvs(self, seed=None):
+    #     '''
+    #     Ancestral sampling from Bayesian network.
+    #     '''
+    #     res = np.array(len(self.node_names) * [np.nan])
+    #     # First get eve node component indices
+    #     idx_sample_next = np.array([self.node_names.index(eve) for eve in self._eve_node_names])
+
+    #     samples_dict = {}
+    #     while np.isnan(res).any():
+    #         # Sample next round of nodes given values in sample_dict
+    #         for idx in idx_sample_next:
+    #             node = self._bnrvs[idx]
+    #             res[idx] = node.rvs(samples_dict, seed=seed)
+    #         samples_dict = self._sample_array_to_dict(res) 
+
+    #         idx_sample_next = ut.get_pure_descendent_idx(idx_sample_next, self.adjacency_matrix)
+     
+    #     return res
 
     def _sample_array_to_dict(self, res_array):
-        '''
+        r'''
         Convert sampled result array of form (x0, ..., xn)
         to dict of form {'X0': x0, ..., 'Xn': xn}.
         '''
 
-        sample_dict = {}
+        samples_dict = {}
         idx_sampled = np.where(~np.isnan(res_array))[0]
         for idx in idx_sampled:
-            sample_dict[self.node_names[idx]] = int(res_array[idx])
+            #sample_dict[self.node_names[idx]] = int(res_array[idx])
+            samples_dict[self.node_names[idx]] = self._get_sample_dict(idx, res_array)
 
-        return sample_dict
+        return samples_dict
+
+    def _get_sample_dict(self, idx, res_array):
+        sample = res_array[idx]
+        if isinstance(sample, np.float):
+            res = int(sample)
+        else:
+            res = {
+                'le': self._bnrvs[idx].le,
+                'value': sample
+            }
+        print(res)
+        return res
 
     def get_graph(self):
         return nx.from_numpy_matrix(self.adjacency_matrix, create_using=nx.DiGraph)
