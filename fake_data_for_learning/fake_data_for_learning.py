@@ -75,7 +75,6 @@ class BayesianNodeRV:
 
     def _validate_nondefault_values(self, values):
         for val in values:
-            print(trick_external_value_separator)
             if trick_external_value_separator in val:
                 raise ValueError(
                     'The character {} is not permitted in values'
@@ -202,7 +201,6 @@ class FakeDataBayesianNetwork:
         while set(samples_dict.keys()) != set(self.node_names):
             for node_name in sample_next_names:
                 node = self._bnrvs[self.node_names.index(node_name)]
-                print(samples_dict)
                 sample = node.rvs(samples_dict, seed=seed)
                 if isinstance(sample, np.int) or isinstance(sample, np.int64):
                     samples_dict[node_name] = sample
@@ -215,41 +213,6 @@ class FakeDataBayesianNetwork:
 
         res = ut.flatten_samples_dict(samples_dict)
         return pd.DataFrame(res, index=range(1), columns=self.node_names)
-
-        # samples_dict = {}
-        # sample_next_names = self._eve_node_names
-        # while set(samples_dict.keys()) != set(self.node_names):
-        #     for node_name in sample_next_names:
-        #         node = self._bnrvs[self.node_names.index(node_name)]
-        #         samples_dict[node_name] = node.rvs(samples_dict, seed=seed)
-            
-        #     idx_next_names = np.array([self.node_names.index(name) for name in sample_next_names])
-        #     sample_next_names = ut.get_pure_descendent_idx(idx_next_names, self.adjacency_matrix)
-
-        # return samples_dict
-
-    
-
-
-    # def rvs(self, seed=None):
-    #     '''
-    #     Ancestral sampling from Bayesian network.
-    #     '''
-    #     res = np.array(len(self.node_names) * [np.nan])
-    #     # First get eve node component indices
-    #     idx_sample_next = np.array([self.node_names.index(eve) for eve in self._eve_node_names])
-
-    #     samples_dict = {}
-    #     while np.isnan(res).any():
-    #         # Sample next round of nodes given values in sample_dict
-    #         for idx in idx_sample_next:
-    #             node = self._bnrvs[idx]
-    #             res[idx] = node.rvs(samples_dict, seed=seed)
-    #         samples_dict = self._sample_array_to_dict(res) 
-
-    #         idx_sample_next = ut.get_pure_descendent_idx(idx_sample_next, self.adjacency_matrix)
-     
-    #     return res
 
     def _sample_array_to_dict(self, res_array):
         r'''
@@ -274,7 +237,6 @@ class FakeDataBayesianNetwork:
                 'le': self._bnrvs[idx].le,
                 'value': sample
             }
-        print(res)
         return res
 
     def get_graph(self):
