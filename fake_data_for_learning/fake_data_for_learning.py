@@ -115,7 +115,21 @@ class BayesianNodeRV:
             return self.cpt[tuple(s)]
 
 
+class SampleValue:
+    def __init__(self, node_name, value, label_encoder=None):
+        self.node_name = node_name
+        self.label_encoder = label_encoder
+        self.value = self._set_value(value)
 
+    def _set_value(self, value):
+        if ut.possible_default_value(value):
+            self.value = value
+        else:
+            if self.label_encoder is None:
+                raise ValueError('Non-default values require a label encoder')
+            self.value = value
+
+            
 class FakeDataBayesianNetwork:
     r'''
     Sample-able Bayesian network comprised up of BayesianNetworkRV's

@@ -9,6 +9,7 @@ from sklearn.preprocessing import LabelEncoder
 
 from fake_data_for_learning import BayesianNodeRV as BNRV
 from fake_data_for_learning import FakeDataBayesianNetwork as FDBN
+from fake_data_for_learning import SampleValue
 import fake_data_for_learning.utils as ut
 
 
@@ -161,6 +162,14 @@ class TestBNRVX2cX0X1:
         res = self.rv2c01.get_pt(parent_values={'X0': 0, 'X1': 0})
         np.testing.assert_equal(res, self.pt_X2cX0X1[0, 0, :])
 
+###################
+# Test SampleValues
+###################
+
+class TestSampleValue:
+    with pytest.raises(ValueError):
+        SampleValue('X0', 'a')
+
 
 
 class TestFakeDataBayesianNetwork:
@@ -312,6 +321,7 @@ class TestFakeDataBayesianNetwork:
         rv1c0_wrong_dims = BNRV('X1', pt_X1cX0_wrong_dims, parent_names=['X0'])
         with pytest.raises(ValueError):
             FDBN(self.rv0, rv1c0_wrong_dims)
+
 
 
 ###############

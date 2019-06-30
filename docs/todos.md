@@ -113,6 +113,8 @@ Extend to conditional rvs
     * sample rvs for non-default values
         * ~~first real implementation~~
         * ~~flatten values dict utility function (to be refactored away)~~
-        * refactor values passing to eliminate dict messes
+    * refactor values passing to eliminate dict messes
+        * ~~First stand-alone definition of SampleValue class~~
+        * Integrate into other classes
 * clean up utility find zero and non-zero column indices
 * refactor parent_values, sample_dict interface (class???)
