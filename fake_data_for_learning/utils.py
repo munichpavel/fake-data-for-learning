@@ -12,6 +12,14 @@ def name_in_list(name, l):
     return res
 
 
+def possible_default_value(x):
+    '''Check conditions that rule-out a default (i.e. natural number) value'''
+    if isinstance(x, np.int) or isinstance(x, np.int64):
+        return x >= 0    
+    else:
+        return False
+
+
 def get_trick_external_value(val, values):
         idx = values.index(val)
         return (
@@ -24,7 +32,7 @@ def untrick_external_value(val):
     return val.split('_')[-1]
 
 
-def get_internal_value(external_value):
+def get_internal_value(sample_value):
     '''
     Translate external value representation to internal one
 
@@ -39,14 +47,13 @@ def get_internal_value(external_value):
         Internal (integer) representation of external value
 
     '''
-
-    if isinstance(external_value, np.int) or isinstance(external_value, np.int64):
-        return external_value
-    else:
-        value = external_value.get('value')
-        le = external_value.get('le')
+    if sample_value.label_encoder is not None:
+        
+        le = sample_value.label_encoder
         untricked_values = [untrick_external_value(tv) for tv in le.classes_]
-        return untricked_values.index(value)
+        return untricked_values.index(sample_value.value)
+    else:
+        return sample_value.value
 
 
 def zero_column_idx(X):
@@ -90,12 +97,3 @@ def get_pure_descendent_idx(parent_idx, adjacency_matrix):
 def non_zero_column_idx(X):
     '''Return array with column indices of non-0 columns'''
     return np.where(X.any(axis=0))[0]
-
-def flatten_samples_dict(x):
-    res = {}
-    for key, val in x.items():
-        if isinstance(val, np.int) or isinstance(val, np.int64):
-            res[key] = val
-        else:
-            res[key] = val.get('value')            
-    return res

@@ -116,7 +116,7 @@ Extend to conditional rvs
     * refactor values passing to eliminate dict messes
         * ~~First stand-alone definition of SampleValue class~~
         * ~~Integrate into other classes~~
-        * refactor
+        * ~~refactor~~
 * clean up utility find zero and non-zero column indices
 * refactor parent_values, sample_dict interface (class???)
 * refactor integer checks for default value
