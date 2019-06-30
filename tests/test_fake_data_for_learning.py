@@ -37,7 +37,6 @@ class TestBNRVX0:
     def test_rv_argument_handling(self):
         expected_draw_X0 = 1
         # Test handling of extraneous connditioned values
-        #assert self.rv0.rvs(parent_values={'X1': 1}, seed=42) == expected_draw_X0
         assert self.rv0.rvs(parent_values={'X1': SampleValue(1)}, seed=42) == expected_draw_X0
     
     def test_get_pt(self):
@@ -88,7 +87,6 @@ class TestBNRVX1cX0:
         np.testing.assert_equal(self.rv1c0.values, np.array([0,1]))
 
     def test_rvs_1c0(self):
-        #draw = self.rv1c0.rvs(parent_values={'X0': 1}, seed=42)
         draw = self.rv1c0.rvs(parent_values={'X0': SampleValue(1)}, seed=42)
         assert isinstance(draw, np.int64)
         # Verify result for fixed seed
@@ -99,12 +97,10 @@ class TestBNRVX1cX0:
         # Verify result for fixed seed
         expected_X1cX0_draw = 0
         # Test handling of extraneous conditioned values
-        #draw = self.rv1c0.rvs(parent_values={'X0': 1, 'X2': 42}, seed=42)
         draw = self.rv1c0.rvs(parent_values={'X0': SampleValue(1), 'X2': SampleValue(42)}, seed=42)
         assert draw == expected_X1cX0_draw
 
     def test_get_pt(self):
-        #res = self.rv1c0.get_pt(parent_values={'X0': 1})
         res = self.rv1c0.get_pt(parent_values={'X0': SampleValue(1)})
         np.testing.assert_equal(res, self.pt_X1cX0[1, :])
 
@@ -113,15 +109,6 @@ class TestBNRVX1cX0:
     rv0_nondef = BNRV('X0', pt_X0, values=['up', 'down'])
 
     def test_get_pt_nondef(self):
-        # parent values has external value and label encoder
-        # res = self.rv1c0.get_pt(
-        #     parent_values={
-        #         'X0': {
-        #             'value': 'down',
-        #             'le': self.rv0_nondef.le
-        #         }
-        #     }
-        # )
         res = self.rv1c0.get_pt(
             parent_values={'X0': SampleValue('down', label_encoder=self.rv0_nondef.le)}
         )
@@ -162,12 +149,10 @@ class TestBNRVX2cX0X1:
     rv2c01 = BNRV('X2', pt_X2cX0X1, parent_names=['X0', 'X1'])
 
     def test_rvs_2c00(self):
-        #draw = self.rv2c01.rvs(parent_values={'X0': 0, 'X1': 0})
         draw = self.rv2c01.rvs(parent_values={'X0': SampleValue(0), 'X1': SampleValue(0)})
         assert isinstance(draw, np.int64)
 
     def test_get_pt(self):
-#        res = self.rv2c01.get_pt(parent_values={'X0': 0, 'X1': 0})
         res = self.rv2c01.get_pt(parent_values={'X0': SampleValue(0), 'X1': SampleValue(0)})
         np.testing.assert_equal(res, self.pt_X2cX0X1[0, 0, :])
 
@@ -392,12 +377,3 @@ def test_get_pure_descendent_idx():
         ut.get_pure_descendent_idx(np.array([1]), X),
         np.array([])
     )
-
-def test_flatten_samples_dict():
-    samples_dict = {
-        'X0': 1, 
-        'X1': {'value': 'b', 'le': 'proxy_string_for_label_encoder'}
-    }
-    expected_result = {'X0': 1, 'X1': 'b'}
-
-    assert ut.flatten_samples_dict(samples_dict) == expected_result

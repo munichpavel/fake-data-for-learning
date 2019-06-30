@@ -157,7 +157,7 @@ class FakeDataBayesianNetwork:
         self._validate_bn()
     
     def _set_node_names(self):
-
+        r''''''
         node_names = []
         parent_names = []
 
@@ -223,33 +223,7 @@ class FakeDataBayesianNetwork:
  
         # Keep only sample values
         res = {k: v.value for (k,v) in samples_dict.items()}
-        #res = ut.flatten_samples_dict(samples_dict)
         return pd.DataFrame(res, index=range(1), columns=self.node_names)
-
-    def _sample_array_to_dict(self, res_array):
-        r'''
-        Convert sampled result array of form (x0, ..., xn)
-        to dict of form {'X0': x0, ..., 'Xn': xn}.
-        '''
-
-        samples_dict = {}
-        idx_sampled = np.where(~np.isnan(res_array))[0]
-        for idx in idx_sampled:
-            #sample_dict[self.node_names[idx]] = int(res_array[idx])
-            samples_dict[self.node_names[idx]] = self._get_sample_dict(idx, res_array)
-
-        return samples_dict
-
-    def _get_sample_dict(self, idx, res_array):
-        sample = res_array[idx]
-        if isinstance(sample, np.float):
-            res = int(sample)
-        else:
-            res = {
-                'le': self._bnrvs[idx].le,
-                'value': sample
-            }
-        return res
 
     def get_graph(self):
         return nx.from_numpy_matrix(self.adjacency_matrix, create_using=nx.DiGraph)
