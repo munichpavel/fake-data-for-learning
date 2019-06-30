@@ -88,7 +88,7 @@ class TestBNRVX1cX0:
 
     def test_rvs_1c0(self):
         draw = self.rv1c0.rvs(parent_values={'X0': SampleValue(1)}, seed=42)
-        assert isinstance(draw, np.int64)
+        assert ut.possible_default_value(draw)
         # Verify result for fixed seed
         expected_X1cX0_draw = 0
         assert draw == expected_X1cX0_draw
@@ -150,7 +150,7 @@ class TestBNRVX2cX0X1:
 
     def test_rvs_2c00(self):
         draw = self.rv2c01.rvs(parent_values={'X0': SampleValue(0), 'X1': SampleValue(0)})
-        assert isinstance(draw, np.int64)
+        assert ut.possible_default_value(draw)
 
     def test_get_pt(self):
         res = self.rv2c01.get_pt(parent_values={'X0': SampleValue(0), 'X1': SampleValue(0)})
@@ -334,6 +334,13 @@ def test_zero_column_idx():
     ])
     expected_idx = np.array([0, 2])
     np.testing.assert_equal(ut.zero_column_idx(X), expected_idx)
+
+
+def test_possible_default_value():
+    assert ut.possible_default_value(1)
+    assert ~ut.possible_default_value(1.)
+    assert ~ut.possible_default_value(-1)
+    assert ~ut.possible_default_value('a')
 
 
 def test_parent_idx():

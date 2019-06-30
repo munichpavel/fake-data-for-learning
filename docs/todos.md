@@ -118,6 +118,5 @@ Extend to conditional rvs
         * ~~Integrate into other classes~~
         * ~~refactor~~
 * clean up utility find zero and non-zero column indices
-* refactor parent_values, sample_dict interface (class???)
-* refactor integer checks for default value
+* ~~refactor integer checks for default value~~
 * change le to label_encoder as class member name
