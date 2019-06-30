@@ -51,7 +51,7 @@ class BayesianNodeRV:
     def _set_values(self, cpt, values):
         if values is None:
             self.values = np.array(range(cpt.shape[0]))
-            self.le = None
+            self.label_encoder = None
             self._values = self.values
         else:
             self._set_nondefault_values(values)
@@ -68,7 +68,7 @@ class BayesianNodeRV:
         for val in values:
             tricked_external_values.append(ut.get_trick_external_value(val, values))
         le.fit(tricked_external_values)
-        self.le = le
+        self.label_encoder = le
 
         # internal values representation
         self._values = le.transform(tricked_external_values)
@@ -101,7 +101,7 @@ class BayesianNodeRV:
         Parameters
         ----------
         parent_values: None, dict of ints of form {'node_name': int}, 
-                or dict of dicts with entries 'node_name': {'value': int, 'le': fitted label encoder}
+                or dict of dicts with entries 'node_name': {'value': int, 'label_encoder': fitted label encoder}
             Values of parent nodes to get relevant 1-d submatrix of the (conditional) probability table
         '''
         if parent_values is None:
@@ -216,7 +216,7 @@ class FakeDataBayesianNetwork:
         while set(samples_dict.keys()) != set(self.node_names):
             for node_name in sample_next_names:
                 node = self._bnrvs[self.node_names.index(node_name)]            
-                samples_dict[node_name] = SampleValue(node.rvs(samples_dict, seed=seed), node.le)
+                samples_dict[node_name] = SampleValue(node.rvs(samples_dict, seed=seed), node.label_encoder)
             idx_current_names = np.array([self.node_names.index(name) for name in sample_next_names])
             idx_next_names = ut.get_pure_descendent_idx(idx_current_names, self.adjacency_matrix)
             sample_next_names = [self.node_names[idx] for idx in idx_next_names]

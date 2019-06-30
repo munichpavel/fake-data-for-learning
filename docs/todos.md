@@ -119,4 +119,4 @@ Extend to conditional rvs
         * ~~refactor~~
 * clean up utility find zero and non-zero column indices
 * ~~refactor integer checks for default value~~
-* change le to label_encoder as class member name
+* ~~change le to label_encoder as class member name~~

@@ -110,7 +110,7 @@ class TestBNRVX1cX0:
 
     def test_get_pt_nondef(self):
         res = self.rv1c0.get_pt(
-            parent_values={'X0': SampleValue('down', label_encoder=self.rv0_nondef.le)}
+            parent_values={'X0': SampleValue('down', label_encoder=self.rv0_nondef.label_encoder)}
         )
         np.testing.assert_equal(res, self.pt_X1cX0[1, :])
 
