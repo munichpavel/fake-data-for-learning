@@ -109,27 +109,28 @@ class BayesianNodeRV:
         else:
             s = [slice(None)] * len(self.cpt.shape)
             for idx, p in enumerate(self.parent_names):
+                print(parent_values[p])
                 parent_internal_value = ut.get_internal_value(parent_values[p])
+                print(parent_internal_value)
                 s[idx] = parent_internal_value
                 #s[idx] = parent_values[p]
             return self.cpt[tuple(s)]
 
 
 class SampleValue:
-    def __init__(self, node_name, value, label_encoder=None):
-        self.node_name = node_name
+    def __init__(self, value, label_encoder=None):
         self.label_encoder = label_encoder
         self.value = self._set_value(value)
 
     def _set_value(self, value):
         if ut.possible_default_value(value):
-            self.value = value
+            return value
         else:
             if self.label_encoder is None:
                 raise ValueError('Non-default values require a label encoder')
-            self.value = value
+            return value
 
-            
+
 class FakeDataBayesianNetwork:
     r'''
     Sample-able Bayesian network comprised up of BayesianNetworkRV's
@@ -214,18 +215,15 @@ class FakeDataBayesianNetwork:
         sample_next_names = self._eve_node_names
         while set(samples_dict.keys()) != set(self.node_names):
             for node_name in sample_next_names:
-                node = self._bnrvs[self.node_names.index(node_name)]
-                sample = node.rvs(samples_dict, seed=seed)
-                if isinstance(sample, np.int) or isinstance(sample, np.int64):
-                    samples_dict[node_name] = sample
-                else:
-                    samples_dict[node_name] = {'value': sample, 'le': node.le}
-     
+                node = self._bnrvs[self.node_names.index(node_name)]            
+                samples_dict[node_name] = SampleValue(node.rvs(samples_dict, seed=seed), node.le)
             idx_current_names = np.array([self.node_names.index(name) for name in sample_next_names])
             idx_next_names = ut.get_pure_descendent_idx(idx_current_names, self.adjacency_matrix)
             sample_next_names = [self.node_names[idx] for idx in idx_next_names]
-
-        res = ut.flatten_samples_dict(samples_dict)
+ 
+        # Keep only sample values
+        res = {k: v.value for (k,v) in samples_dict.items()}
+        #res = ut.flatten_samples_dict(samples_dict)
         return pd.DataFrame(res, index=range(1), columns=self.node_names)
 
     def _sample_array_to_dict(self, res_array):

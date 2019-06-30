@@ -115,6 +115,9 @@ Extend to conditional rvs
         * ~~flatten values dict utility function (to be refactored away)~~
     * refactor values passing to eliminate dict messes
         * ~~First stand-alone definition of SampleValue class~~
-        * Integrate into other classes
+        * ~~Integrate into other classes~~
+        * refactor
 * clean up utility find zero and non-zero column indices
 * refactor parent_values, sample_dict interface (class???)
+* refactor integer checks for default value
+* change le to label_encoder as class member name
