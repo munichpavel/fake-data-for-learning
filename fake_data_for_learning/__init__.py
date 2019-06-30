@@ -6,4 +6,4 @@ __author__ = """Paul Larsen"""
 __email__ = 'munichpavel@gmail.com'
 __version__ = '0.1.0'
 
-from .fake_data_for_learning import BayesianNodeRV, FakeDataBayesianNetwork
+from .fake_data_for_learning import BayesianNodeRV, FakeDataBayesianNetwork, SampleValue
