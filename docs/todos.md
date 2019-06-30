@@ -120,3 +120,6 @@ Extend to conditional rvs
 * clean up utility find zero and non-zero column indices
 * ~~refactor integer checks for default value~~
 * ~~change le to label_encoder as class member name~~
+* ~~add size argument to rvs in FakeDataBayesianNetwork~~
+    * ~~fake implementation~~
+    * ~~real implementation~~

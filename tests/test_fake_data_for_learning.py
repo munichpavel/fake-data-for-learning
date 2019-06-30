@@ -165,6 +165,9 @@ class TestSampleValue:
         SampleValue('a')
 
 
+##############################
+# Test FakeDataBayesianNetwork
+##############################
 
 class TestFakeDataBayesianNetwork:
 
@@ -215,6 +218,10 @@ class TestFakeDataBayesianNetwork:
         expected_sample = pd.DataFrame({'X0': 'b', 'X1': 'male'}, index=range(1), columns=('X0', 'X1'))
         pd.testing.assert_frame_equal(sample, expected_sample)
 
+        samples = self.bn_nondef.rvs(size=2, seed=42)
+        expected_samples = pd.DataFrame(
+            {'X0': ['b', 'b'], 'X1': ['male', 'male']}, index=range(2), columns=('X0', 'X1'))
+        pd.testing.assert_frame_equal(samples, expected_samples)
 
     ###############################
     #  Bayesian network X0 -> X2 <- X1
