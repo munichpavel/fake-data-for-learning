@@ -137,7 +137,7 @@ class TestBNRVX2cX0X1:
     pt_X2cX0X1 = np.array([
         [
             [0., 1.],
-            [0.5, 0.5]
+            [0.5, 0.5],
         ],
         [
             [0.9, 0.1],
@@ -156,6 +156,8 @@ class TestBNRVX2cX0X1:
         res = self.rv2c01.get_pt(parent_values={'X0': SampleValue(0), 'X1': SampleValue(0)})
         np.testing.assert_equal(res, self.pt_X2cX0X1[0, 0, :])
 
+
+    
 ###################
 # Test SampleValues
 ###################
@@ -323,8 +325,54 @@ class TestFakeDataBayesianNetwork:
         with pytest.raises(ValueError):
             FDBN(self.rv0, rv1c0_wrong_dims)
 
+    ###########################################################################
+    # Bayesian network age -> thriftiness <- employment
+    # age takes 3 values, employment takes 4 values, and thriftiness if binary
+    ###########################################################################
+    age = BNRV('age', np.array([0.2, 0.5, 0.3]), values=('20', '40', '60'))
+
+    profession = BNRV(
+        'profession', 
+        np.array([
+            [0.3, 0.4, 0.2, 0.1],
+            [0.05, 0.15, 0.3, 0.5],
+            [0.15, 0.05, 0.2, 0.6]
+        ]),
+        values=('unemployed', 'student', 'self-employed', 'salaried'),
+        parent_names=['age'])
+
+    thriftiness = BNRV(
+        'thriftiness',
+        np.array([
+            [
+                [0.3, 0.7], #20, unemployed
+                [0.2, 0.8], #20, student
+                [0.1, 0.9], #20, self-employed
+                [0.6, 0.4], #20, salaried
+            ],
+            [
+                [0.4, 0.6], #40, unemployed
+                [0.7, 0.3], #40, student
+                [0.3, 0.7], # 40, self-employed
+                [0.2, 0.8], # 40 salaried
+            ],
+            [
+                [0.1, 0.9], #60, unemployed
+                [0.2, 0.8], #60, student
+                [0.3, 0.7], #60, self-employed
+                [0.25, 0.75], #60, salaried
+            ],
+        ]),
+        parent_names=['age', 'profession']
+    )
 
 
+    X = FDBN(age, profession, thriftiness)
+    def test_expected_cpt_dimension(self):
+        np.testing.assert_equal(
+            self.X._get_expected_cpt_dims([0,1], len(self.X._bnrvs[2].values)),
+            (3,4,2)
+        )
 ###############
 # Test utils
 ###############
@@ -391,3 +439,4 @@ def test_get_pure_descendent_idx():
         ut.get_pure_descendent_idx(np.array([1]), X),
         np.array([])
     )
+

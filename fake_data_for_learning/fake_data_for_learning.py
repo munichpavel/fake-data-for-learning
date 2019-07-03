@@ -50,7 +50,7 @@ class BayesianNodeRV:
 
     def _set_values(self, cpt, values):
         if values is None:
-            self.values = np.array(range(cpt.shape[0]))
+            self.values = np.array(range(cpt.shape[-1]))
             self.label_encoder = None
             self._values = self.values
         else:
@@ -155,7 +155,6 @@ class FakeDataBayesianNetwork:
         self._validate_bn()
     
     def _set_node_names(self):
-        r''''''
         node_names = []
         parent_names = []
 
@@ -180,8 +179,8 @@ class FakeDataBayesianNetwork:
             expected_cpt_dims = self._get_expected_cpt_dims(parent_idxs, len(rv.values))
             if rv.cpt.shape != tuple(expected_cpt_dims):
                 raise ValueError(
-                    'Conditional probability table dimensions {} of {} inconsistent with parent values {}'.format(
-                    rv.cpt.shape, rv.name, expected_cpt_dims)
+                    '{} conditional probability table dimensions {} inconsistent with parent values {}'.format(
+                    rv.name, rv.cpt.shape, expected_cpt_dims)
                 )
 
     def _get_expected_cpt_dims(self, parent_idxs, child_value_length):
