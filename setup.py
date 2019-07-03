@@ -10,10 +10,10 @@ with open('README.md') as readme_file:
 
 
 requirements = [
-    matplotlib,
-    pandas,
-    networkx,
-    numpy
+    'matplotlib',
+    'pandas',
+    'networkx',
+    'numpy',
 ]
 
 setup_requirements = [
