@@ -233,11 +233,8 @@ class FakeDataBayesianNetwork:
 
     def _get_sample_next_names(self, current_names):
         idx_current_names = np.array([self.node_names.index(name) for name in current_names])
-        print('idx current names {}'.format(idx_current_names))
         idx_next_names = ut.get_pure_descendent_idx(idx_current_names, self.adjacency_matrix)
-        print('idx next names {}'.format(idx_next_names))
         sample_next_names = [self.node_names[idx] for idx in idx_next_names]
-        print('next names to sample {}'.format(sample_next_names))
         return sample_next_names
 
 
