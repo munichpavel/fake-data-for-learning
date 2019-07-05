@@ -114,6 +114,8 @@ class BayesianNodeRV:
                 #s[idx] = parent_values[p]
             return self.cpt[tuple(s)]
 
+    def __repr__(self):
+        return 'BayesianNodeRV({}, parent_names={})'.format(self.name, self.parent_names)
 
 class SampleValue:
     def __init__(self, value, label_encoder=None):
@@ -127,6 +129,10 @@ class SampleValue:
             if self.label_encoder is None:
                 raise ValueError('Non-default values require a label encoder')
             return value
+
+    def __repr__(self):
+        return 'SampleValue({}, {})'.format(self.value, self.label_encoder)
+    
 
 
 class FakeDataBayesianNetwork:
@@ -212,18 +218,29 @@ class FakeDataBayesianNetwork:
         return pd.DataFrame.from_records(res, index=range(size), columns=self.node_names)
 
     def _rv_dict(self, seed=None):
+        r'''Ancestral sampling from the Bayesian network'''
         samples_dict = {}
         sample_next_names = self._eve_node_names
+        
         while set(samples_dict.keys()) != set(self.node_names):
             for node_name in sample_next_names:
-                node = self._bnrvs[self.node_names.index(node_name)]            
+                node = self._bnrvs[self.node_names.index(node_name)]       
                 samples_dict[node_name] = SampleValue(node.rvs(samples_dict, seed=seed), node.label_encoder)
-            idx_current_names = np.array([self.node_names.index(name) for name in sample_next_names])
-            idx_next_names = ut.get_pure_descendent_idx(idx_current_names, self.adjacency_matrix)
-            sample_next_names = [self.node_names[idx] for idx in idx_next_names]
+            sample_next_names = self._get_sample_next_names(sample_next_names)
 
         # Keep only sample values
         return {k: v.value for (k,v) in samples_dict.items()}
+
+    def _get_sample_next_names(self, current_names):
+        idx_current_names = np.array([self.node_names.index(name) for name in current_names])
+        print('idx current names {}'.format(idx_current_names))
+        idx_next_names = ut.get_pure_descendent_idx(idx_current_names, self.adjacency_matrix)
+        print('idx next names {}'.format(idx_next_names))
+        sample_next_names = [self.node_names[idx] for idx in idx_next_names]
+        print('next names to sample {}'.format(sample_next_names))
+        return sample_next_names
+
+
         
     def get_graph(self):
         return nx.from_numpy_matrix(self.adjacency_matrix, create_using=nx.DiGraph)
