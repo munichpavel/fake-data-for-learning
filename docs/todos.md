@@ -123,3 +123,8 @@ Extend to conditional rvs
 * ~~add size argument to rvs in FakeDataBayesianNetwork~~
     * ~~fake implementation~~
     * ~~real implementation~~
+
+* fix and refactor ancestral sampling
+  * encapsulate stopping criterion
+    * ~~fake~~
+    * ~~real~~

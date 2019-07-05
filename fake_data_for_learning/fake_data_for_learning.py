@@ -222,7 +222,7 @@ class FakeDataBayesianNetwork:
         samples_dict = {}
         sample_next_names = self._eve_node_names
         
-        while set(samples_dict.keys()) != set(self.node_names):
+        while not self.all_nodes_sampled(samples_dict):
             for node_name in sample_next_names:
                 node = self._bnrvs[self.node_names.index(node_name)]       
                 samples_dict[node_name] = SampleValue(node.rvs(samples_dict, seed=seed), node.label_encoder)
@@ -231,13 +231,14 @@ class FakeDataBayesianNetwork:
         # Keep only sample values
         return {k: v.value for (k,v) in samples_dict.items()}
 
+    def all_nodes_sampled(self, samples_dict):
+        return set(samples_dict.keys()) == set(self.node_names)
+
     def _get_sample_next_names(self, current_names):
         idx_current_names = np.array([self.node_names.index(name) for name in current_names])
         idx_next_names = ut.get_pure_descendent_idx(idx_current_names, self.adjacency_matrix)
         sample_next_names = [self.node_names[idx] for idx in idx_next_names]
         return sample_next_names
-
-
         
     def get_graph(self):
         return nx.from_numpy_matrix(self.adjacency_matrix, create_using=nx.DiGraph)

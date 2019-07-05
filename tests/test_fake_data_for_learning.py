@@ -383,6 +383,19 @@ class TestFakeDataBayesianNetwork:
             self.X._get_expected_cpt_dims([0,1], len(self.X._bnrvs[2].values)),
             (3,4,2)
         )
+
+    def test_all_nodes_sampled(self):
+        samples_partial = {'age': SampleValue('20', LabelEncoder())}
+        assert ~self.X.all_nodes_sampled(samples_partial)
+
+        samples_all = {
+            'age': SampleValue('20', LabelEncoder()),
+            'profession': SampleValue('student', LabelEncoder()),
+            'thriftiness': SampleValue(0)
+        }
+        assert self.X.all_nodes_sampled(samples_all)
+
+
 ###############
 # Test utils
 ###############
