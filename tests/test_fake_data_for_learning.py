@@ -156,6 +156,16 @@ class TestBNRVX2cX0X1:
         res = self.rv2c01.get_pt(parent_values={'X0': SampleValue(0), 'X1': SampleValue(0)})
         np.testing.assert_equal(res, self.pt_X2cX0X1[0, 0, :])
 
+class TestProfession:
+    profession = BNRV(
+        'profession', 
+        np.array([
+            [0.3, 0.4, 0.2, 0.1],
+            [0.05, 0.15, 0.3, 0.5],
+            [0.15, 0.05, 0.2, 0.6]
+        ]),
+        values=('unemployed', 'student', 'self-employed', 'salaried'),
+        parent_names=['age'])
 
     
 ###################
