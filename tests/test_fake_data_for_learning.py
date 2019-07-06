@@ -225,6 +225,7 @@ class TestFakeDataBayesianNetwork:
     rv1c0_nondef = BNRV('X1', pt_X1cX0, parent_names=['X0'], values=['male', 'female'])
 
     bn_nondef = FDBN(rv0_nondef, rv1c0_nondef)
+
     def test_rvs_type_nondef_values(self):
         sample = self.bn_nondef.rvs(seed=42)
         expected_sample = pd.DataFrame({'X0': 'b', 'X1': 'male'}, index=range(1), columns=('X0', 'X1'))
@@ -336,7 +337,8 @@ class TestFakeDataBayesianNetwork:
             FDBN(self.rv0, rv1c0_wrong_dims)
 
     ###########################################################################
-    # Bayesian network age -> thriftiness <- employment
+    # Bayesian network age ->               thriftiness
+    #                     \> employment />
     # age takes 3 values, employment takes 4 values, and thriftiness if binary
     ###########################################################################
     age = BNRV('age', np.array([0.2, 0.5, 0.3]), values=('20', '40', '60'))
@@ -378,22 +380,38 @@ class TestFakeDataBayesianNetwork:
 
 
     X = FDBN(age, profession, thriftiness)
+    def test_get_node(self):
+        assert self.X.get_node('age') == self.age
+        
+        with pytest.raises(ValueError):
+            self.X.get_node('pompitousness')
+
     def test_expected_cpt_dimension(self):
         np.testing.assert_equal(
             self.X._get_expected_cpt_dims([0,1], len(self.X._bnrvs[2].values)),
             (3,4,2)
         )
 
-    def test_all_nodes_sampled(self):
-        samples_partial = {'age': SampleValue('20', LabelEncoder())}
-        assert ~self.X.all_nodes_sampled(samples_partial)
-
-        samples_all = {
+    samples_partial = {'age': SampleValue('20', LabelEncoder())}
+    samples_all = {
             'age': SampleValue('20', LabelEncoder()),
             'profession': SampleValue('student', LabelEncoder()),
             'thriftiness': SampleValue(0)
         }
-        assert self.X.all_nodes_sampled(samples_all)
+    def test_all_nodes_sampled(self):
+        assert ~self.X.all_nodes_sampled(self.samples_partial)
+        assert self.X.all_nodes_sampled(self.samples_all)
+
+    def test_all_parents_sampled(self):
+        assert self.X.all_parents_sampled('age', {})
+        assert ~self.X.all_parents_sampled('thriftiness', self.samples_partial)
+        assert self.X.all_parents_sampled('thriftiness', self.samples_all)
+        
+    # def test_get_unsampled_nodes(self):
+    #     assert (
+    #         set(self.X.get_unsampled_nodes(self.samples_partial))
+    #         == {'profession', 'thriftiness'}
+    #     )
 
 
 ###############

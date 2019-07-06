@@ -128,3 +128,14 @@ Extend to conditional rvs
   * encapsulate stopping criterion
     * ~~fake~~
     * ~~real~~
+  * all parents sampled
+    * ~~fake~~
+    * ~~real~~
+
+  * get node by name
+    * ~~fake~~
+    * ~~real~~
+    * ~~with value error~~
+    * refactor
+
+* refactor tests by test not be example to decouple failures
