@@ -137,7 +137,7 @@ class TestBNRVX2cX0X1:
     pt_X2cX0X1 = np.array([
         [
             [0., 1.],
-            [0.5, 0.5]
+            [0.5, 0.5],
         ],
         [
             [0.9, 0.1],
@@ -156,6 +156,18 @@ class TestBNRVX2cX0X1:
         res = self.rv2c01.get_pt(parent_values={'X0': SampleValue(0), 'X1': SampleValue(0)})
         np.testing.assert_equal(res, self.pt_X2cX0X1[0, 0, :])
 
+class TestProfession:
+    profession = BNRV(
+        'profession', 
+        np.array([
+            [0.3, 0.4, 0.2, 0.1],
+            [0.05, 0.15, 0.3, 0.5],
+            [0.15, 0.05, 0.2, 0.6]
+        ]),
+        values=('unemployed', 'student', 'self-employed', 'salaried'),
+        parent_names=['age'])
+
+    
 ###################
 # Test SampleValues
 ###################
@@ -213,6 +225,7 @@ class TestFakeDataBayesianNetwork:
     rv1c0_nondef = BNRV('X1', pt_X1cX0, parent_names=['X0'], values=['male', 'female'])
 
     bn_nondef = FDBN(rv0_nondef, rv1c0_nondef)
+
     def test_rvs_type_nondef_values(self):
         sample = self.bn_nondef.rvs(seed=42)
         expected_sample = pd.DataFrame({'X0': 'b', 'X1': 'male'}, index=range(1), columns=('X0', 'X1'))
@@ -323,6 +336,93 @@ class TestFakeDataBayesianNetwork:
         with pytest.raises(ValueError):
             FDBN(self.rv0, rv1c0_wrong_dims)
 
+    ###########################################################################
+    # Bayesian network age ->               thriftiness
+    #                     \> employment />
+    # age takes 3 values, employment takes 4 values, and thriftiness if binary
+    ###########################################################################
+    age = BNRV('age', np.array([0.2, 0.5, 0.3]), values=('20', '40', '60'))
+
+    profession = BNRV(
+        'profession', 
+        np.array([
+            [0.3, 0.4, 0.2, 0.1],
+            [0.05, 0.15, 0.3, 0.5],
+            [0.15, 0.05, 0.2, 0.6]
+        ]),
+        values=('unemployed', 'student', 'self-employed', 'salaried'),
+        parent_names=['age'])
+
+    thriftiness = BNRV(
+        'thriftiness',
+        np.array([
+            [
+                [0.3, 0.7], #20, unemployed
+                [0.2, 0.8], #20, student
+                [0.1, 0.9], #20, self-employed
+                [0.6, 0.4], #20, salaried
+            ],
+            [
+                [0.4, 0.6], #40, unemployed
+                [0.7, 0.3], #40, student
+                [0.3, 0.7], # 40, self-employed
+                [0.2, 0.8], # 40 salaried
+            ],
+            [
+                [0.1, 0.9], #60, unemployed
+                [0.2, 0.8], #60, student
+                [0.3, 0.7], #60, self-employed
+                [0.25, 0.75], #60, salaried
+            ],
+        ]),
+        parent_names=['age', 'profession']
+    )
+
+
+    thrifty_bn = FDBN(age, profession, thriftiness)
+    def test_get_node(self):
+        assert self.thrifty_bn.get_node('age') == self.age
+        
+        with pytest.raises(ValueError):
+            self.thrifty_bn.get_node('pompitousness')
+
+    def test_expected_cpt_dimension(self):
+        np.testing.assert_equal(
+            self.thrifty_bn._get_expected_cpt_dims([0,1], len(self.thrifty_bn._bnrvs[2].values)),
+            (3,4,2)
+        )
+
+    samples_partial = {'age': SampleValue('20', LabelEncoder())}
+    samples_all = {
+            'age': SampleValue('20', LabelEncoder()),
+            'profession': SampleValue('student', LabelEncoder()),
+            'thriftiness': SampleValue(0)
+        }
+    def test_all_nodes_sampled(self):
+        assert ~self.thrifty_bn.all_nodes_sampled(self.samples_partial)
+        assert self.thrifty_bn.all_nodes_sampled(self.samples_all)
+
+    def test_all_parents_sampled(self):
+        assert self.thrifty_bn.all_parents_sampled('age', {})
+        assert ~self.thrifty_bn.all_parents_sampled('thriftiness', self.samples_partial)
+        assert self.thrifty_bn.all_parents_sampled('thriftiness', self.samples_all)
+        
+    def test_get_unsampled_nodes(self):
+        assert (
+            set(self.thrifty_bn.get_unsampled_nodes(self.samples_partial))
+            == {'profession', 'thriftiness'}
+        )
+
+    def test_thriftiness_rvs(self):
+        sample = self.thrifty_bn.rvs(seed=42)
+        expected_sample = pd.DataFrame(
+            {
+                'age': '40',
+                'profession': 'self-employed',
+                'thriftiness': 1
+            }, 
+            index=range(1), columns=('age', 'profession', 'thriftiness'))
+        pd.testing.assert_frame_equal(sample, expected_sample)
 
 
 ###############
@@ -391,3 +491,4 @@ def test_get_pure_descendent_idx():
         ut.get_pure_descendent_idx(np.array([1]), X),
         np.array([])
     )
+

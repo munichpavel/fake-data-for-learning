@@ -123,3 +123,23 @@ Extend to conditional rvs
 * ~~add size argument to rvs in FakeDataBayesianNetwork~~
     * ~~fake implementation~~
     * ~~real implementation~~
+
+* fix and refactor ancestral sampling
+  * encapsulate stopping criterion
+    * ~~fake~~
+    * ~~real~~
+  * all parents sampled
+    * ~~fake~~
+    * ~~real~~
+
+  * get node by name
+    * ~~fake~~
+    * ~~real~~
+    * ~~with value error~~
+    * refactor
+  * get unsampled nodes
+    * ~~fake~~
+    * ~~real~~
+  * ~~fix BN rvs for non-default, test on thrifiness edge case~~
+
+* refactor tests by test not be example to decouple failures
