@@ -143,3 +143,5 @@ Extend to conditional rvs
   * ~~fix BN rvs for non-default, test on thrifiness edge case~~
 
 * refactor tests by test not be example to decouple failures
+
+* ~~fix premature merge into master~~
