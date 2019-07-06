@@ -379,16 +379,16 @@ class TestFakeDataBayesianNetwork:
     )
 
 
-    X = FDBN(age, profession, thriftiness)
+    thrifty_bn = FDBN(age, profession, thriftiness)
     def test_get_node(self):
-        assert self.X.get_node('age') == self.age
+        assert self.thrifty_bn.get_node('age') == self.age
         
         with pytest.raises(ValueError):
-            self.X.get_node('pompitousness')
+            self.thrifty_bn.get_node('pompitousness')
 
     def test_expected_cpt_dimension(self):
         np.testing.assert_equal(
-            self.X._get_expected_cpt_dims([0,1], len(self.X._bnrvs[2].values)),
+            self.thrifty_bn._get_expected_cpt_dims([0,1], len(self.thrifty_bn._bnrvs[2].values)),
             (3,4,2)
         )
 
@@ -399,19 +399,30 @@ class TestFakeDataBayesianNetwork:
             'thriftiness': SampleValue(0)
         }
     def test_all_nodes_sampled(self):
-        assert ~self.X.all_nodes_sampled(self.samples_partial)
-        assert self.X.all_nodes_sampled(self.samples_all)
+        assert ~self.thrifty_bn.all_nodes_sampled(self.samples_partial)
+        assert self.thrifty_bn.all_nodes_sampled(self.samples_all)
 
     def test_all_parents_sampled(self):
-        assert self.X.all_parents_sampled('age', {})
-        assert ~self.X.all_parents_sampled('thriftiness', self.samples_partial)
-        assert self.X.all_parents_sampled('thriftiness', self.samples_all)
+        assert self.thrifty_bn.all_parents_sampled('age', {})
+        assert ~self.thrifty_bn.all_parents_sampled('thriftiness', self.samples_partial)
+        assert self.thrifty_bn.all_parents_sampled('thriftiness', self.samples_all)
         
-    # def test_get_unsampled_nodes(self):
-    #     assert (
-    #         set(self.X.get_unsampled_nodes(self.samples_partial))
-    #         == {'profession', 'thriftiness'}
-    #     )
+    def test_get_unsampled_nodes(self):
+        assert (
+            set(self.thrifty_bn.get_unsampled_nodes(self.samples_partial))
+            == {'profession', 'thriftiness'}
+        )
+
+    def test_thriftiness_rvs(self):
+        sample = self.thrifty_bn.rvs(seed=42)
+        expected_sample = pd.DataFrame(
+            {
+                'age': '40',
+                'profession': 'self-employed',
+                'thriftiness': 1
+            }, 
+            index=range(1), columns=('age', 'profession', 'thriftiness'))
+        pd.testing.assert_frame_equal(sample, expected_sample)
 
 
 ###############

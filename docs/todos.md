@@ -137,5 +137,9 @@ Extend to conditional rvs
     * ~~real~~
     * ~~with value error~~
     * refactor
+  * get unsampled nodes
+    * ~~fake~~
+    * ~~real~~
+  * ~~fix BN rvs for non-default, test on thrifiness edge case~~
 
 * refactor tests by test not be example to decouple failures
