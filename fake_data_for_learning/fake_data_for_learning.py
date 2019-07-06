@@ -80,7 +80,7 @@ class BayesianNodeRV:
                     'The character {} is not permitted in values'
                     .format(trick_external_value_separator)
                 ) 
-    
+
     def rvs(self, parent_values=None, size=None, seed=None):
         '''
         Returns
@@ -224,15 +224,33 @@ class FakeDataBayesianNetwork:
         
         while not self.all_nodes_sampled(samples_dict):
             for node_name in sample_next_names:
-                node = self._bnrvs[self.node_names.index(node_name)]       
-                samples_dict[node_name] = SampleValue(node.rvs(samples_dict, seed=seed), node.label_encoder)
-            sample_next_names = self._get_sample_next_names(sample_next_names)
-
+                if self.all_parents_sampled(node_name, samples_dict):
+                    node = self.get_node(node_name)
+                    samples_dict[node_name] = SampleValue(node.rvs(samples_dict, seed=seed), node.label_encoder)
+            #sample_next_names = self._get_sample_next_names(sample_next_names)
+            sample_next_names = self.get_unsampled_nodes(samples_dict)
         # Keep only sample values
         return {k: v.value for (k,v) in samples_dict.items()}
 
     def all_nodes_sampled(self, samples_dict):
         return set(samples_dict.keys()) == set(self.node_names)
+
+    def get_node(self, node_name):
+        if node_name not in self.node_names:
+            raise ValueError('No node defined with name {}'.format(node_name))
+        res = self._bnrvs[self.node_names.index(node_name)]
+        return res
+
+    def all_parents_sampled(self, node_name, samples_dict):
+        parent_names = self.get_node(node_name).parent_names
+        if parent_names is None:
+            return True
+        sampled_names = set(samples_dict.keys())
+        return set(parent_names).issubset(sampled_names)
+
+    def get_unsampled_nodes(self, samples_dict):
+        return list(set(self.node_names) - set(samples_dict.keys()))
+
 
     def _get_sample_next_names(self, current_names):
         idx_current_names = np.array([self.node_names.index(name) for name in current_names])
