@@ -336,7 +336,54 @@ class TestFakeDataBayesianNetwork:
         with pytest.raises(ValueError):
             FDBN(self.rv0, rv1c0_wrong_dims)
 
+    #####################
+    # Test expected cpt dimensions on 
+    # Bayesian network gender -> churn <- employment
+    # gender and churn binary, employment takes 4 values
+    #########################
+    profession = BNRV(
+        'profession', 
+        np.array([
+            [0.1, 0.15, 0.25, 0.4],
+        ]),
+        values=('unemployed', 'student', 'self-employed', 'salaried')
+    )
 
+    gender = BNRV(
+        'gender', 
+        np.array([0.6, 0.4]), 
+        values=('female', 'male')
+    )
+
+    churn = BNRV(
+        'churn',
+        np.array([
+            [
+                [0.2, 0.8], # unemployed, female
+                [0.3, 0.7] # unemployed, male
+            ],
+            [
+                [0.6, 0.4], # student, female
+                [0.9, 0.1] # student, male
+            ],
+            [
+                [0.1, 0.9], # self-employed, female
+                [0.2, 0.8], # self-employed, male
+            ],
+            [
+                [0.7, 0.3], # salaried, female
+                [0.8, 0.2], # salaried, male
+            ]
+        ]),
+        parent_names = ['profession', 'gender']
+    )
+
+    churn_bn = FDBN(profession, gender, churn)
+    def test_expected_2d_cpt_dimension(self):
+        assert (
+            self.churn_bn.get_expected_cpt_dims([0,1], len(self.churn_bn._bnrvs[2].values))
+            == [4,2,2]
+        )
     ###########################################################################
     # Bayesian network age ->               thriftiness
     #                     \> employment />
@@ -387,10 +434,10 @@ class TestFakeDataBayesianNetwork:
         with pytest.raises(ValueError):
             self.thrifty_bn.get_node('pompitousness')
 
-    def test_expected_cpt_dimension(self):
-        np.testing.assert_equal(
-            self.thrifty_bn.get_expected_cpt_dims([0,1], len(self.thrifty_bn._bnrvs[2].values)),
-            (3,4,2)
+    def test_expected_3d_cpt_dimension(self):
+       assert (
+            self.thrifty_bn.get_expected_cpt_dims([0,1], len(self.thrifty_bn._bnrvs[2].values))
+            ==  [3,4,2]
         )
 
     samples_partial = {'age': SampleValue('20', LabelEncoder())}
