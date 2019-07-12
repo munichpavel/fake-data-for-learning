@@ -336,6 +336,7 @@ class TestFakeDataBayesianNetwork:
         with pytest.raises(ValueError):
             FDBN(self.rv0, rv1c0_wrong_dims)
 
+
     ###########################################################################
     # Bayesian network age ->               thriftiness
     #                     \> employment />
@@ -388,7 +389,7 @@ class TestFakeDataBayesianNetwork:
 
     def test_expected_cpt_dimension(self):
         np.testing.assert_equal(
-            self.thrifty_bn._get_expected_cpt_dims([0,1], len(self.thrifty_bn._bnrvs[2].values)),
+            self.thrifty_bn.get_expected_cpt_dims([0,1], len(self.thrifty_bn._bnrvs[2].values)),
             (3,4,2)
         )
 

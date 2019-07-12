@@ -182,14 +182,14 @@ class FakeDataBayesianNetwork:
         # Check consistency of conditional probability tables between parents and children
         for idx, rv in enumerate(self._bnrvs):
             parent_idxs = ut.get_parent_idx(idx, self.adjacency_matrix)
-            expected_cpt_dims = self._get_expected_cpt_dims(parent_idxs, len(rv.values))
+            expected_cpt_dims = self.get_expected_cpt_dims(parent_idxs, len(rv.values))
             if rv.cpt.shape != tuple(expected_cpt_dims):
                 raise ValueError(
                     '{} conditional probability table dimensions {} inconsistent with parent values {}'.format(
                     rv.name, rv.cpt.shape, expected_cpt_dims)
                 )
 
-    def _get_expected_cpt_dims(self, parent_idxs, child_value_length):
+    def get_expected_cpt_dims(self, parent_idxs, child_value_length):
         expected_cpt_dims = []
         for parent_idx in parent_idxs:
             expected_cpt_dims.append(len(self._bnrvs[parent_idx].values))
