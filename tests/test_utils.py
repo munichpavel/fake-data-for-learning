@@ -71,7 +71,7 @@ def test_generate_random_cpt():
     cpt = ut.generate_random_cpt(3,2)
 
     # test that entries are non-negative
-    assert np.all(cpt > 0)
+    assert np.all(cpt >= 0)
 
 def test_make_cpt():
     cpt = ut.make_cpt(np.random.rand(3,2,4))
