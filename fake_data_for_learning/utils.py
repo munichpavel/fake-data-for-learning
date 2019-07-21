@@ -117,7 +117,7 @@ def make_cpt(x):
     probability table
     '''
     res = x.copy()
-    ranges = [range(s) for s in x.shape[:-1]]
+    ranges = [range(s) for s in res.shape[:-1]]
     for s in product(*ranges):
         res[s] = softmax(res[s])
 
