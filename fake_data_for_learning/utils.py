@@ -1,6 +1,9 @@
 '''Utility functions for fake_data_for_learning'''
 import numpy as np
 import string
+from itertools import product
+
+from scipy.special import softmax
 
 trick_external_value_separator = '_'
 
@@ -21,12 +24,13 @@ def possible_default_value(x):
 
 
 def get_trick_external_value(val, values):
-        idx = values.index(val)
-        return (
-            string.ascii_letters[idx] + 
-            trick_external_value_separator + 
-            val
-        )
+    idx = values.index(val)
+    return (
+        string.ascii_letters[idx] + 
+        trick_external_value_separator + 
+        val
+    )
+
 
 def untrick_external_value(val):
     return val.split('_')[-1]
@@ -67,7 +71,6 @@ def get_parent_idx(child_idx, adjacency_matrix):
     return res.tolist()
 
 
-
 def get_pure_descendent_idx(parent_idx, adjacency_matrix):
     r'''
     Return column ids of descendents having only parent_idx as parents.
@@ -97,3 +100,26 @@ def get_pure_descendent_idx(parent_idx, adjacency_matrix):
 def non_zero_column_idx(X):
     '''Return array with column indices of non-0 columns'''
     return np.where(X.any(axis=0))[0]
+
+
+def generate_random_cpt(*cpt_shape):
+    '''
+    Generate non-negative random matrix of given 
+    shape such that sums over last dimension are 1
+    '''
+    res = np.random.rand(*cpt_shape)
+    res = make_cpt(res)
+    return res
+
+def make_cpt(x):
+    '''
+    Convert numpy array x to conditional
+    probability table
+    '''
+    res = x.copy()
+    ranges = [range(s) for s in x.shape[:-1]]
+    for s in product(*ranges):
+        res[s] = softmax(res[s])
+
+    return res
+
