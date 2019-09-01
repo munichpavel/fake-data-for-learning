@@ -145,3 +145,7 @@ Extend to conditional rvs
 * refactor tests by test not be example to decouple failures
 
 * ~~fix premature merge into master~~
+
+## get_pt
+
+Drop requirement that label encoder be passed as argument
