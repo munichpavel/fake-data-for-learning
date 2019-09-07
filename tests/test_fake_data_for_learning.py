@@ -54,9 +54,17 @@ class TestBNRVX0:
             np.array([0, 1])
         )
 
+        # Test label encoder have same value ordering as given
+        np.testing.assert_equal(
+            self.rv0_char.label_encoder.classes_,
+            np.array(['up', 'down'])
+        )
+
     def test_wonky_nondef_values(self):
         with pytest.raises(ValueError):
             BNRV('X0', self.pt_X0, values=['up_up_away', 'down'])
+
+
 
     def test_rvs(self):
         assert isinstance(self.rv0_char.rvs(seed=42), str)
