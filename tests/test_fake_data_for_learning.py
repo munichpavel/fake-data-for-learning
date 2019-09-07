@@ -52,10 +52,6 @@ class TestBNRVX0:
             np.array(['up', 'down'], dtype=object)
         )
 
-    def test_wonky_nondef_values(self):
-        with pytest.raises(ValueError):
-            BNRV('X0', self.pt_X0, values=['up_up_away', 'down'])
-
     def test_rvs(self):
         assert isinstance(self.rv0_char.rvs(seed=42), str)
 

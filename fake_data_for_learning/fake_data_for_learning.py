@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 from sklearn.preprocessing import LabelEncoder
+from sklearn.utils import column_or_1d
 
 from . import utils as ut
 
@@ -52,34 +53,14 @@ class BayesianNodeRV:
         if values is None:
             self.values = np.array(range(cpt.shape[-1]))
             self.label_encoder = None
-            self._values = self.values
         else:
-            self._set_nondefault_values(values)
+            self.values = values
+            self.label_encoder = self._set_label_encoder(values)
 
-    def _set_nondefault_values(self, values):
-        # external values representation
-        self._validate_nondefault_values(values)
-        self.values = values
-
-        # label encoder
-        le = LabelEncoder()
-        # Hack to trick out sklearn's baked in sort order
-        tricked_external_values = []
-        for val in values:
-            tricked_external_values.append(ut.get_trick_external_value(val, values))
-        le.fit(tricked_external_values)
-        self.label_encoder = le
-
-        # internal values representation
-        self._values = le.transform(tricked_external_values)
-
-    def _validate_nondefault_values(self, values):
-        for val in values:
-            if trick_external_value_separator in val:
-                raise ValueError(
-                    'The character {} is not permitted in values'
-                    .format(trick_external_value_separator)
-                ) 
+    def _set_label_encoder(self, values):
+        le = MyLabelEncoder()
+        le.fit(values)
+        return le
 
     def rvs(self, parent_values=None, size=None, seed=None):
         '''
@@ -116,6 +97,7 @@ class BayesianNodeRV:
     def __repr__(self):
         return 'BayesianNodeRV({}, parent_names={})'.format(self.name, self.parent_names)
 
+
 class SampleValue:
     def __init__(self, value, label_encoder=None):
         self.label_encoder = label_encoder
@@ -132,6 +114,13 @@ class SampleValue:
     def __repr__(self):
         return 'SampleValue({}, {})'.format(self.value, self.label_encoder)
     
+
+class MyLabelEncoder(LabelEncoder):
+
+    def fit(self, y):
+        y = column_or_1d(y, warn=True)
+        self.classes_ = pd.Series(y).unique()
+        return self
 
 
 class FakeDataBayesianNetwork:
@@ -249,7 +238,6 @@ class FakeDataBayesianNetwork:
 
     def get_unsampled_nodes(self, samples_dict):
         return list(set(self.node_names) - set(samples_dict.keys()))
-
 
     def _get_sample_next_names(self, current_names):
         idx_current_names = np.array([self.node_names.index(name) for name in current_names])
