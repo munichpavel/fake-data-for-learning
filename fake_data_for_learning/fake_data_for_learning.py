@@ -62,8 +62,16 @@ class BayesianNodeRV:
         le.fit(values)
         return le
 
-    def rvs(self, parent_values=None, size=None, seed=None):
+    def rvs(self, parent_values=None, size=1, seed=None):
         '''
+        Parameters
+        -----------
+        parent_values : None or dict
+            None if node is an orphan, else a dict with parent values
+        size : int
+            Number of random samples to draw
+        seed : int
+            Seed for numpy.random
         Returns
         -------
         rvs : ndarray or scalar
