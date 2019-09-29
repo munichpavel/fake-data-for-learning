@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run: 
           command: | 
-            pip install -r requirements.txt
+            sudo pip install -r requirements.txt
       - run:
           command: |
             pipenv pytest -vv
