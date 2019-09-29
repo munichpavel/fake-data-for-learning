@@ -7,6 +7,6 @@ jobs:
     steps:
       - checkout
       - run: 
-        command: |  # use pipenv to install dependencies
-          sudo pip install pipenv
-          pipenv install
+          command: |  # use pipenv to install dependencies
+            sudo pip install pipenv
+            pipenv install
