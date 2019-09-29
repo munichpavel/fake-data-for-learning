@@ -52,11 +52,20 @@ class BayesianNodeRV:
         )
 
     def _set_parent_names(self, parent_names):
-        if parent_names is None:
-            return None
         
-        if not isinstance(parent_names, list):
-            raise TypeError('parent_names must be a list')
+        if not(parent_names is None or isinstance(parent_names, list)):
+            raise TypeError('parent_names must be a list or None')
+
+        val_error_msg = (
+            'Number of parent names and conditional probability '
+            'table are incompatible'
+        )
+        if parent_names is None:
+            if 1 != len(self.cpt.shape):
+                raise ValueError(val_error_msg)
+        else:
+            if len(parent_names) + 1 != len(self.cpt.shape):
+                raise ValueError(val_error_msg)
 
         return parent_names
 

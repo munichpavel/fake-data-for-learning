@@ -32,11 +32,21 @@ def test_bnrv_init(binary_pt, binary_cpt):
     
     # Successful initialization
     BayesianNodeRV('X0', binary_pt)
+    BayesianNodeRV('X1', binary_cpt, parent_names=['X0'])
 
     # Failing initialization
     # Parent names must be list
     with pytest.raises(TypeError):
         BayesianNodeRV('X0', binary_cpt, parent_names='X1')
+
+    
+    # Number of parent names must be compatible with shape of cpt
+    with pytest.raises(ValueError):
+        BayesianNodeRV('X1', binary_cpt)
+
+    with pytest.raises(ValueError):
+        BayesianNodeRV('X2', binary_cpt, parent_names=['X0', 'X1'])
+
 
 def test_bnrv_encoding(binary_pt):
     # Default values
