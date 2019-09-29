@@ -1,8 +1,9 @@
 version: 2
 jobs:
   build:
+    working_directory: ~/circleci-fake-data
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: circleci/python:3.6.4
     steps:
       - checkout
       - run: echo "A first hello"
