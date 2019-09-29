@@ -66,6 +66,9 @@ def test_encoding(binary_pt):
     with pytest.raises(ValueError):
         BayesianNodeRV('X0', binary_pt, ['b', 'a'])
 
+    with pytest.raises(ValueError):
+        BayesianNodeRV('X0', binary_pt, values=['a', 'a'])
+
 def test_bnrv_equality(binary_pt, binary_cpt):
     rv = BayesianNodeRV('X0', binary_pt)
     assert rv == rv
