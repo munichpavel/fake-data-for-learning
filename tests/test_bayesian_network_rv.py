@@ -26,8 +26,6 @@ def binary_cpt():
     ])
 
 
-
-
 def test_bnrv_init(binary_pt, binary_cpt):
     
     # Successful initialization
@@ -75,6 +73,13 @@ def test_bnrv_equality(binary_pt, binary_cpt):
 
     assert rv != BayesianNodeRV('X1', binary_cpt, parent_names=['X0'])
 
+
+def test_bnrv_rvs(binary_pt, binary_cpt):
+    rv = BayesianNodeRV('X0', binary_pt)
+    assert isinstance(rv.rvs(seed=42)[0], np.int64)
+
+    rv_nondef = BayesianNodeRV('X0', binary_pt, values=['up', 'down'])
+    assert rv_nondef.rvs(seed=42)[0] in rv_nondef.values
 
 
 # class TestBNRVX0:
