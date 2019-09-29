@@ -1,0 +1,18 @@
+pip
+bumpversion
+wheel
+watchdog
+flake8
+tox
+coverage
+Sphinx
+pytest
+pytest-runner
+jupyter
+matplotlib
+networkx
+numpy
+pylint
+rope
+scipy
+-e .
