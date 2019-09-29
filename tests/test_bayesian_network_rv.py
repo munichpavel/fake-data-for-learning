@@ -56,12 +56,15 @@ def test_encoding(binary_pt):
 
     # Non-default values
     binary_rv_nondef = BayesianNodeRV(
-        'X0', binary_pt, ['up', 'down']
+        'X0', binary_pt, ['down', 'up']
     )
     np.testing.assert_equal(
         binary_rv_nondef.values,
         np.array(['down', 'up']).astype('U')
     )
+
+    with pytest.raises(ValueError):
+        BayesianNodeRV('X0', binary_pt, ['b', 'a'])
 
 def test_bnrv_equality(binary_pt, binary_cpt):
     rv = BayesianNodeRV('X0', binary_pt)
@@ -69,7 +72,7 @@ def test_bnrv_equality(binary_pt, binary_cpt):
 
     assert rv != BayesianNodeRV('X1', binary_pt)
 
-    assert rv != BayesianNodeRV('X0', binary_pt, values=['up', 'down'])
+    assert rv != BayesianNodeRV('X0', binary_pt, values=['down', 'up'])
 
     assert rv != BayesianNodeRV('X1', binary_cpt, parent_names=['X0'])
 
@@ -78,7 +81,7 @@ def test_rvs(binary_pt, binary_cpt):
     rv = BayesianNodeRV('X0', binary_pt)
     assert isinstance(rv.rvs(seed=42)[0], np.int64)
 
-    rv_nondef = BayesianNodeRV('X0', binary_pt, values=['up', 'down'])
+    rv_nondef = BayesianNodeRV('X0', binary_pt, values=['down', 'up'])
     assert rv_nondef.rvs(seed=42)[0] in rv_nondef.values
 
 

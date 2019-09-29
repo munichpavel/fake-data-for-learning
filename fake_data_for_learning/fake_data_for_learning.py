@@ -20,7 +20,7 @@ class BayesianNodeRV:
     ----------
     name : string
         Node variable name
-    cpt: numpy array
+    cpt: numpy.array
         (Conditional) probability array. NB: We depart from normal convention on the assignment of the 
         array dimensions. In this class, the node variable (aka dependent, not conditioned on) corresponds
         to the LAST componend of array indexing. E.g. For a 2-d array cpt, this means that the ROWS must sum to 1,
@@ -29,7 +29,8 @@ class BayesianNodeRV:
     values: list, optional
         list of values random variable will take. Default is [0, cpt.shape[-1]), if values
         are given, use sklearn.preprocessing.LabelEncoder(). NOTE: the sklearn label encoder
-        sorts values in lexicographical order.
+        sorts values in lexicographic order. To ensure compatibility with the conditional 
+        probability table, given values must also be in lexicographic order.
 
     parents: list, optional
         list of parent node random variable names. Default is None, i.e. no parents
@@ -64,6 +65,7 @@ class BayesianNodeRV:
             if 1 != len(self.cpt.shape):
                 raise ValueError(val_error_msg)
         else:
+            # Check compability of parent names with conditional proby table
             if len(parent_names) + 1 != len(self.cpt.shape):
                 raise ValueError(val_error_msg)
 
@@ -74,6 +76,12 @@ class BayesianNodeRV:
             self.values = np.array(range(cpt.shape[-1]))
             self.label_encoder = None
         else:
+            # Confirm that non-default values are in lexicographic order
+            if not np.array_equal(
+                np.array(values),
+                np.unique(values)
+            ):
+                raise ValueError('Values must be unique and in lexicographic order')
             self.label_encoder = self._set_label_encoder(values)
             self.values = self.label_encoder.classes_
 
@@ -234,7 +242,7 @@ class FakeDataBayesianNetwork:
             for node_name in sample_next_names:
                 if self.all_parents_sampled(node_name, samples_dict):
                     node = self.get_node(node_name)
-                    samples_dict[node_name] = SampleValue(node.rvs(samples_dict, seed=seed), node.label_encoder)
+                    samples_dict[node_name] = SampleValue(node.rvs(parent_values=samples_dict, seed=seed)[0], node.label_encoder)
             #sample_next_names = self._get_sample_next_names(sample_next_names)
             sample_next_names = self.get_unsampled_nodes(samples_dict)
         # Keep only sample values
