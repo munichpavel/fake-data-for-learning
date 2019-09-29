@@ -8,8 +8,6 @@ coverage
 Sphinx
 pytest
 pytest-runner
-jupyter
-matplotlib
 networkx
 numpy
 pylint

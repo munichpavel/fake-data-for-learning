@@ -1,8 +1,14 @@
 version: 2
- jobs:
-   build:
-     docker:
-       - image: circleci/ruby:2.4.1
-     steps:
-       - checkout
-       - run: echo "A first hello"
+jobs:
+  build:
+    working_directory: ~/circleci-fake-data
+    docker:
+      - image: circleci/python:3.6.4
+    steps:
+      - checkout
+      - run: 
+          command: | 
+            sudo pip install -r requirements.txt
+      - run:
+          command: |
+            pytest -vv
