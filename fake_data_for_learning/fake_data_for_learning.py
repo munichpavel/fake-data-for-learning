@@ -27,7 +27,9 @@ class BayesianNodeRV:
         not the columns, as is otherwise standard. This choice is to make cpt definition in numpy more human-readable.
 
     values: list, optional
-        list of values random variable will take. Default is [0, cpt.shape[-1])
+        list of values random variable will take. Default is [0, cpt.shape[-1]), if values
+        are given, use sklearn.preprocessing.LabelEncoder(). NOTE: the sklearn label encoder
+        sorts values in lexicographical order.
 
     parents: list, optional
         list of parent node random variable names. Default is None, i.e. no parents
@@ -54,11 +56,11 @@ class BayesianNodeRV:
             self.values = np.array(range(cpt.shape[-1]))
             self.label_encoder = None
         else:
-            self.values = values
             self.label_encoder = self._set_label_encoder(values)
+            self.values = self.label_encoder.classes_
 
     def _set_label_encoder(self, values):
-        le = MyLabelEncoder()
+        le = LabelEncoder()
         le.fit(values)
         return le
 
@@ -121,14 +123,6 @@ class SampleValue:
 
     def __repr__(self):
         return 'SampleValue({}, {})'.format(self.value, self.label_encoder)
-    
-
-class MyLabelEncoder(LabelEncoder):
-
-    def fit(self, y):
-        y = column_or_1d(y, warn=True)
-        self.classes_ = pd.Series(y).unique()
-        return self
 
 
 class FakeDataBayesianNetwork:
