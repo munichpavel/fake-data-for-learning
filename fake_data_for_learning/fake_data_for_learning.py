@@ -37,7 +37,7 @@ class BayesianNodeRV:
     def __init__(self, name, cpt, values=None, parent_names=None):
         self.name = name
         self.cpt = cpt
-        self.parent_names = parent_names
+        self.parent_names = self._set_parent_names(parent_names)
         self._set_values(cpt, values)
 
     def __eq__(self, other):
@@ -50,6 +50,15 @@ class BayesianNodeRV:
             self.parent_names == other.parent_names and
             np.array_equal(self.values, other.values)
         )
+
+    def _set_parent_names(self, parent_names):
+        if parent_names is None:
+            return None
+        
+        if not isinstance(parent_names, list):
+            raise TypeError('parent_names must be a list')
+
+        return parent_names
 
     def _set_values(self, cpt, values):
         if values is None:

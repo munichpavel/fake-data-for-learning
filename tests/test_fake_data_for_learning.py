@@ -13,12 +13,32 @@ from fake_data_for_learning import SampleValue
 import fake_data_for_learning.utils as ut
 
 
+# (Conditional) probability distributions
 @pytest.fixture
 def binary_pt():
     return np.array([0.1, 0.9])
 
+@pytest.fixture
+def binary_cpt():
+    return np.array([
+        [0.2, 0.8],
+        [0.7, 0.3]
+    ])
 
-def test_rv_encoding(binary_pt):
+
+
+
+def test_bnrv_init(binary_pt, binary_cpt):
+    
+    # Successful initialization
+    BayesianNodeRV('X0', binary_pt)
+
+    # Failing initialization
+    # Parent names must be list
+    with pytest.raises(TypeError):
+        BayesianNodeRV('X0', binary_cpt, parent_names='X1')
+
+def test_bnrv_encoding(binary_pt):
     # Default values
     binary_rv = BayesianNodeRV('X0', binary_pt)
     np.testing.assert_equal(
@@ -35,6 +55,15 @@ def test_rv_encoding(binary_pt):
         np.array(['down', 'up']).astype('U')
     )
 
+def test_bnrv_equality(binary_pt, binary_cpt):
+    rv = BayesianNodeRV('X0', binary_pt)
+    assert rv == rv
+
+    assert rv != BayesianNodeRV('X1', binary_pt)
+
+    assert rv != BayesianNodeRV('X0', binary_pt, values=['up', 'down'])
+
+    assert rv != BayesianNodeRV('X1', binary_cpt, parent_names=['X0'])
 
 
 
