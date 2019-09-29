@@ -88,7 +88,21 @@ def test_rvs(binary_pt, binary_cpt):
     assert rv_nondef.rvs(seed=42)[0] in rv_nondef.values
 
 
+def test_sample_value():
+    assert SampleValue.possible_default_value(1)
+    assert not SampleValue.possible_default_value(-1)
+    assert not SampleValue.possible_default_value('alice')
 
+    # Check instantiaion
+    SampleValue(1)
+
+    le = LabelEncoder()
+    le.fit(['alice'])
+    SampleValue('alice', label_encoder=le)
+
+    with pytest.raises(ValueError):
+        SampleValue('bob', label_encoder=le)
+    
 # class TestBNRVX0:
 #     #X0
 #     pt_X0 = np.array([0.1, 0.9])

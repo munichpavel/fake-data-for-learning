@@ -140,12 +140,24 @@ class SampleValue:
         self.value = self._set_value(value)
 
     def _set_value(self, value):
-        if ut.possible_default_value(value):
-            return value
+        if self.label_encoder is None:
+            if self.possible_default_value(value):
+                return value
+            else:
+                 raise ValueError('Non-default values require a label encoder')
         else:
-            if self.label_encoder is None:
-                raise ValueError('Non-default values require a label encoder')
-            return value
+            if not value in self.label_encoder.classes_:
+                raise ValueError ('Value has not been encoded')
+            else:
+                return value
+
+    @staticmethod
+    def possible_default_value(x):
+        '''Check conditions that rule-out a default (i.e. natural number) value'''
+        if isinstance(x, np.int) or isinstance(x, np.int64):
+            return x >= 0    
+        else:
+            return False
 
     def __repr__(self):
         return 'SampleValue({}, {})'.format(self.value, self.label_encoder)
