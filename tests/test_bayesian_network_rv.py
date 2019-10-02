@@ -3,14 +3,11 @@
 import pytest
 import numpy as np
 import pandas as pd
-from itertools import product
 
 from sklearn.preprocessing import LabelEncoder
 
 from fake_data_for_learning import BayesianNodeRV
-from fake_data_for_learning import FakeDataBayesianNetwork
 from fake_data_for_learning import SampleValue
-import fake_data_for_learning.utils as ut
 
 
 # (Conditional) probability distributions
@@ -94,6 +91,7 @@ def test_bnrv_equality(binary_pt, binary_cpt):
 def test_sample_value():
     assert SampleValue.possible_default_value(1)
     assert not SampleValue.possible_default_value(-1)
+    assert not SampleValue.possible_default_value(1.)
     assert not SampleValue.possible_default_value('alice')
 
     # Check instantiaion
@@ -103,6 +101,7 @@ def test_sample_value():
     le.fit(['alice'])
     SampleValue('alice', label_encoder=le)
 
+    # Passing value not in label encoder classes should raise an error
     with pytest.raises(ValueError):
         SampleValue('bob', label_encoder=le)
 
