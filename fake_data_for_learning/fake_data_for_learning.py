@@ -9,11 +9,9 @@ from sklearn.utils import column_or_1d
 
 from . import utils as ut
 
-from .utils import trick_external_value_separator
-
 
 class BayesianNodeRV:
-    '''
+    r'''
     Sample-able random variable corresponding to node of a discrete Bayesian network.
 
     Parameters
@@ -91,7 +89,9 @@ class BayesianNodeRV:
         return le
 
     def rvs(self, parent_values=None, size=1, seed=None):
-        '''
+        r'''
+        Generate random variates from the bayesian node.
+
         Parameters
         -----------
         parent_values : None or dict
@@ -114,7 +114,9 @@ class BayesianNodeRV:
             return res
     
     def get_pt(self, parent_values=None):
-        '''
+        r'''
+        Get probability table.
+
         Parameters
         ----------
         parent_values: None, dict of ints of form {'node_name': int}, 
@@ -126,9 +128,30 @@ class BayesianNodeRV:
         else:
             s = [slice(None)] * len(self.cpt.shape)
             for idx, p in enumerate(self.parent_names):
-                parent_internal_value = ut.get_internal_value(parent_values[p])
+                parent_internal_value = self.get_internal_value(parent_values[p])
+                print(parent_internal_value)
                 s[idx] = parent_internal_value
             return self.cpt[tuple(s)]
+
+    def get_internal_value(self, sample_value):
+        '''
+        Translate SampleValue representation to natural number consistent with 
+        conditional probability table definition.
+
+        Parameters
+        ----------
+        sample_value: SampleValue
+
+        Returns
+        -------
+        res : int
+            Internal (integer) representation of external value
+
+        '''
+        if sample_value.label_encoder is not None:
+            return sample_value.label_encoder([sample_value.value])[0]
+        else:
+            return sample_value.value
 
     def __repr__(self):
         return 'BayesianNodeRV({}, parent_names={})'.format(self.name, self.parent_names)
@@ -141,7 +164,7 @@ class SampleValue:
 
     def _set_value(self, value):
         if self.label_encoder is None:
-            if self.possible_default_value(value):
+            if SampleValue.possible_default_value(value):
                 return value
             else:
                  raise ValueError('Non-default values require a label encoder')
@@ -153,7 +176,7 @@ class SampleValue:
 
     @staticmethod
     def possible_default_value(x):
-        '''Check conditions that rule-out a default (i.e. natural number) value'''
+        r'''Check conditions that rule-out a default (i.e. natural number) value'''
         if isinstance(x, np.int) or isinstance(x, np.int64):
             return x >= 0    
         else:
@@ -209,13 +232,19 @@ class FakeDataBayesianNetwork:
 
         # Check consistency of conditional probability tables between parents and children
         for idx, rv in enumerate(self._bnrvs):
-            parent_idxs = ut.get_parent_idx(idx, self.adjacency_matrix)
+            parent_idxs = self.get_parent_idx(idx, self.adjacency_matrix)
             expected_cpt_dims = self.get_expected_cpt_dims(parent_idxs, len(rv.values))
         if rv.cpt.shape != tuple(expected_cpt_dims):
             raise ValueError(
                 '{} conditional probability table dimensions {} inconsistent with parent values {}'.format(
                 rv.name, rv.cpt.shape, expected_cpt_dims)
             )
+
+    @staticmethod
+    def get_parent_idx(child_idx, adjacency_matrix):
+        r'''Return list of index positions of parents of node at child_idx in adjacency matrix'''
+        res = np.nonzero(adjacency_matrix[:, child_idx])[0]
+        return res.tolist()
 
     def get_expected_cpt_dims(self, parent_idxs, child_value_length):
         expected_cpt_dims = []
@@ -234,11 +263,24 @@ class FakeDataBayesianNetwork:
                 res[i,j] = ut.name_in_list(node_i.name, node_j.parent_names)
         return res
 
+    @staticmethod
+    def name_in_list(name, l):
+        r'''Return 1 if name is in list l, else 0'''
+        if l is None:
+                return 0
+        res = name in l
+        return res
+
     def _set_eve_node_names(self):
         r'''Find eve nodes as zero columns of adjacency matrix'''
-        eve_idx = ut.zero_column_idx(self.adjacency_matrix)
+        eve_idx = self.zero_column_idx(self.adjacency_matrix)
         res = list(np.array(self.node_names)[eve_idx])
         return res
+
+    @staticmethod
+    def zero_column_idx(X):
+        r'''Return array with column indices of 0 columns'''
+        return np.where(~X.any(axis=0))[0]
 
     def rvs(self, size=1, seed=None):
         r'''Ancestral sampling from the Bayesian network'''
@@ -281,10 +323,42 @@ class FakeDataBayesianNetwork:
 
     def _get_sample_next_names(self, current_names):
         idx_current_names = np.array([self.node_names.index(name) for name in current_names])
-        idx_next_names = ut.get_pure_descendent_idx(idx_current_names, self.adjacency_matrix)
+        idx_next_names = FakeDataBayesianNetwork.get_pure_descendent_idx(idx_current_names, self.adjacency_matrix)
         sample_next_names = [self.node_names[idx] for idx in idx_next_names]
         return sample_next_names
+
+    @staticmethod
+    def get_pure_descendent_idx(parent_idx, adjacency_matrix):
+        r'''
+        Return column ids of descendents having only parent_idx as parents.
+        For parent indices i,j, returns k if and only if
+        (
+            adjacency_matrix[i,k] == adjacency_matrix[j,k] == 1
+            and i,j are the only such indices (i.e.
+                adjacency_matrix[i',k] == 1 implies i' \in {i,j})
+        )
+        '''
+        n_vars = adjacency_matrix.shape[0]
+        def mask_from_idx(idx):
+            return np.array([x in idx for x in range(n_vars)])
+
+        parent_mask = mask_from_idx(parent_idx)
+        descendents = FakeDataBayesianNetwork.non_zero_column_idx(adjacency_matrix[parent_idx, :])
+
+        # Keep only descendents having only parent_idx as parents
+        pure_descendents = []
+        for idx in descendents:
+            if not adjacency_matrix[~parent_mask, idx].any():
+                pure_descendents.append(idx)
         
+        return np.array(pure_descendents)
+        
+    @staticmethod
+    def non_zero_column_idx(X):
+        r'''Return array with column indices of non-0 columns'''
+        return np.where(X.any(axis=0))[0]
+
+    # Visualization
     def get_graph(self):
         return nx.from_numpy_matrix(self.adjacency_matrix, create_using=nx.DiGraph)
 
