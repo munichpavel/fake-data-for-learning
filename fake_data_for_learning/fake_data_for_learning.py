@@ -149,7 +149,7 @@ class BayesianNodeRV:
 
         '''
         if sample_value.label_encoder is not None:
-            return sample_value.label_encoder([sample_value.value])[0]
+            return sample_value.label_encoder.transform([sample_value.value])[0]
         else:
             return sample_value.value
 
@@ -260,7 +260,7 @@ class FakeDataBayesianNetwork:
         res = np.zeros((len(self._bnrvs), len(self._bnrvs)), dtype=int)
         for i, node_i in enumerate(self._bnrvs):
             for j, node_j in enumerate(self._bnrvs):
-                res[i,j] = ut.name_in_list(node_i.name, node_j.parent_names)
+                res[i,j] = FakeDataBayesianNetwork.name_in_list(node_i.name, node_j.parent_names)
         return res
 
     @staticmethod
