@@ -201,21 +201,21 @@ class FakeDataBayesianNetwork:
         Node variable names of the BNRVs
     adjacency_matrix : numpy array
         Adjanency matrix of the Bayesian network's graph
-    _eve_node_names: list of strings
+    eve_node_names: list of strings
         Node variable names without parents
     '''
     def __init__(self, *args):
-        self._bnrvs = args
+        self.bnrvs = args
         self.node_names = self._set_node_names()
         self.adjacency_matrix = self.calc_adjacency_matrix()
-        self._eve_node_names = self._set_eve_node_names()
+        self.eve_node_names = self._set_eve_node_names()
         self._validate_bn()
     
     def _set_node_names(self):
         node_names = []
         parent_names = []
 
-        for rv in self._bnrvs:
+        for rv in self.bnrvs:
             node_names.append(rv.name)
             if rv.parent_names is not None:
                 parent_names += rv.parent_names
@@ -231,14 +231,15 @@ class FakeDataBayesianNetwork:
         r'''Check for consistency of node random variables in Bayesian network'''
 
         # Check consistency of conditional probability tables between parents and children
-        for idx, rv in enumerate(self._bnrvs):
+        for idx, rv in enumerate(self.bnrvs):
             parent_idxs = self.get_parent_idx(idx, self.adjacency_matrix)
             expected_cpt_dims = self.get_expected_cpt_dims(parent_idxs, len(rv.values))
-        if rv.cpt.shape != tuple(expected_cpt_dims):
-            raise ValueError(
-                '{} conditional probability table dimensions {} inconsistent with parent values {}'.format(
-                rv.name, rv.cpt.shape, expected_cpt_dims)
-            )
+
+            if rv.cpt.shape != tuple(expected_cpt_dims):
+                raise ValueError(
+                    '{} conditional probability table dimensions {} inconsistent with parent values {}'.format(
+                    rv.name, rv.cpt.shape, expected_cpt_dims)
+                )
 
     @staticmethod
     def get_parent_idx(child_idx, adjacency_matrix):
@@ -247,9 +248,18 @@ class FakeDataBayesianNetwork:
         return res.tolist()
 
     def get_expected_cpt_dims(self, parent_idxs, child_value_length):
+        r'''
+        Return expected dimension of the conditional probability table.
+        Note that the tuple ordering depends on the ordering of the 
+        parent ordering for each non-orphan bayesian node random variable.
+
+        Returns
+        -------
+         : list
+        '''
         expected_cpt_dims = []
         for parent_idx in parent_idxs:
-            expected_cpt_dims.append(len(self._bnrvs[parent_idx].values))
+            expected_cpt_dims.append(len(self.bnrvs[parent_idx].values))
 
         # append node value length
         expected_cpt_dims.append(child_value_length)
@@ -257,9 +267,9 @@ class FakeDataBayesianNetwork:
 
     def calc_adjacency_matrix(self):
         
-        res = np.zeros((len(self._bnrvs), len(self._bnrvs)), dtype=int)
-        for i, node_i in enumerate(self._bnrvs):
-            for j, node_j in enumerate(self._bnrvs):
+        res = np.zeros((len(self.bnrvs), len(self.bnrvs)), dtype=int)
+        for i, node_i in enumerate(self.bnrvs):
+            for j, node_j in enumerate(self.bnrvs):
                 res[i,j] = FakeDataBayesianNetwork.name_in_list(node_i.name, node_j.parent_names)
         return res
 
@@ -290,7 +300,7 @@ class FakeDataBayesianNetwork:
     def _rv_dict(self, seed=None):
         r'''Ancestral sampling from the Bayesian network'''
         samples_dict = {}
-        sample_next_names = self._eve_node_names
+        sample_next_names = self.eve_node_names
         
         while not self.all_nodes_sampled(samples_dict):
             for node_name in sample_next_names:
@@ -308,7 +318,7 @@ class FakeDataBayesianNetwork:
     def get_node(self, node_name):
         if node_name not in self.node_names:
             raise ValueError('No node defined with name {}'.format(node_name))
-        res = self._bnrvs[self.node_names.index(node_name)]
+        res = self.bnrvs[self.node_names.index(node_name)]
         return res
 
     def all_parents_sampled(self, node_name, samples_dict):

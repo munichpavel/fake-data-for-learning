@@ -1,8 +1,11 @@
+import pytest
+
 import numpy as np
 from itertools import product
 
 from fake_data_for_learning import BayesianNodeRV
 from fake_data_for_learning import FakeDataBayesianNetwork
+from fake_data_for_learning import SampleValue
 
 from fake_data_for_learning import utils as ut
 
@@ -99,7 +102,218 @@ def test_make_cpt():
     for r in product(*ranges):
         np.testing.assert_almost_equal(sum(cpt_from_negative[r]), 1)
 
- ##############################
+
+@pytest.fixture
+def rv_binary_X0():
+    return BayesianNodeRV('X0', np.array([0.1, 0.9]))
+
+@pytest.fixture
+def rv_binary_child_X1(rv_binary_X0):
+    return BayesianNodeRV(
+        'X1', 
+        np.array([
+            [0.2, 0.8],
+            [0.7, 0.3]
+        ]),
+        parent_names = [rv_binary_X0.name]
+    )
+
+
+def test_parents(
+    rv_binary_X0, rv_binary_child_X1  
+):
+    
+    # Test for missing parent variable
+    with pytest.raises(ValueError):
+        FakeDataBayesianNetwork(rv_binary_child_X1)
+
+    # Test for wrong parent name
+    with pytest.raises(ValueError):
+        FakeDataBayesianNetwork(
+            rv_binary_child_X1,
+            BayesianNodeRV(
+                'X1',
+                np.array([
+                    [0.2, 0.8],
+                    [0.7, 0.3]
+                ]),
+                parent_names = ['geoff']
+            )
+        )
+
+
+@pytest.fixture
+def non_binary_bayesian_network(rv_binary_X0):
+    # X0 -> X2 <- Y1
+    return FakeDataBayesianNetwork(
+        rv_binary_X0,
+        BayesianNodeRV('Y1', np.array([0.1, 0.7, 0.2])),
+        BayesianNodeRV(
+            'X2',
+            np.array([
+                [ 
+                    [0., 1.0],
+                    [0.2, 0.8],
+                    [0.1, 0.9]
+                ],
+                [
+                    [0.5, 0.5],
+                    [0.3, 0.7],
+                    [0.9, 0.1]
+                ],
+
+            ]),
+            parent_names=['X0', 'Y1']
+        )
+    )
+
+
+@pytest.fixture
+def thrifty_bayesian_network():
+    r'''
+        age     ->      profession
+        |                   /
+        -> thriftiness <---
+    '''
+    age = BayesianNodeRV('age', np.array([0.2, 0.5, 0.3]), values=('20', '40', '60'))
+    profession = BayesianNodeRV(
+        'profession', 
+        np.array([
+            [0.3, 0.4, 0.2, 0.1],
+            [0.05, 0.15, 0.3, 0.5],
+            [0.15, 0.05, 0.2, 0.6]
+        ]),
+        values=('salaried', 'self-employed', 'student', 'unemployed'),
+        parent_names=['age'])
+
+    thriftiness = BayesianNodeRV(
+        'thriftiness',
+        np.array([
+            [
+                [0.6, 0.4], #20, salaried
+                [0.1, 0.9], #20, self-employed
+                [0.2, 0.8], #20, student
+                [0.3, 0.7], #20, unemployed
+            ],
+            [
+                [0.2, 0.8], # 40 salaried
+                [0.3, 0.7], # 40, self-employed
+                [0.7, 0.3], #40, student
+                [0.4, 0.6], #40, unemployed                
+            ],
+            [
+                [0.25, 0.75], #60, salaried
+                [0.3, 0.7], #60, self-employed
+                [0.2, 0.8], #60, student
+                [0.1, 0.9], #60, unemployed
+            ],
+        ]),
+        parent_names=['age', 'profession']
+    )
+
+    return FakeDataBayesianNetwork(age, profession, thriftiness)
+
+
+def test_expected_cpt_dims(
+    rv_binary_X0, rv_binary_child_X1,
+    non_binary_bayesian_network,
+    thrifty_bayesian_network
+):
+    bn = FakeDataBayesianNetwork(rv_binary_X0, rv_binary_child_X1)
+    assert (
+        bn.get_expected_cpt_dims([0], len(rv_binary_X0.values))
+        == [2,2]
+    )
+
+    # X0 -> X2 <- Y1 with Y1 ternary
+    assert(
+        non_binary_bayesian_network,
+        [2,3,2]
+    )
+
+    # Thriftiness Bayesian network
+    assert (
+        thrifty_bayesian_network.get_expected_cpt_dims(
+            [0,1], len(thrifty_bayesian_network.bnrvs[2].values)
+        )
+        ==  [3,4,2]
+    )
+
+
+
+def test_adjacency_matrix(
+    rv_binary_X0, rv_binary_child_X1,
+    non_binary_bayesian_network,
+    thrifty_bayesian_network
+):
+    bn = FakeDataBayesianNetwork(rv_binary_X0, rv_binary_child_X1)
+    expected_adj = np.array(
+        [[0, 1], [0, 0]]
+    )
+
+    np.testing.assert_equal(
+        bn.adjacency_matrix,
+        expected_adj
+    )
+
+    # X0 -> X2 <- Y1
+    expected_nonbinary_adj = np.array([
+        [0, 0, 1],
+        [0, 0, 1],
+        [0, 0, 0]
+    ])
+    np.testing.assert_equal(
+        non_binary_bayesian_network.adjacency_matrix,
+        expected_nonbinary_adj
+    )
+   
+    expected_thrifty_adj = np.array([
+        [0, 1, 1],
+        [0, 0, 1],
+        [0, 0, 0]
+    ])
+    np.testing.assert_equal(
+        thrifty_bayesian_network.adjacency_matrix,
+        expected_thrifty_adj
+    )
+
+def test_ancestral_sampling(
+    non_binary_bayesian_network,
+    thrifty_bayesian_network
+):
+    # Test eve names, i.e. nodes with no parents
+    assert (
+        non_binary_bayesian_network.eve_node_names
+        == ['X0', 'Y1']
+    )
+
+    assert(
+        thrifty_bayesian_network.eve_node_names
+        == ['age']
+    )
+
+    #Test all nodes sampled
+    assert not non_binary_bayesian_network.all_nodes_sampled(
+        {
+            'X0': SampleValue(0),
+            'Y0': SampleValue(2)
+        }
+    )
+    assert thrifty_bayesian_network.all_nodes_sampled(
+        {
+            'age': SampleValue(
+                '20', thrifty_bayesian_network.bnrvs[0].label_encoder
+            ),
+            'profession': SampleValue(
+                'unemployed', thrifty_bayesian_network.bnrvs[1].label_encoder
+            ),
+            'thriftiness': SampleValue(1)
+        }
+    )
+
+
+
+##############################
 # # Test FakeDataBayesianNetwork
 # ##############################
 
@@ -311,7 +525,7 @@ def test_make_cpt():
 
 #     def test_expected_3d_cpt_dimension(self):
 #        assert (
-#             self.thrifty_bn.get_expected_cpt_dims([0,1], len(self.thrifty_bn._bnrvs[2].values))
+#             self.thrifty_bn.get_expected_cpt_dims([0,1], len(self.thrifty_bn.bnrvs[2].values))
 #             ==  [3,4,2]
 #         )
 
