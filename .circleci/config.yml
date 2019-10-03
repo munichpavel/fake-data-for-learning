@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  test:
+  build:
     working_directory: ~/circleci-fake-data
     docker:
       - image: circleci/python:3.6.4
