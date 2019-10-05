@@ -318,6 +318,15 @@ def test_ancestral_sampling(
     with pytest.raises(ValueError):
         non_binary_bayesian_network.get_node('larry')
 
+    # Test all_parents_sampled
+    assert non_binary_bayesian_network.all_parents_sampled('X0', {})
+    assert non_binary_bayesian_network.all_parents_sampled(
+        'Y1', {'X0': SampleValue(1, None)}
+    )
+    assert not non_binary_bayesian_network.all_parents_sampled(
+        'X2', {'Y1': SampleValue(2, None)}
+    )
+
 
 
 ##############################
