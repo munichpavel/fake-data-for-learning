@@ -36,7 +36,7 @@ class BayesianNodeRV:
     def __init__(self, name, cpt, values=None, parent_names=None):
         self.name = name
         self.cpt = cpt
-        self.parent_names = self._set_parent_names(parent_names)
+        self._set_parent_names(parent_names)
         self._set_values(cpt, values)
 
     def __eq__(self, other):
@@ -51,7 +51,7 @@ class BayesianNodeRV:
         )
 
     def _set_parent_names(self, parent_names):
-        
+        r'''Set parent_names provided no value errors raised'''
         if not(parent_names is None or isinstance(parent_names, list)):
             raise TypeError('parent_names must be a list or None')
 
@@ -67,9 +67,14 @@ class BayesianNodeRV:
             if len(parent_names) + 1 != len(self.cpt.shape):
                 raise ValueError(val_error_msg)
 
-        return parent_names
+        # Set parent names if no errors raised
+        self.parent_names = parent_names
 
     def _set_values(self, cpt, values):
+        r'''
+        Set random variable values according to the shape of the 
+        conditional probability table cpt and given values.
+        '''
         if values is None:
             self.values = np.array(range(cpt.shape[-1]))
             self.label_encoder = None
