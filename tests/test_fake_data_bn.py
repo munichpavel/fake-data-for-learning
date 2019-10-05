@@ -242,7 +242,6 @@ def test_expected_cpt_dims(
     )
 
 
-
 def test_adjacency_matrix(
     rv_binary_X0, rv_binary_child_X1,
     non_binary_bayesian_network,
@@ -343,6 +342,15 @@ def test_ancestral_sampling(
         )
     )
 
+    # Test rvs
+    sample = thrifty_bayesian_network.rvs(seed=42)
+    allowed_outcomes = {
+            'age': thrifty_bayesian_network.get_node('age').values,
+            'profession': thrifty_bayesian_network.get_node('profession').values,
+            'thriftiness': thrifty_bayesian_network.get_node('thriftiness').values
+    }
+    for name in thrifty_bayesian_network.node_names:
+        assert sample.loc[0, name] in allowed_outcomes[name]
 
 
 ##############################
