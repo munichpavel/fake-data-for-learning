@@ -229,8 +229,8 @@ def test_expected_cpt_dims(
 
     # X0 -> X2 <- Y1 with Y1 ternary
     assert(
-        non_binary_bayesian_network,
-        (2,3,2)
+        non_binary_bayesian_network
+        == (2,3,2)
     )
 
     # Thriftiness Bayesian network
