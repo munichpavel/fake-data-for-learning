@@ -224,13 +224,13 @@ def test_expected_cpt_dims(
     bn = FakeDataBayesianNetwork(rv_binary_X0, rv_binary_child_X1)
     assert (
         bn.get_expected_cpt_dims([0], len(rv_binary_X0.values))
-        == [2,2]
+        == (2,2)
     )
 
     # X0 -> X2 <- Y1 with Y1 ternary
     assert(
         non_binary_bayesian_network,
-        [2,3,2]
+        (2,3,2)
     )
 
     # Thriftiness Bayesian network
@@ -238,7 +238,7 @@ def test_expected_cpt_dims(
         thrifty_bayesian_network.get_expected_cpt_dims(
             [0,1], len(thrifty_bayesian_network.bnrvs[2].values)
         )
-        ==  [3,4,2]
+        ==  (3,4,2)
     )
 
 

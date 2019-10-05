@@ -257,9 +257,16 @@ class FakeDataBayesianNetwork:
         Note that the tuple ordering depends on the ordering of the 
         parent ordering for each non-orphan bayesian node random variable.
 
+        Parameters
+        ----------
+        parent_idxs : list of int
+            Indices of parent nodes in creation of Bayesian network
+        child_value_length : int
+            Cardinality of values of child node
+
         Returns
         -------
-         : list
+         : tuple
         '''
         expected_cpt_dims = []
         for parent_idx in parent_idxs:
@@ -267,7 +274,7 @@ class FakeDataBayesianNetwork:
 
         # append node value length
         expected_cpt_dims.append(child_value_length)
-        return expected_cpt_dims
+        return tuple(expected_cpt_dims)
 
     def calc_adjacency_matrix(self):
         
