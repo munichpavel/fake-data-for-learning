@@ -1,7 +1,9 @@
 import pytest
 
-import numpy as np
 from itertools import product
+from collections import Counter
+
+import numpy as np
 
 from fake_data_for_learning import BayesianNodeRV
 from fake_data_for_learning import FakeDataBayesianNetwork
@@ -326,6 +328,21 @@ def test_ancestral_sampling(
     assert not non_binary_bayesian_network.all_parents_sampled(
         'X2', {'Y1': SampleValue(2)}
     )
+
+    # Test get_unsampled_nodes
+    assert (
+        Counter(['Y1', 'X2']) == 
+        Counter(non_binary_bayesian_network.get_unsampled_nodes(
+            {'X0': SampleValue(1)}
+        ))
+    )
+    assert (
+        [] == 
+        non_binary_bayesian_network.get_unsampled_nodes(
+            {'X0': SampleValue(1), 'Y1': SampleValue(2), 'X2': SampleValue(0)}
+        )
+    )
+
 
 
 ##############################
