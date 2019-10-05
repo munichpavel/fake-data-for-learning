@@ -311,8 +311,10 @@ class FakeDataBayesianNetwork:
             for node_name in sample_next_names:
                 if self.all_parents_sampled(node_name, samples_dict):
                     node = self.get_node(node_name)
-                    samples_dict[node_name] = SampleValue(node.rvs(parent_values=samples_dict, seed=seed)[0], node.label_encoder)
-            #sample_next_names = self._get_sample_next_names(sample_next_names)
+                    samples_dict[node_name] = SampleValue(
+                        node.rvs(parent_values=samples_dict, seed=seed)[0], 
+                        node.label_encoder
+                    )
             sample_next_names = self.get_unsampled_nodes(samples_dict)
         # Keep only sample values
         return {k: v.value for (k,v) in samples_dict.items()}
