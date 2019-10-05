@@ -315,6 +315,9 @@ def test_ancestral_sampling(
     # Test get node from node_name
     assert rv_binary_X0 == non_binary_bayesian_network.get_node('X0')
 
+    with pytest.raises(ValueError):
+        non_binary_bayesian_network.get_node('larry')
+
 
 
 ##############################
