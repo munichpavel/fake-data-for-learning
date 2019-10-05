@@ -186,7 +186,7 @@ class SampleValue:
         else:
             return False
 
-    def __repr__(self):
+    def __str_(self):
         return 'SampleValue({}, {})'.format(self.value, self.label_encoder)
 
 
@@ -391,3 +391,7 @@ class FakeDataBayesianNetwork:
 
     def draw_graph(self):
         nx.draw(self.get_graph(), with_labels=True)
+
+    def __str__(self):
+        return 'FakeDataBayesianNetwork with node_names={})'.format(self.node_names)
+
