@@ -134,7 +134,6 @@ class BayesianNodeRV:
             s = [slice(None)] * len(self.cpt.shape)
             for idx, p in enumerate(self.parent_names):
                 parent_internal_value = self.get_internal_value(parent_values[p])
-                print(parent_internal_value)
                 s[idx] = parent_internal_value
             return self.cpt[tuple(s)]
 
