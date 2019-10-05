@@ -229,7 +229,9 @@ def test_expected_cpt_dims(
 
     # X0 -> X2 <- Y1 with Y1 ternary
     assert(
-        non_binary_bayesian_network
+        non_binary_bayesian_network.get_expected_cpt_dims(
+            [0,1], len(non_binary_bayesian_network.bnrvs[2].values)
+        )
         == (2,3,2)
     )
 
