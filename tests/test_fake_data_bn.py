@@ -278,6 +278,7 @@ def test_adjacency_matrix(
     )
 
 def test_ancestral_sampling(
+    rv_binary_X0,
     non_binary_bayesian_network,
     thrifty_bayesian_network
 ):
@@ -292,7 +293,7 @@ def test_ancestral_sampling(
         == ['age']
     )
 
-    #Test all nodes sampled
+    # Test all nodes sampled method
     assert not non_binary_bayesian_network.all_nodes_sampled(
         {
             'X0': SampleValue(0),
@@ -310,6 +311,9 @@ def test_ancestral_sampling(
             'thriftiness': SampleValue(1)
         }
     )
+
+    # Test get node from node_name
+    assert rv_binary_X0 == non_binary_bayesian_network.get_node('X0')
 
 
 
