@@ -157,7 +157,7 @@ class BayesianNodeRV:
         else:
             return sample_value.value
 
-    def __repr__(self):
+    def __str__(self):
         return 'BayesianNodeRV({}, parent_names={})'.format(self.name, self.parent_names)
 
 
