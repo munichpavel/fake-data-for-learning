@@ -315,7 +315,7 @@ class FakeDataBayesianNetwork:
                         node.rvs(parent_values=samples_dict, seed=seed)[0], 
                         node.label_encoder
                     )
-            sample_next_names = self.get_unsampled_nodes(samples_dict)
+            sample_next_names = self.get_unsampled_node_names(samples_dict)
         # Keep only sample values
         return {k: v.value for (k,v) in samples_dict.items()}
 
@@ -335,7 +335,18 @@ class FakeDataBayesianNetwork:
         sampled_names = set(samples_dict.keys())
         return set(parent_names).issubset(sampled_names)
 
-    def get_unsampled_nodes(self, samples_dict):
+    def get_unsampled_node_names(self, samples_dict):
+        r'''
+        Parameters
+        ----------
+        samples_dict : dict
+            Dict of form {'node_name': SampleValue(...)}
+
+        Returns
+        --------
+         : list
+            List of node_names that are not in the samples_dict
+        '''
         return list(set(self.node_names) - set(samples_dict.keys()))
 
     def _get_sample_next_names(self, current_names):

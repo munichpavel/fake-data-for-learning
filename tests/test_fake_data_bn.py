@@ -329,16 +329,16 @@ def test_ancestral_sampling(
         'X2', {'Y1': SampleValue(2)}
     )
 
-    # Test get_unsampled_nodes
+    # Test get_unsampled_node_names
     assert (
         Counter(['Y1', 'X2']) == 
-        Counter(non_binary_bayesian_network.get_unsampled_nodes(
+        Counter(non_binary_bayesian_network.get_unsampled_node_names(
             {'X0': SampleValue(1)}
         ))
     )
     assert (
         [] == 
-        non_binary_bayesian_network.get_unsampled_nodes(
+        non_binary_bayesian_network.get_unsampled_node_names(
             {'X0': SampleValue(1), 'Y1': SampleValue(2), 'X2': SampleValue(0)}
         )
     )
@@ -576,9 +576,9 @@ def test_ancestral_sampling(
 #         assert ~self.thrifty_bn.all_parents_sampled('thriftiness', self.samples_partial)
 #         assert self.thrifty_bn.all_parents_sampled('thriftiness', self.samples_all)
         
-#     def test_get_unsampled_nodes(self):
+#     def test_get_unsampled_node_names(self):
 #         assert (
-#             set(self.thrifty_bn.get_unsampled_nodes(self.samples_partial))
+#             set(self.thrifty_bn.get_unsampled_node_names(self.samples_partial))
 #             == {'profession', 'thriftiness'}
 #         )
 
