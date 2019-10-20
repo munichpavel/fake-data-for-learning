@@ -8,6 +8,13 @@ The goal of this package is to make it easy to generate interesting fake data. W
 
 ## Quickstart
 
+Install from GitHub
+
+```pip install git+https://github.com/munichpavel/fake-data-for-learning```
+
+
+For local development
+
 * `git clone` the repository and `cd` into the root directory
 * Adapt the `.env.example` file and save as `.env`
 * Create a virtual environment using ```conda```, ```virtualenv``` or ```virtualenvwrapper``` and add the relevant command to your `.env` file (e.g. if your environment is named ```myenv```, add ```conda activate myenv```, ```source myenv/bin/activate``` or ```workon myenv```)

@@ -33,20 +33,18 @@ def find_version(*file_paths):
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-requirements = [
-    'pandas',
-    'networkx',
-    'numpy',
+install_requirements = [
+    'networkx>=2.5',
+    'scikit-learn>=0.21',
+    'scipy>=1.3'
 ]
 
 setup_requirements = [
     'pytest-runner',
-    # TODO(munichpavel): put setup requirements (distutils extensions, etc.) here
 ]
 
 test_requirements = [
     'pytest',
-    # TODO: put package test requirements here
 ]
 
 setup(
@@ -58,10 +56,12 @@ setup(
     packages=find_packages(include=['fake_data_for_learning']),
     include_package_data=False,
     python_requires='>3.6',
-    install_requires=requirements,
+    install_requires=install_requirements,
+    setup_requires=setup_requirements,
+    test_suite='tests',
+    tests_require=test_requirements,
     license="MIT license",
     zip_safe=False,
-    keywords='fake_data_for_learning',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
@@ -70,7 +70,4 @@ setup(
     	'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
-    test_suite='tests',
-    tests_require=test_requirements,
-    setup_requires=setup_requirements,
-)
+   )

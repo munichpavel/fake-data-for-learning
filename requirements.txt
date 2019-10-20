@@ -14,4 +14,3 @@ pylint
 rope
 scipy
 scikit-learn
--e .
