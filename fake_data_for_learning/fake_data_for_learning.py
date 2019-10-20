@@ -394,10 +394,14 @@ class FakeDataBayesianNetwork:
 
     # Visualization
     def get_graph(self):
-        return nx.from_numpy_matrix(self.adjacency_matrix, create_using=nx.DiGraph)
+        g = nx.from_numpy_matrix(self.adjacency_matrix, create_using=nx.DiGraph)
+        # Add node labels
+        labels = {n: self.node_names[n] for n in range(len(self.node_names))}
+        g = nx.relabel_nodes(g, labels)
+        return g
 
     def draw_graph(self):
-        nx.draw(self.get_graph(), with_labels=True)
+        nx.draw_networkx(self.get_graph(), node_size=800, node_color='#00b4d9')
 
     def __str__(self):
         return 'FakeDataBayesianNetwork with node_names={})'.format(self.node_names)
