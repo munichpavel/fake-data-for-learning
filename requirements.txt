@@ -1,4 +1,5 @@
 pip
+pandas
 bumpversion
 wheel
 watchdog
@@ -14,3 +15,4 @@ pylint
 rope
 scipy
 scikit-learn
+-e .
