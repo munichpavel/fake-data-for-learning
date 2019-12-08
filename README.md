@@ -59,12 +59,6 @@ bn.draw_graph()
 
 ![docs/graphics/graph.png](docs/graphics/graph.png)
 
-## Features
-
-* Sampling from discrete Bayesian networks with integer or string outcome values
-* Visualization of network a la ```networkx```
-
-
 See the demo notebook [bayesian-network.ipynb](notebooks/bayesian-network.ipynb) for feature examples.
 
 ## Related packages
