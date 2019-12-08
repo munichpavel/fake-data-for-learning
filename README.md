@@ -19,6 +19,46 @@ For local development
 * Adapt the `.env.example` file and save as `.env`
 * Create a virtual environment using ```conda```, ```virtualenv``` or ```virtualenvwrapper``` and add the relevant command to your `.env` file (e.g. if your environment is named ```myenv```, add ```conda activate myenv```, ```source myenv/bin/activate``` or ```workon myenv```)
 
+### Basic usage
+
+Defining and sampling from (discrete) conditional random variables:
+```python
+from fake_data_for_learning import BayesianNodeRV, SampleValue
+
+# Gender -> Y
+# Define Gender with probability table, node label and value labels
+Gender = BNRV('Gender', np.array([0.55, 0.45]), values=['female', 'male'])
+
+# Define Y with conditional probability table, node, value and parent labels
+pt_YcGender = np.array([
+    [0.9, 0.1],
+    [0.4, 0.6],
+])
+Y = BNRV('Y', pt_YcGender, parent_names=['Gender'])
+
+# Sample from Y given Gender
+Y.rvs({'Gender': SampleValue('male', label_encoder=Gender.label_encoder)})
+# array([1])
+```
+
+Combine into a Bayesian network
+
+```python
+from fake_data_for_learning import FakeDataBayesianNetwork
+bn = FakeDatBayesianNetwork(Gender, Y)
+bn.rvs(size=5)
+```
+
+![docs/graphics/network_sample.png](docs/graphics/network_sample.png)
+
+Visualize the Bayesian network
+
+```python
+bn.draw_graph()
+```
+
+![docs/graphics/graph.png](docs/graphics/graph.png)
+
 ## Features
 
 * Sampling from discrete Bayesian networks with integer or string outcome values
