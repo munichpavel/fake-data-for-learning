@@ -288,7 +288,7 @@ class FakeDataBayesianNetwork:
     def name_in_list(name, l):
         r'''Return 1 if name is in list l, else 0'''
         if l is None:
-                return 0
+            return 0
         res = name in l
         return res
 
