@@ -204,7 +204,7 @@ class FakeDataBayesianNetwork:
     node_names : list of strings
         Node variable names of the BNRVs
     adjacency_matrix : numpy array
-        Adjanency matrix of the Bayesian network's graph
+        Adjacency matrix of the Bayesian network's graph
     eve_node_names: list of strings
         Node variable names without parents
     '''
