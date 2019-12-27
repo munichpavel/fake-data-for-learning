@@ -115,10 +115,10 @@ class BayesianNodeRV:
         if self.parent_names is None:
             return np.random.choice(self.values, size, p=self.cpt)
         else:
-            res = np.random.choice(self.values, size, p=self.get_pt(parent_values))
+            res = np.random.choice(self.values, size, p=self.get_probability_table(parent_values))
             return res
     
-    def get_pt(self, parent_values=None):
+    def get_probability_table(self, parent_values=None):
         r'''
         Get probability table.
 

@@ -106,10 +106,10 @@ def test_sample_value():
         SampleValue('bob', label_encoder=le)
 
 
-def test_get_pt(binary_cpt):
+def test_get_probability_table(binary_cpt):
     rv1c0 = BayesianNodeRV('X1', binary_cpt, parent_names=['X0'])
     np.testing.assert_equal(
-        rv1c0.get_pt(parent_values={'X0': SampleValue(1)}), 
+        rv1c0.get_probability_table(parent_values={'X0': SampleValue(1)}), 
         binary_cpt[1, :]
     )
 
@@ -126,7 +126,7 @@ def test_get_pt(binary_cpt):
     ])
     rv2c01 = BayesianNodeRV('X2', pt_X2cX0X1, parent_names=['X0', 'X1'])
     np.testing.assert_equal(
-        rv2c01.get_pt(parent_values={'X0': SampleValue(0), 'X1': SampleValue(0)}),
+        rv2c01.get_probability_table(parent_values={'X0': SampleValue(0), 'X1': SampleValue(0)}),
         pt_X2cX0X1[0, 0, :]
     )
 
