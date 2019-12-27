@@ -204,7 +204,7 @@ class FakeDataBayesianNetwork:
     node_names : list of strings
         Node variable names of the BNRVs
     adjacency_matrix : numpy array
-        Adjanency matrix of the Bayesian network's graph
+        Adjacency matrix of the Bayesian network's graph
     eve_node_names: list of strings
         Node variable names without parents
     '''
@@ -288,7 +288,7 @@ class FakeDataBayesianNetwork:
     def name_in_list(name, l):
         r'''Return 1 if name is in list l, else 0'''
         if l is None:
-                return 0
+            return 0
         res = name in l
         return res
 

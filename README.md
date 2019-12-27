@@ -27,14 +27,14 @@ from fake_data_for_learning import BayesianNodeRV, SampleValue
 
 # Gender -> Y
 # Define Gender with probability table, node label and value labels
-Gender = BNRV('Gender', np.array([0.55, 0.45]), values=['female', 'male'])
+Gender = BayesianNodeRV('Gender', np.array([0.55, 0.45]), values=['female', 'male'])
 
 # Define Y with conditional probability table, node, value and parent labels
 pt_YcGender = np.array([
     [0.9, 0.1],
     [0.4, 0.6],
 ])
-Y = BNRV('Y', pt_YcGender, parent_names=['Gender'])
+Y = BayesianNodeRV('Y', pt_YcGender, parent_names=['Gender'])
 
 # Sample from Y given Gender
 Y.rvs({'Gender': SampleValue('male', label_encoder=Gender.label_encoder)})
@@ -45,7 +45,7 @@ Combine into a Bayesian network
 
 ```python
 from fake_data_for_learning import FakeDataBayesianNetwork
-bn = FakeDatBayesianNetwork(Gender, Y)
+bn = FakeDataBayesianNetwork(Gender, Y)
 bn.rvs(size=5)
 ```
 
