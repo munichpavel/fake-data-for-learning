@@ -130,6 +130,19 @@ def test_get_probability_table(binary_cpt):
         pt_X2cX0X1[0, 0, :]
     )
 
+def test_get_pmf(binary_pt):
+    rv = BayesianNodeRV('X0', binary_pt)
+    assert rv.pmf(0) == binary_pt[0]
+    assert rv.pmf(1) == binary_pt[1]
+
+    with pytest.raises(ValueError):
+        rv.pmf(2)
+
+    with pytest.raises(ValueError):
+        rv.pmf('alice')
+
+    with pytest.raises(ValueError):
+        rv.pmf(1, parent_values={'Z': SampleValue(0)})
 
 def test_rvs(binary_pt, binary_cpt):
     rv = BayesianNodeRV('X0', binary_pt)

@@ -43,6 +43,7 @@ class BayesianNodeRV:
   
         if self.__class__ != other.__class__: 
             return False
+            
         return (
             self.name == other.name and
             np.array_equal(self.cpt, other.cpt) and
@@ -93,6 +94,48 @@ class BayesianNodeRV:
         le.fit(values)
         return le
 
+    def pmf(self, value, parent_values=None):
+        r'''
+        Probability mass function
+
+        Parameters
+        ----------
+        value : int or str
+            Must be contained in the class attribute `values`
+        
+        parent_values : dict of SampleValue
+            Required in case of conditional random variable
+
+        Returns
+        -------
+        float
+        '''
+        check = self._validate_pmf_args(value, parent_values)
+        if not check:
+            raise ValueError(
+                f'Input value {value} with parent values {parent_values} '
+                f'incompatible with allowed values {self.values} and '
+                f'parent names {self.parent_names}'
+            )
+        return self.cpt[value]
+
+    def _validate_pmf_args(self, value, parent_values):
+        checks = []
+
+        checks.append(value in list(self.values))
+    
+        if parent_values is None:
+            checks.append(self.parent_names is None)
+        elif self.parent_names is None:
+            checks.append(parent_values is None)
+        else:
+            checks.append(
+                set(parent_values.keys()).issubset(set(self.parent_names))
+            )
+
+        res = np.array(checks).all()
+        return res
+        
     def rvs(self, parent_values=None, size=1, seed=None):
         r'''
         Generate random variates from the bayesian node.
