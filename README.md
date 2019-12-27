@@ -63,11 +63,7 @@ See the demo notebook [bayesian-network.ipynb](notebooks/bayesian-network.ipynb)
 
 ## Related packages
 
-This package exists because I became tired of googling for existing implementations of how I wanted to generate fake data. In the development process, however, I found other packages that with the similar core functionality (plus other features), such as
-
-* [Pranab Ghosh](https://github.com/pranab)'s [avenir](https://github.com/pranab/avenir)
-* The [pgmpy](http://pgmpy.org/index.html) class [```BayesianModelSampling```](http://pgmpy.org/sampling.html#bayesian-model-samplers)
-
+This package exists because I became tired of googling for existing implementations of how I wanted to generate fake data. In the development process, however, I found other packages with overlapping functionality (plus other features), notably the [pgmpy](http://pgmpy.org/index.html) class [```BayesianModelSampling```](http://pgmpy.org/sampling.html#bayesian-model-samplers).
 
 ## Credits
 
