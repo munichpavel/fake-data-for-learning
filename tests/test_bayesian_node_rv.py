@@ -160,7 +160,7 @@ def test_get_pmf_w_parents(binary_cpt):
 
     with pytest.raises(ValueError):
         rv.pmf(1, parent_values={'X': SampleValue('terry', label_encoder=le)})
-    
+
 
 def test_rvs(binary_pt, binary_cpt):
     rv = BayesianNodeRV('X0', binary_pt)
