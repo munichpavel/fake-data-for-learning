@@ -30,10 +30,10 @@ class BayesianNodeRV:
         sorts values in lexicographic order. To ensure compatibility with the conditional 
         probability table, given values must also be in lexicographic order.
 
-    parents: list, optional
-        list of parent node random variable names. Default is None, i.e. no parents
+    parent_names: list, optional
+        list of parent node random variable names. Default is empty list, i.e. no parents
     '''
-    def __init__(self, name, cpt, values=None, parent_names=None):
+    def __init__(self, name, cpt, values=None, parent_names=[]):
         self.name = name
         self.cpt = cpt
         self._set_parent_names(parent_names)
@@ -53,20 +53,20 @@ class BayesianNodeRV:
 
     def _set_parent_names(self, parent_names):
         r'''Set parent_names provided no value errors raised'''
-        if not(parent_names is None or isinstance(parent_names, list)):
-            raise TypeError('parent_names must be a list or None')
+        if not isinstance(parent_names, list):
+            raise TypeError('parent_names must be a list')
 
         val_error_msg = (
             'Number of parent names and conditional probability '
             'table are incompatible'
         )
-        if parent_names is None:
-            if 1 != len(self.cpt.shape):
-                raise ValueError(val_error_msg)
-        else:
-            # Check compability of parent names with conditional proby table
-            if len(parent_names) + 1 != len(self.cpt.shape):
-                raise ValueError(val_error_msg)
+        # if parent_names is None:
+        #     if 1 != len(self.cpt.shape):
+        #         raise ValueError(val_error_msg)
+        # else:
+        # Check compability of parent names with conditional proby table
+        if len(parent_names) + 1 != len(self.cpt.shape):
+            raise ValueError(val_error_msg)
 
         # Set parent names if no errors raised
         self.parent_names = parent_names
@@ -94,7 +94,7 @@ class BayesianNodeRV:
         le.fit(values)
         return le
 
-    def pmf(self, value, parent_values=None):
+    def pmf(self, value, parent_values={}):
         r'''
         Probability mass function
 
@@ -126,10 +126,10 @@ class BayesianNodeRV:
 
         checks.append(value in list(self.values))
     
-        if parent_values is None:
-            checks.append(self.parent_names is None)
-        elif self.parent_names is None:
-            checks.append(parent_values is None)
+        if parent_values == {}:
+            checks.append(self.parent_names == [])
+        elif self.parent_names == []:
+            checks.append(parent_values == {})
         else:
             checks.append(
                 set(parent_values.keys()).issubset(set(self.parent_names))
@@ -467,7 +467,7 @@ class FakeDataBayesianNetwork:
         parent_idx = self.get_parent_idx(i, self.adjacency_matrix)
 
         if not parent_idx:
-            parent_values = None
+            parent_values = {}
         else:
             parent_values = {
                 self.bnrvs[idx].name: SampleValue(sample[idx], label_encoder=self.bnrvs[idx].label_encoder)
