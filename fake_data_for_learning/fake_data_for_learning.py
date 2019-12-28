@@ -56,17 +56,13 @@ class BayesianNodeRV:
         if not isinstance(parent_names, list):
             raise TypeError('parent_names must be a list')
 
-        val_error_msg = (
-            'Number of parent names and conditional probability '
-            'table are incompatible'
-        )
-        # if parent_names is None:
-        #     if 1 != len(self.cpt.shape):
-        #         raise ValueError(val_error_msg)
-        # else:
-        # Check compability of parent names with conditional proby table
+        
         if len(parent_names) + 1 != len(self.cpt.shape):
-            raise ValueError(val_error_msg)
+            raise ValueError(
+                f'Number of parent names ({len(parent_names)}) '
+                f'and conditional probability table shape ({self.cpt.shape}) '
+                'are incompatible'
+        )
 
         # Set parent names if no errors raised
         self.parent_names = parent_names
@@ -173,17 +169,16 @@ class BayesianNodeRV:
             res = np.random.choice(self.values, size, p=self.get_probability_table(parent_values))
             return res
     
-    def get_probability_table(self, parent_values=None):
+    def get_probability_table(self, parent_values={}):
         r'''
         Get probability table.
 
         Parameters
         ----------
-        parent_values: None, dict of ints of form {'node_name': int}, 
-                or dict of dicts with entries 'node_name': {'value': int, 'label_encoder': fitted label encoder}
+        parent_values: empty dict or dict of form {'name': SampleValue(...), ...}
             Values of parent nodes to get relevant 1-d submatrix of the (conditional) probability table
         '''
-        if parent_values is None:
+        if parent_values == {}:
             return self.cpt
         else:
             s = [slice(None)] * len(self.cpt.shape)
@@ -321,7 +316,7 @@ class FakeDataBayesianNetwork:
 
         Returns
         -------
-         : tuple
+        tuple
         '''
         expected_cpt_dims = []
         for parent_idx in parent_idxs:
@@ -332,7 +327,6 @@ class FakeDataBayesianNetwork:
         return tuple(expected_cpt_dims)
 
     def calc_adjacency_matrix(self):
-        
         res = np.zeros((len(self.bnrvs), len(self.bnrvs)), dtype=int)
         for i, node_i in enumerate(self.bnrvs):
             for j, node_j in enumerate(self.bnrvs):
@@ -381,7 +375,7 @@ class FakeDataBayesianNetwork:
                 if self.all_parents_sampled(node_name, samples_dict):
                     node = self.get_node(node_name)
                     samples_dict[node_name] = SampleValue(
-                        node.rvs(parent_values=samples_dict, seed=seed)[0], 
+                        node.rvs(size=1, parent_values=samples_dict, seed=seed)[0], 
                         node.label_encoder
                     )
             sample_next_names = self.get_unsampled_node_names(samples_dict)
