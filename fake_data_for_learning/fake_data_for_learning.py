@@ -360,8 +360,16 @@ class FakeDataBayesianNetwork:
 
     def rvs(self, size=1, seed=None):
         r'''Ancestral sampling from the Bayesian network'''
-        res = [self._rv_dict(seed=seed) for _ in range(size)]
+        sample_seeds = FakeDataBayesianNetwork.get_sample_seeds(size, seed)
+        res = [self._rv_dict(seed=sample_seeds[i]) for i in range(size)]
         return pd.DataFrame.from_records(res, index=range(size), columns=self.node_names)
+
+    @staticmethod
+    def get_sample_seeds(size, seed):
+        np.random.seed(seed=seed)
+        # Enlarge support of seed values by scaling size by 100, perhaps unnecessary
+        res = np.random.randint(100*size, size=size)
+        return res
 
     def _rv_dict(self, seed=None):
         r'''Ancestral sampling from the Bayesian network'''
