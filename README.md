@@ -21,8 +21,12 @@ For local development
 
 ### Basic usage
 
+The methods and interfaces for `fake_data_for_learning` largely follow those of [scipy](https://scipy.org), e.g. the method `rvs` to generate random samples, and `pmf` for the probability mass function, with extensions to handle non-integer sample values.
+
 Defining and sampling from (discrete) conditional random variables:
+
 ```python
+import numpy as np
 from fake_data_for_learning import BayesianNodeRV, SampleValue
 
 # Gender -> Y
@@ -36,9 +40,13 @@ pt_YcGender = np.array([
 ])
 Y = BayesianNodeRV('Y', pt_YcGender, parent_names=['Gender'])
 
+# Evaluate probability mass function for given parent values
+Y.pmf(0, parent_values={'Gender': SampleValue('male', label_encoder=Gender.label_encoder)})
+# 0.4
+
 # Sample from Y given Gender
-Y.rvs({'Gender': SampleValue('male', label_encoder=Gender.label_encoder)})
-# array([1])
+Y.rvs({'Gender': SampleValue('male', label_encoder=Gender.label_encoder)}, seed=42)
+# array([0])
 ```
 
 Combine into a Bayesian network
@@ -46,7 +54,7 @@ Combine into a Bayesian network
 ```python
 from fake_data_for_learning import FakeDataBayesianNetwork
 bn = FakeDataBayesianNetwork(Gender, Y)
-bn.rvs(size=5)
+bn.rvs(size=5, seed=42)
 ```
 
 ![docs/graphics/network_sample.png](docs/graphics/network_sample.png)
