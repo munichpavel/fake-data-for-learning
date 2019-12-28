@@ -344,15 +344,38 @@ def test_ancestral_sampling(
         )
     )
 
-    # Test rvs
-    sample = thrifty_bayesian_network.rvs(seed=42)
-    allowed_outcomes = {
-            'age': thrifty_bayesian_network.get_node('age').values,
-            'profession': thrifty_bayesian_network.get_node('profession').values,
-            'thriftiness': thrifty_bayesian_network.get_node('thriftiness').values
-    }
-    for name in thrifty_bayesian_network.node_names:
-        assert sample.loc[0, name] in allowed_outcomes[name]
+def test_rvs_boundary_cases():
+    pt_always_0 = np.array([1., 0.])
+    always_0 = BayesianNodeRV('X0', pt_always_0)
+    always_1c0 = BayesianNodeRV(
+        'X1', 
+        np.array([
+            [0., 1.],
+            [1., 0.],
+        ]), 
+        parent_names=['X0']
+    )
+
+    bn_1c0 = FakeDataBayesianNetwork(always_0, always_1c0)
+    pd.testing.assert_frame_equal(
+        bn_1c0.rvs(size=1), 
+        pd.DataFrame.from_records([{'X0': 0, 'X1': 1}])
+    )
+
+    always_0c0 = BayesianNodeRV(
+        'X1', 
+        np.array([
+            [1., 0.],
+            [0., 1.],
+        ]), 
+        parent_names=['X0']
+    )
+    bn_0c0 = FakeDataBayesianNetwork(always_0, always_0c0)
+    pd.testing.assert_frame_equal(
+        bn_0c0.rvs(size=1), 
+        pd.DataFrame.from_records([{'X0': 0, 'X1': 0}])
+    )
+
 
 def test_pmf():
     X0 = BayesianNodeRV('X0', np.array([0.1, 0.9]))
