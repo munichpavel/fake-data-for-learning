@@ -363,7 +363,7 @@ def test_rvs_counts_vs_pmf():
     )
     pd.testing.assert_series_equal(
         sample_ratios, expected_ratios,
-        check_exact=False, check_less_precise=1
+        check_exact=False, check_less_precise=0
     )
 
     # X0 -> X1 binary
@@ -388,5 +388,5 @@ def test_rvs_counts_vs_pmf():
     )
     pd.testing.assert_series_equal(
         sample_ratios, expected_ratios,
-        check_exact=False, check_less_precise=1
+        check_exact=False, check_less_precise=0
     )
