@@ -265,6 +265,8 @@ class FakeDataBayesianNetwork:
         self.node_names = self._set_node_names()
         self.adjacency_matrix = self.calc_adjacency_matrix()
         self._validate_bn()
+        self.graph = self.get_graph()
+        self.topoligically_ordered_node_names = self.get_topological_ordering()
     
     def _set_node_names(self):
         node_names = []
@@ -342,6 +344,16 @@ class FakeDataBayesianNetwork:
         res = name in l
         return res
 
+    def get_graph(self):
+        g = nx.from_numpy_matrix(self.adjacency_matrix, create_using=nx.DiGraph)
+        # Add node labels
+        labels = {n: self.node_names[n] for n in range(len(self.node_names))}
+        g = nx.relabel_nodes(g, labels)
+        return g
+
+    def get_topological_ordering(self):
+        return list(topological_sort(self.graph))
+
     def rvs(self, size=1):
         r'''Ancestral sampling from the Bayesian network'''
         res = [self.get_ancestral_sample() for _ in range(size)]
@@ -350,19 +362,14 @@ class FakeDataBayesianNetwork:
     def get_ancestral_sample(self):
         r'''Ancestral sampling from the Bayesian network'''
         res = {}
-        topologically_ordered_node_names = self.get_topological_ordering()
-
-        res = self.get_ordered_samples(topologically_ordered_node_names)
+        res = self.get_ordered_samples()
         # Keep only SampleValue value
         res = {k: v.value for (k,v) in res.items()}
         return res
 
-    def get_topological_ordering(self):
-        return topological_sort(self.get_graph())
-
-    def get_ordered_samples(self, ordered_node_names):
+    def get_ordered_samples(self):
         res = {}
-        for node_name in ordered_node_names:
+        for node_name in self.topoligically_ordered_node_names:
             node = self.get_node(node_name)
             res[node_name] = SampleValue(
                 node.rvs(
@@ -414,13 +421,6 @@ class FakeDataBayesianNetwork:
         return child.pmf(sample[i], parent_values=parent_values)
 
     # Visualization
-    def get_graph(self):
-        g = nx.from_numpy_matrix(self.adjacency_matrix, create_using=nx.DiGraph)
-        # Add node labels
-        labels = {n: self.node_names[n] for n in range(len(self.node_names))}
-        g = nx.relabel_nodes(g, labels)
-        return g
-
     def draw_graph(self):
         nx.draw_networkx(self.get_graph(), node_size=800, node_color='#00b4d9')
 

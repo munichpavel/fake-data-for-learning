@@ -351,7 +351,8 @@ def test_rvs_counts_vs_pmf():
     X1 = BayesianNodeRV('X1', np.array([0.5, 0.5]))
 
     bn = FakeDataBayesianNetwork(X0, X1)
-    samples = bn.rvs(size=10000)
+    samples = bn.rvs(size=2500)
+    print(samples.head())
     sample_ratios = samples.groupby(['X0', 'X1']).size() / samples.shape[0]
 
     expected_index = pd.MultiIndex.from_tuples(
@@ -376,7 +377,7 @@ def test_rvs_counts_vs_pmf():
     X1 = BayesianNodeRV('X1', pt_X1cX0, parent_names=['X0'])
 
     bn = FakeDataBayesianNetwork(X0, X1)
-    samples = bn.rvs(size=10000)
+    samples = bn.rvs(size=5000)
     sample_ratios = samples.groupby(['X0', 'X1']).size() / samples.shape[0]
 
     expected_index = pd.MultiIndex.from_tuples(
