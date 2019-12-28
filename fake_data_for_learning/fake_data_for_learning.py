@@ -4,6 +4,8 @@
 import numpy as np
 import pandas as pd
 import networkx as nx
+from networkx.algorithms.dag import topological_sort
+
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import column_or_1d
 
@@ -355,7 +357,7 @@ class FakeDataBayesianNetwork:
     def rvs(self, size=1, seed=None):
         r'''Ancestral sampling from the Bayesian network'''
         sample_seeds = FakeDataBayesianNetwork.get_sample_seeds(size, seed)
-        res = [self._rv_dict(seed=sample_seeds[i]) for i in range(size)]
+        res = [self.get_ancestral_sample(seed=sample_seeds[i]) for i in range(size)]
         return pd.DataFrame.from_records(res, index=range(size), columns=self.node_names)
 
     @staticmethod
@@ -365,89 +367,38 @@ class FakeDataBayesianNetwork:
         res = np.random.randint(100*size, size=size)
         return res
 
-    def _rv_dict(self, seed=None):
+    def get_ancestral_sample(self, seed=None):
         r'''Ancestral sampling from the Bayesian network'''
-        samples_dict = {}
-        sample_next_names = self.eve_node_names
-        
-        while not self.all_nodes_sampled(samples_dict):
-            for node_name in sample_next_names:
-                if self.all_parents_sampled(node_name, samples_dict):
-                    node = self.get_node(node_name)
-                    samples_dict[node_name] = SampleValue(
-                        node.rvs(size=1, parent_values=samples_dict, seed=seed)[0], 
-                        node.label_encoder
-                    )
-            sample_next_names = self.get_unsampled_node_names(samples_dict)
-        # Keep only sample values
-        return {k: v.value for (k,v) in samples_dict.items()}
+        res = {}
+        topologically_ordered_node_names = self.get_topological_ordering()
 
-    def all_nodes_sampled(self, samples_dict):
-        return set(samples_dict.keys()) == set(self.node_names)
+        res = self.get_ordered_samples(topologically_ordered_node_names, seed)
+        # Keep only SampleValue value
+        res = {k: v.value for (k,v) in res.items()}
+        return res
+
+    def get_topological_ordering(self):
+        return topological_sort(self.get_graph())
+
+    def get_ordered_samples(self, ordered_node_names, seed):
+        res = {}
+        for node_name in ordered_node_names:
+            node = self.get_node(node_name)
+            res[node_name] = SampleValue(
+                node.rvs(
+                    size=1,
+                    parent_values=res,
+                    seed=seed
+                )[0],
+                label_encoder=node.label_encoder
+            )
+        return res
 
     def get_node(self, node_name):
         if node_name not in self.node_names:
             raise ValueError('No node defined with name {}'.format(node_name))
         res = self.bnrvs[self.node_names.index(node_name)]
         return res
-
-    def all_parents_sampled(self, node_name, samples_dict):
-        parent_names = self.get_node(node_name).parent_names
-        if parent_names is None:
-            return True
-        sampled_names = set(samples_dict.keys())
-        return set(parent_names).issubset(sampled_names)
-
-    def get_unsampled_node_names(self, samples_dict):
-        r'''
-        Parameters
-        ----------
-        samples_dict : dict
-            Dict of form {'node_name': SampleValue(...)}
-
-        Returns
-        --------
-         : list
-            List of node_names that are not in the samples_dict
-        '''
-        return list(set(self.node_names) - set(samples_dict.keys()))
-
-    def _get_sample_next_names(self, current_names):
-        idx_current_names = np.array([self.node_names.index(name) for name in current_names])
-        idx_next_names = FakeDataBayesianNetwork.get_pure_descendent_idx(idx_current_names, self.adjacency_matrix)
-        sample_next_names = [self.node_names[idx] for idx in idx_next_names]
-        return sample_next_names
-
-    @staticmethod
-    def get_pure_descendent_idx(parent_idx, adjacency_matrix):
-        r'''
-        Return column ids of descendents having only parent_idx as parents.
-        For parent indices i,j, returns k if and only if
-        (
-            adjacency_matrix[i,k] == adjacency_matrix[j,k] == 1
-            and i,j are the only such indices (i.e.
-                adjacency_matrix[i',k] == 1 implies i' \in {i,j})
-        )
-        '''
-        n_vars = adjacency_matrix.shape[0]
-        def mask_from_idx(idx):
-            return np.array([x in idx for x in range(n_vars)])
-
-        parent_mask = mask_from_idx(parent_idx)
-        descendents = FakeDataBayesianNetwork.non_zero_column_idx(adjacency_matrix[parent_idx, :])
-
-        # Keep only descendents having only parent_idx as parents
-        pure_descendents = []
-        for idx in descendents:
-            if not adjacency_matrix[~parent_mask, idx].any():
-                pure_descendents.append(idx)
-        
-        return np.array(pure_descendents)
-        
-    @staticmethod
-    def non_zero_column_idx(X):
-        r'''Return array with column indices of non-0 columns'''
-        return np.where(X.any(axis=0))[0]
 
     def pmf(self, sample):
         r'''
@@ -496,4 +447,3 @@ class FakeDataBayesianNetwork:
 
     def __str__(self):
         return 'FakeDataBayesianNetwork with node_names={})'.format(self.node_names)
-

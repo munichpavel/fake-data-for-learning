@@ -42,50 +42,6 @@ def test_parent_idx():
     assert FakeDataBayesianNetwork.get_parent_idx(0, X) == []
 
 
-def test_get_pure_descendent_idx():
-    # Test with graph
-    # X0        X1--
-    # |         |   |
-    #  -> X2 <--    |
-    #      |        |
-    # X3 <- -> X4 <-
-    X = np.array([
-        [0, 0, 1, 0, 0],
-        [0, 0, 1, 0, 1],
-        [0, 0, 0, 1, 1],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0]
-    ])
-
-    # Pure descendent of X0, X1 is X2
-    np.testing.assert_equal(
-        FakeDataBayesianNetwork.get_pure_descendent_idx(np.array([0,1]), X),
-        np.array([2])
-    )
-    # Pure descendent of X2 is X3
-    np.testing.assert_equal(
-        FakeDataBayesianNetwork.get_pure_descendent_idx(np.array([2]), X),
-        np.array([3])
-    )
-
-    # No pure descendents of X1
-    np.testing.assert_equal(
-        FakeDataBayesianNetwork.get_pure_descendent_idx(np.array([1]), X),
-        np.array([])
-    )
-
-def test_non_zero_column_idx():
-    X = np.array([
-        [0, 0, 1, 0, 0],
-        [0, 0, 1, 0, 1],
-        [0, 0, 0, 1, 1]
-    ])
-    np.testing.assert_equal(
-        FakeDataBayesianNetwork.non_zero_column_idx(X),
-        np.array([2,3,4])
-    )
-
-
 def test_generate_random_cpt():
     cpt = ut.generate_random_cpt(3,2)
 
@@ -280,69 +236,38 @@ def test_adjacency_matrix(
         expected_thrifty_adj
     )
 
-def test_ancestral_sampling(
-    rv_binary_X0,
-    non_binary_bayesian_network,
-    thrifty_bayesian_network
-):
-    # Test eve names, i.e. nodes with no parents
+def test_topological_sort():
+    eve_0 = BayesianNodeRV('E0', np.array([0.2, 0.8]))
+    eve_1 = BayesianNodeRV('E1', np.array([0.7, 0.3]))
+    descendent = BayesianNodeRV(
+        'D',
+        np.array([
+            [
+                [0.3, 0.7],
+                [0.7, 0.3]
+            ],
+            [
+                [0.7, 0.3],
+                [0.7, 0.3]
+            ]
+        ]),
+        parent_names=['E0', 'E1']
+    )
+    further_descendent = BayesianNodeRV('FD', 
+        np.array([
+            [0.4, 0.6],
+            [0.6, 0.4]
+        ]),
+        parent_names=['D']
+    )
+    bn = FakeDataBayesianNetwork(eve_0, eve_1, descendent, further_descendent)
+
+    res = list(bn.get_topological_ordering())
     assert (
-        non_binary_bayesian_network.eve_node_names
-        == ['X0', 'Y1']
+        res == ['E0', 'E1', 'D', 'FD'] or
+        res == ['E1', 'E0', 'D', 'FD']
     )
 
-    assert(
-        thrifty_bayesian_network.eve_node_names
-        == ['age']
-    )
-
-    # Test all nodes sampled method
-    assert not non_binary_bayesian_network.all_nodes_sampled(
-        {
-            'X0': SampleValue(0),
-            'Y0': SampleValue(2)
-        }
-    )
-    assert thrifty_bayesian_network.all_nodes_sampled(
-        {
-            'age': SampleValue(
-                '20', thrifty_bayesian_network.bnrvs[0].label_encoder
-            ),
-            'profession': SampleValue(
-                'unemployed', thrifty_bayesian_network.bnrvs[1].label_encoder
-            ),
-            'thriftiness': SampleValue(1)
-        }
-    )
-
-    # Test get node from node_name
-    assert rv_binary_X0 == non_binary_bayesian_network.get_node('X0')
-
-    with pytest.raises(ValueError):
-        non_binary_bayesian_network.get_node('larry')
-
-    # Test all_parents_sampled
-    assert non_binary_bayesian_network.all_parents_sampled('X0', {})
-    assert non_binary_bayesian_network.all_parents_sampled(
-        'Y1', {'X0': SampleValue(1)}
-    )
-    assert not non_binary_bayesian_network.all_parents_sampled(
-        'X2', {'Y1': SampleValue(2)}
-    )
-
-    # Test get_unsampled_node_names
-    assert (
-        Counter(['Y1', 'X2']) == 
-        Counter(non_binary_bayesian_network.get_unsampled_node_names(
-            {'X0': SampleValue(1)}
-        ))
-    )
-    assert (
-        [] == 
-        non_binary_bayesian_network.get_unsampled_node_names(
-            {'X0': SampleValue(1), 'Y1': SampleValue(2), 'X2': SampleValue(0)}
-        )
-    )
 
 def test_rvs_boundary_cases():
     pt_always_0 = np.array([1., 0.])
@@ -357,6 +282,7 @@ def test_rvs_boundary_cases():
     )
 
     bn_1c0 = FakeDataBayesianNetwork(always_0, always_1c0)
+    print(bn_1c0.rvs(size=1))
     pd.testing.assert_frame_equal(
         bn_1c0.rvs(size=1), 
         pd.DataFrame.from_records([{'X0': 0, 'X1': 1}])
