@@ -455,6 +455,27 @@ class FakeDataBayesianNetwork:
         r'''Return array with column indices of non-0 columns'''
         return np.where(X.any(axis=0))[0]
 
+    def pmf(self, sample):
+        res = 1.
+        for i in range(len(sample)):
+            res *= self._get_ith_pmf(sample, i)
+
+        return res
+
+    def _get_ith_pmf(self, sample, i):
+        child = self.bnrvs[i]
+        parent_idx = self.get_parent_idx(i, self.adjacency_matrix)
+
+        if not parent_idx:
+            parent_values = None
+        else:
+            parent_values = {
+                self.bnrvs[idx].name: SampleValue(sample[idx], label_encoder=self.bnrvs[idx].label_encoder)
+                for idx in parent_idx
+            }
+
+        return child.pmf(sample[i], parent_values=parent_values)
+
     # Visualization
     def get_graph(self):
         g = nx.from_numpy_matrix(self.adjacency_matrix, create_using=nx.DiGraph)

@@ -4,6 +4,7 @@ from itertools import product
 from collections import Counter
 
 import numpy as np
+import pandas as pd
 
 from fake_data_for_learning import BayesianNodeRV
 from fake_data_for_learning import FakeDataBayesianNetwork
@@ -350,3 +351,42 @@ def test_ancestral_sampling(
     }
     for name in thrifty_bayesian_network.node_names:
         assert sample.loc[0, name] in allowed_outcomes[name]
+
+def test_pmf():
+    X0 = BayesianNodeRV('X0', np.array([0.1, 0.9]))
+
+
+    X1cX0 = BayesianNodeRV(
+        'X1', 
+        np.array([
+            [0.2, 0.8],
+            [0.7, 0.3]
+        ]),
+        parent_names = [X0.name]
+    )
+    bn = FakeDataBayesianNetwork(X0, X1cX0)
+    
+    assert pytest.approx(bn.pmf(pd.Series([0,0]))) == pytest.approx(X0.cpt[0] * X1cX0.cpt[0,0])
+    assert pytest.approx(bn.pmf(pd.Series([1,0]))) == pytest.approx(X0.cpt[1] * X1cX0.cpt[1,0])
+    assert pytest.approx(bn.pmf(pd.Series([0,1]))) == pytest.approx(X0.cpt[0] * X1cX0.cpt[0,1])
+    assert pytest.approx(bn.pmf(pd.Series([1,1]))) == pytest.approx(X0.cpt[1] * X1cX0.cpt[1,1])
+
+def test_pmf_non_default_values():
+
+    level = BayesianNodeRV('Level', np.array([0.1, 0.9]), values=['high', 'low'])
+
+    outcome = BayesianNodeRV(
+        'Outcome', 
+        np.array([
+            [0.2, 0.5, 0.3],
+            [0.3, 0.4, 0.3],
+        ]),
+        values=['bad', 'good', 'meltdown'],
+        parent_names=['Level']
+    )
+    bn = FakeDataBayesianNetwork(level, outcome)
+
+    assert pytest.approx(bn.pmf(pd.Series(['high', 'bad']))) == \
+        pytest.approx(level.cpt[0] * outcome.cpt[0,0])
+    assert pytest.approx(bn.pmf(pd.Series(['low', 'meltdown']))) == \
+        pytest.approx(level.cpt[1] * outcome.cpt[1,2])
