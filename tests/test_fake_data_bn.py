@@ -89,6 +89,7 @@ def test_generate_random_cpt():
     # test that entries are non-negative
     assert np.all(cpt >= 0)
 
+
 def test_make_cpt():
     cpt = ut.make_cpt(np.random.rand(3,2,4))
 
@@ -120,11 +121,7 @@ def rv_binary_child_X1(rv_binary_X0):
         parent_names = [rv_binary_X0.name]
     )
 
-
-def test_parents(
-    rv_binary_X0, rv_binary_child_X1  
-):
-    
+def test_parents(rv_binary_X0, rv_binary_child_X1):
     # Test for missing parent variable
     with pytest.raises(ValueError):
         FakeDataBayesianNetwork(rv_binary_child_X1)
