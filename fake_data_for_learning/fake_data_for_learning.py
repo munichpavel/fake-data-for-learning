@@ -165,7 +165,7 @@ class BayesianNodeRV:
         '''
         np.random.seed(seed)
 
-        if self.parent_names is None:
+        if self.parent_names == []:
             return np.random.choice(self.values, size, p=self.cpt)
         else:
             res = np.random.choice(self.values, size, p=self.get_probability_table(parent_values))
