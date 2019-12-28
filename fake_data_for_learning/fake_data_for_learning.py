@@ -264,7 +264,6 @@ class FakeDataBayesianNetwork:
         self.bnrvs = args
         self.node_names = self._set_node_names()
         self.adjacency_matrix = self.calc_adjacency_matrix()
-        self.eve_node_names = self._set_eve_node_names()
         self._validate_bn()
     
     def _set_node_names(self):
@@ -342,17 +341,6 @@ class FakeDataBayesianNetwork:
             return 0
         res = name in l
         return res
-
-    def _set_eve_node_names(self):
-        r'''Find eve nodes as zero columns of adjacency matrix'''
-        eve_idx = self.zero_column_idx(self.adjacency_matrix)
-        res = list(np.array(self.node_names)[eve_idx])
-        return res
-
-    @staticmethod
-    def zero_column_idx(X):
-        r'''Return array with column indices of 0 columns'''
-        return np.where(~X.any(axis=0))[0]
 
     def rvs(self, size=1, seed=None):
         r'''Ancestral sampling from the Bayesian network'''

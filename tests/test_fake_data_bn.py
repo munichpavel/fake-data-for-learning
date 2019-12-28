@@ -21,16 +21,6 @@ def test_name_in_list():
         assert FakeDataBayesianNetwork.name_in_list('alice', ['alice', 'bob']) == 1
 
 
-def test_zero_column_idx():
-    X = np.array([
-        [0, 1, 0],
-        [0, 1, 0],
-        [0, 0, 0]
-    ])
-    expected_idx = np.array([0, 2])
-    np.testing.assert_equal(FakeDataBayesianNetwork.zero_column_idx(X), expected_idx)
-
-
 def test_parent_idx():
     X = np.array([
         [0, 0, 1],
