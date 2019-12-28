@@ -49,12 +49,13 @@ Y.rvs({'Gender': SampleValue('male', label_encoder=Gender.label_encoder)}, seed=
 # array([0])
 ```
 
-Combine into a Bayesian network
+Combine into a Bayesian network. Sample and calculate the probability mass function of each sample.
 
 ```python
 from fake_data_for_learning import FakeDataBayesianNetwork
-bn = FakeDataBayesianNetwork(Gender, Y)
-bn.rvs(size=5, seed=42)
+samples = bn.rvs(size=5)
+# Rounding of pmf is only for display purposes
+samples['pmf'] = samples[['Gender', 'Y']].apply(lambda sample: round(bn.pmf(sample), 3), axis=1)
 ```
 
 ![docs/graphics/network_sample.png](docs/graphics/network_sample.png)

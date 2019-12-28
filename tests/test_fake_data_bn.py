@@ -343,3 +343,50 @@ def test_pmf_non_default_values():
         pytest.approx(level.cpt[0] * outcome.cpt[0,0])
     assert pytest.approx(bn.pmf(pd.Series(['low', 'meltdown']))) == \
         pytest.approx(level.cpt[1] * outcome.cpt[1,2])
+
+
+def test_rvs_counts_vs_pmf():
+    # X0, X1 independent
+    X0 = BayesianNodeRV('X0', np.array([0.5, 0.5]))
+    X1 = BayesianNodeRV('X1', np.array([0.5, 0.5]))
+
+    bn = FakeDataBayesianNetwork(X0, X1)
+    samples = bn.rvs(size=10000)
+    sample_ratios = samples.groupby(['X0', 'X1']).size() / samples.shape[0]
+
+    expected_index = pd.MultiIndex.from_tuples(
+        [(0,0), (0,1), (1,0), (1,1)],
+        names=['X0', 'X1'])
+    expected_ratios = pd.Series(
+        [0.25, 0.25, 0.25, 0.25],
+        index=expected_index
+    )
+    pd.testing.assert_series_equal(
+        sample_ratios, expected_ratios,
+        check_exact=False, check_less_precise=1
+    )
+
+    # X0 -> X1 binary
+    pt_X0 = np.array([0.5, 0.5])
+    X0 = BayesianNodeRV('X0', pt_X0)
+    pt_X1cX0 = np.array([
+            [0.25, 0.75],
+            [0.75, 0.25],
+    ])
+    X1 = BayesianNodeRV('X1', pt_X1cX0, parent_names=['X0'])
+
+    bn = FakeDataBayesianNetwork(X0, X1)
+    samples = bn.rvs(size=10000)
+    sample_ratios = samples.groupby(['X0', 'X1']).size() / samples.shape[0]
+
+    expected_index = pd.MultiIndex.from_tuples(
+        [(0,0), (0,1), (1,0), (1,1)],
+        names=['X0', 'X1'])
+    expected_ratios = pd.Series(
+        [0.125, 0.375, 0.375, 0.125],
+        index=expected_index
+    )
+    pd.testing.assert_series_equal(
+        sample_ratios, expected_ratios,
+        check_exact=False, check_less_precise=1
+    )

@@ -342,25 +342,17 @@ class FakeDataBayesianNetwork:
         res = name in l
         return res
 
-    def rvs(self, size=1, seed=None):
+    def rvs(self, size=1):
         r'''Ancestral sampling from the Bayesian network'''
-        sample_seeds = FakeDataBayesianNetwork.get_sample_seeds(size, seed)
-        res = [self.get_ancestral_sample(seed=sample_seeds[i]) for i in range(size)]
+        res = [self.get_ancestral_sample() for _ in range(size)]
         return pd.DataFrame.from_records(res, index=range(size), columns=self.node_names)
 
-    @staticmethod
-    def get_sample_seeds(size, seed):
-        np.random.seed(seed=seed)
-        # Enlarge support of seed values by scaling size by 100, perhaps unnecessary
-        res = np.random.randint(100*size, size=size)
-        return res
-
-    def get_ancestral_sample(self, seed=None):
+    def get_ancestral_sample(self):
         r'''Ancestral sampling from the Bayesian network'''
         res = {}
         topologically_ordered_node_names = self.get_topological_ordering()
 
-        res = self.get_ordered_samples(topologically_ordered_node_names, seed)
+        res = self.get_ordered_samples(topologically_ordered_node_names)
         # Keep only SampleValue value
         res = {k: v.value for (k,v) in res.items()}
         return res
@@ -368,7 +360,7 @@ class FakeDataBayesianNetwork:
     def get_topological_ordering(self):
         return topological_sort(self.get_graph())
 
-    def get_ordered_samples(self, ordered_node_names, seed):
+    def get_ordered_samples(self, ordered_node_names):
         res = {}
         for node_name in ordered_node_names:
             node = self.get_node(node_name)
@@ -376,7 +368,6 @@ class FakeDataBayesianNetwork:
                 node.rvs(
                     size=1,
                     parent_values=res,
-                    seed=seed
                 )[0],
                 label_encoder=node.label_encoder
             )
