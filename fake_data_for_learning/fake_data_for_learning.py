@@ -456,6 +456,19 @@ class FakeDataBayesianNetwork:
         return np.where(X.any(axis=0))[0]
 
     def pmf(self, sample):
+        r'''
+        Probabilty mass function for bayesian network.
+
+        Parameters
+        ----------
+        sample : pandas.Series
+            Series of sampled values
+
+        Returns
+        -------
+        res : float
+            Probability mass function evaluated at sample
+        '''
         res = 1.
         for i in range(len(sample)):
             res *= self._get_ith_pmf(sample, i)
