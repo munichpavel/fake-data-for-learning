@@ -67,7 +67,7 @@ bn.draw_graph()
 
 ![docs/graphics/graph.png](docs/graphics/graph.png)
 
-See the demo notebook [bayesian-network.ipynb](notebooks/bayesian-network.ipynb) for feature examples.
+See the demo notebook [notebooks/bayesian-network.ipynb](notebooks/bayesian-network.ipynb) for feature examples.
 
 ## Related packages
 
