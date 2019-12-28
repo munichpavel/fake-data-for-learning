@@ -6,6 +6,8 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 
+from numpy.testing import assert_almost_equal
+
 from fake_data_for_learning import BayesianNodeRV
 from fake_data_for_learning import FakeDataBayesianNetwork
 from fake_data_for_learning import SampleValue
@@ -97,14 +99,14 @@ def test_make_cpt():
     # test that final dimensions sum to 1
     ranges = [range(s) for s in cpt.shape[:-1]]
     for r in product(*ranges):
-        np.testing.assert_almost_equal(sum(cpt[r]), 1)
+        assert_almost_equal(sum(cpt[r]), 1)
 
     cpt_from_negative = ut.make_cpt(-np.ones((4,2,3)))
 
     # test that final dimensions sum to 1
     ranges = [range(s) for s in cpt_from_negative.shape[:-1]]
     for r in product(*ranges):
-        np.testing.assert_almost_equal(sum(cpt_from_negative[r]), 1)
+        assert_almost_equal(sum(cpt_from_negative[r]), 1)
 
 
 @pytest.fixture
@@ -366,10 +368,22 @@ def test_pmf():
     )
     bn = FakeDataBayesianNetwork(X0, X1cX0)
     
-    assert pytest.approx(bn.pmf(pd.Series([0,0]))) == pytest.approx(X0.cpt[0] * X1cX0.cpt[0,0])
-    assert pytest.approx(bn.pmf(pd.Series([1,0]))) == pytest.approx(X0.cpt[1] * X1cX0.cpt[1,0])
-    assert pytest.approx(bn.pmf(pd.Series([0,1]))) == pytest.approx(X0.cpt[0] * X1cX0.cpt[0,1])
-    assert pytest.approx(bn.pmf(pd.Series([1,1]))) == pytest.approx(X0.cpt[1] * X1cX0.cpt[1,1])
+    assert_almost_equal(
+        bn.pmf(pd.Series([0,0])),
+        X0.cpt[0] * X1cX0.cpt[0,0]
+    )
+    assert_almost_equal(
+        bn.pmf(pd.Series([1,0])),
+        X0.cpt[1] * X1cX0.cpt[1,0]
+    )
+    assert_almost_equal(
+        bn.pmf(pd.Series([0,1])),
+        X0.cpt[0] * X1cX0.cpt[0,1]
+    )
+    assert_almost_equal(
+        bn.pmf(pd.Series([1,1])),
+        X0.cpt[1] * X1cX0.cpt[1,1]
+    )
 
 def test_pmf_non_default_values():
 
