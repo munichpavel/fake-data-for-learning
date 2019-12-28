@@ -43,7 +43,7 @@ class BayesianNodeRV:
   
         if self.__class__ != other.__class__: 
             return False
-            
+
         return (
             self.name == other.name and
             np.array_equal(self.cpt, other.cpt) and
@@ -117,7 +117,9 @@ class BayesianNodeRV:
                 f'incompatible with allowed values {self.values} and '
                 f'parent names {self.parent_names}'
             )
-        return self.cpt[value]
+
+        res = self._get_pmf(value, parent_values)
+        return res
 
     def _validate_pmf_args(self, value, parent_values):
         checks = []
@@ -135,6 +137,16 @@ class BayesianNodeRV:
 
         res = np.array(checks).all()
         return res
+
+    def _get_pmf(self, value, parent_values):
+        if self.label_encoder is None:
+            idx = value
+        else:
+            idx = self.label_encoder.transform([value])[0]
+        
+        probability_table = self.get_probability_table(parent_values)
+        return probability_table[idx]
+        
         
     def rvs(self, parent_values=None, size=1, seed=None):
         r'''

@@ -39,8 +39,7 @@ def test_init(binary_pt, binary_cpt):
         parent_names=['tertiary-rv']
     )
 
-    # Failing initialization
-    # Parent names must be list
+    # Failing initialization: Parent names must be list
     with pytest.raises(TypeError):
         BayesianNodeRV('X0', binary_cpt, parent_names='X1')
 
@@ -143,6 +142,25 @@ def test_get_pmf(binary_pt):
 
     with pytest.raises(ValueError):
         rv.pmf(1, parent_values={'Z': SampleValue(0)})
+
+def test_get_pmf_w_parents(binary_cpt):
+    rv = BayesianNodeRV('Y', binary_cpt, parent_names=['X'])
+    assert rv.pmf(1, parent_values={'X': SampleValue(0)}) == 0.8
+
+    with pytest.raises(ValueError):
+        rv.pmf(1)
+
+    le = LabelEncoder()
+    le.fit(['alice', 'bob'])
+    assert rv.pmf(
+        1, 
+        parent_values={'X': SampleValue('alice', label_encoder=le)}
+    ) == 0.8
+
+
+    with pytest.raises(ValueError):
+        rv.pmf(1, parent_values={'X': SampleValue('terry', label_encoder=le)})
+    
 
 def test_rvs(binary_pt, binary_cpt):
     rv = BayesianNodeRV('X0', binary_pt)
