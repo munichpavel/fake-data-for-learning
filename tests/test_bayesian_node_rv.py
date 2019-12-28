@@ -125,8 +125,8 @@ def test_get_probability_table(binary_cpt):
     ])
     rv2c01 = BayesianNodeRV('X2', pt_X2cX0X1, parent_names=['X0', 'X1'])
     np.testing.assert_equal(
-        rv2c01.get_probability_table(parent_values={'X0': SampleValue(0), 'X1': SampleValue(0)}),
-        pt_X2cX0X1[0, 0, :]
+        rv2c01.get_probability_table(parent_values={'X0': SampleValue(0), 'X1': SampleValue(1)}),
+        pt_X2cX0X1[0, 1, :]
     )
 
 def test_get_pmf(binary_pt):
@@ -143,9 +143,16 @@ def test_get_pmf(binary_pt):
     with pytest.raises(ValueError):
         rv.pmf(1, parent_values={'Z': SampleValue(0)})
 
-def test_get_pmf_w_parents(binary_cpt):
-    rv = BayesianNodeRV('Y', binary_cpt, parent_names=['X'])
-    assert rv.pmf(1, parent_values={'X': SampleValue(0)}) == 0.8
+def test_get_pmf_w_parents():
+    rv = BayesianNodeRV(
+        'Y',
+        np.array([
+            [0.2, 0.8],
+            [0.7, 0.3]
+        ]), 
+        parent_names=['X']
+    )
+    assert rv.pmf(0, parent_values={'X': SampleValue(1)}) == 0.7
 
     with pytest.raises(ValueError):
         rv.pmf(1)
