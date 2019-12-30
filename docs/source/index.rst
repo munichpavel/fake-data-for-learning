@@ -5,12 +5,16 @@
 
 Welcome to fake-data-for-learning's documentation!
 ==================================================
+.. automodule:: fake_data_for_learning.fake_data_for_learning
+    :members:
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+    
+    README <readme_link>
 
-
+ 
 
 Indices and tables
 ==================
