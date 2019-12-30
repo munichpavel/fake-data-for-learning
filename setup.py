@@ -30,8 +30,8 @@ def find_version(*file_paths):
 
     raise RuntimeError("Unable to find version string.")
 
-with open('README.md') as readme_file:
-    readme = readme_file.read()
+# with open('README.md') as readme_file:
+#     readme = readme_file.read()
 
 install_requirements = [
     'networkx>=2.4',
