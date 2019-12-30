@@ -214,6 +214,12 @@ class BayesianNodeRV:
 
 
 class SampleValue:
+    r'''
+    Container for parent values when sampling from conditional probability distributuions.
+    
+    If the sample values are non-default--i.e. other than natural numbers corresponding to the number of possible variable states--then a label encoder is required.
+    '''
+
     def __init__(self, value, label_encoder=None):
         self.label_encoder = label_encoder
         self.value = self._set_value(value)
