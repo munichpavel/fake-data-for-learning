@@ -6,6 +6,9 @@ For machine learning experimentation, it is useful to have an unlimited supply o
 
 The goal of this package is to make it easy to generate interesting fake data. In the current release, we generate fake data with discrete Bayesian networks (also known as directed graphical models).
 
+* **Website**: [https://munichpavel.github.io/fake-data-for-learning](https://munichpavel.github.io/fake-data-for-learning)
+* **Documentation**: [https://munichpavel.github.io/fake-data-docs/](https://munichpavel.github.io/fake-data-docs/)
+
 ## Quickstart
 
 Install from GitHub
@@ -19,7 +22,7 @@ For local development
 * Adapt the `.env.example` file and save as `.env`
 * Create a virtual environment using ```conda```, ```virtualenv``` or ```virtualenvwrapper``` and add the relevant command to your `.env` file (e.g. if your environment is named ```myenv```, add ```conda activate myenv```, ```source myenv/bin/activate``` or ```workon myenv```)
 
-### Basic usage
+## Basic usage
 
 The methods and interfaces for `fake_data_for_learning` largely follow those of [scipy](https://scipy.org), e.g. the method `rvs` to generate random samples, and `pmf` for the probability mass function, with extensions to handle non-integer sample values.
 
