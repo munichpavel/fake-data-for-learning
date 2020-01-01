@@ -18,4 +18,4 @@ Documentation
 
 To generate your own `Sphinx`_ documentation, you must set the environment variable ``LOCAL_BUILDDIR``.
 
-.. _Sphinx: https://sphinx-doc.org/
+.. _Sphinx: http://sphinx-doc.org/
