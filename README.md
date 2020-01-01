@@ -4,22 +4,13 @@ Interesting fake multivariate data is harder to generate than it should be. Text
 
 For machine learning experimentation, it is useful to have an unlimited supply of interesting fake data, where by interesting I mean that we know certain properties of the data and want to test if the algorithm can pick this up. A great potential source of such data is graphical models.
 
-The goal of this package is to make it easy to generate interesting fake data. We start with discrete Bayesian networks (also known as directed graphical models).
+The goal of this package is to make it easy to generate interesting fake data. In the current release, we generate fake data with discrete Bayesian networks (also known as directed graphical models).
 
-## Quickstart
+* **Website**: [https://munichpavel.github.io/fake-data-for-learning](https://munichpavel.github.io/fake-data-for-learning)
+* **Documentation**: [https://munichpavel.github.io/fake-data-docs/](https://munichpavel.github.io/fake-data-docs/)
+* **Installation**: [docs/source/install.rst](docs/source/install.rst)
 
-Install from GitHub
-
-```pip install git+https://github.com/munichpavel/fake-data-for-learning```
-
-
-For local development
-
-* `git clone` the repository and `cd` into the root directory
-* Adapt the `.env.example` file and save as `.env`
-* Create a virtual environment using ```conda```, ```virtualenv``` or ```virtualenvwrapper``` and add the relevant command to your `.env` file (e.g. if your environment is named ```myenv```, add ```conda activate myenv```, ```source myenv/bin/activate``` or ```workon myenv```)
-
-### Basic usage
+## Basic usage
 
 The methods and interfaces for `fake_data_for_learning` largely follow those of [scipy](https://scipy.org), e.g. the method `rvs` to generate random samples, and `pmf` for the probability mass function, with extensions to handle non-integer sample values.
 
@@ -73,6 +64,8 @@ See the demo notebook [notebooks/bayesian-network.ipynb](notebooks/bayesian-netw
 ## Related packages
 
 This package exists because I became tired of googling for existing implementations of how I wanted to generate fake data. In the development process, however, I found other packages with overlapping functionality (plus other features), notably the [pgmpy](http://pgmpy.org/index.html) class [```BayesianModelSampling```](http://pgmpy.org/sampling.html#bayesian-model-samplers).
+
+
 
 ## Credits
 
