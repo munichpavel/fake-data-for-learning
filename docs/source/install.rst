@@ -10,8 +10,7 @@ Install from GitHub: ``pip install git+https://github.com/munichpavel/fake-data-
 For local development
 
 * ``git clone`` the repository and ``cd`` into the root directory
-* Adapt the `.env.example` file and save as ``.env``
-* Create a virtual environment using `conda`, ``virtualenv`` or ``virtualenvwrapper`` and the included ``requirements.txt`` file
+* Create a virtual environment from the included ``requirements.txt`` file
 
 Documentation
 =============
