@@ -69,3 +69,8 @@ target/
 
 # jupyter
 notebooks/.ipynb_checkpoints/*
+
+# Sphinx
+_build/
+html/
+doctrees/
