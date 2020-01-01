@@ -14,6 +14,10 @@ The goal of this package is to make it easy to generate interesting fake data. W
    api
    install
 
+**Website**: https://munichpavel.github.io/fake-data-for-learning
+
+**GitHub Repository**: https://github.com/munichpavel/fake-data-for-learning
+
 Indices and tables
 ==================
 
