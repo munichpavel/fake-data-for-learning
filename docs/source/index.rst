@@ -12,7 +12,7 @@ The goal of this package is to make it easy to generate interesting fake data. W
    :caption: Contents
 
    api
-
+   install
 
 Indices and tables
 ==================

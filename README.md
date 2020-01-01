@@ -8,19 +8,7 @@ The goal of this package is to make it easy to generate interesting fake data. I
 
 * **Website**: [https://munichpavel.github.io/fake-data-for-learning](https://munichpavel.github.io/fake-data-for-learning)
 * **Documentation**: [https://munichpavel.github.io/fake-data-docs/](https://munichpavel.github.io/fake-data-docs/)
-
-## Quickstart
-
-Install from GitHub
-
-```pip install git+https://github.com/munichpavel/fake-data-for-learning```
-
-
-For local development
-
-* `git clone` the repository and `cd` into the root directory
-* Adapt the `.env.example` file and save as `.env`
-* Create a virtual environment using ```conda```, ```virtualenv``` or ```virtualenvwrapper``` and add the relevant command to your `.env` file (e.g. if your environment is named ```myenv```, add ```conda activate myenv```, ```source myenv/bin/activate``` or ```workon myenv```)
+* **Installation**: [docs/source/install.rst](docs/source/install.rst)
 
 ## Basic usage
 
@@ -76,6 +64,8 @@ See the demo notebook [notebooks/bayesian-network.ipynb](notebooks/bayesian-netw
 ## Related packages
 
 This package exists because I became tired of googling for existing implementations of how I wanted to generate fake data. In the development process, however, I found other packages with overlapping functionality (plus other features), notably the [pgmpy](http://pgmpy.org/index.html) class [```BayesianModelSampling```](http://pgmpy.org/sampling.html#bayesian-model-samplers).
+
+
 
 ## Credits
 
