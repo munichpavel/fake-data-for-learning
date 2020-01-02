@@ -65,7 +65,7 @@ See the demo notebook [notebooks/bayesian-network.ipynb](notebooks/bayesian-netw
 
 This package exists because I became tired of googling for existing implementations of how I wanted to generate fake data. In the development process, however, I found other packages with overlapping functionality (plus other features), notably
 
-* [pgmpy](http://pgmpy.org/index.html) has perhaps the most overlapping functionality, noting that `pgmpy` has a significantly larger scope. One difference is the bookkeeping convention for conditional probability tables: `pgmpy` represents conditional probability tables as 2d matrices, whereas we give each of the $n-1$ conditioned variables its own dimension, resulting in an $n$ dimensional matrix.
+* [pgmpy](http://pgmpy.org/index.html) has perhaps the most overlapping functionality, noting that `pgmpy` has a significantly larger scope. One difference is the bookkeeping convention for conditional probability tables: `pgmpy` represents conditional probability tables as 2d matrices, whereas we give each of the *n*-1 conditioned variables its own dimension, resulting in an *n* dimensional matrix.
 
 * [causalgraphicalmodels](https://github.com/ijmbarr/causalgraphicalmodels)'s class `StructuralCausalModel` allows sampling from Bayesian network where the variables are related as functions of one another, rather than via the conditional probability tables used here.
 
