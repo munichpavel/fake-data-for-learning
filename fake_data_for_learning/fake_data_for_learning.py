@@ -146,14 +146,14 @@ class BayesianNodeRV:
         return probability_table[idx]
         
         
-    def rvs(self, parent_values=None, size=1, seed=None):
+    def rvs(self, parent_values={}, size=1, seed=None):
         r'''
         Generate random variates from the bayesian node.
 
         Parameters
         -----------
-        parent_values : None or dict
-            None if node is an orphan, else a dict with parent values
+        parent_values : dict
+            Dict with parent values, possibly empty
         size : int
             Number of random samples to draw
         seed : int
