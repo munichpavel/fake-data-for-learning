@@ -6,11 +6,13 @@ from itertools import product
 from scipy.special import softmax
 
 
-def generate_random_cpt(*cpt_shape):
+def generate_random_cpt(*cpt_shape, seed=None):
     '''
     Generate non-negative random matrix of given 
     shape such that sums over last dimension are 1
     '''
+    if seed is not None:
+        np.random.seed(seed=seed)
     res = np.random.rand(*cpt_shape)
     res = make_cpt(res)
     return res
