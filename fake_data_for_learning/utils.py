@@ -6,26 +6,31 @@ from itertools import product
 from scipy.special import softmax
 
 
-def generate_random_cpt(*cpt_shape, seed=None):
-    '''
-    Generate non-negative random matrix of given 
-    shape such that sums over last dimension are 1
-    '''
-    if seed is not None:
-        np.random.seed(seed=seed)
-    res = np.random.rand(*cpt_shape)
-    res = make_cpt(res)
-    return res
+class RandomCpt:
 
-def make_cpt(x):
-    '''
-    Convert numpy array x to conditional
-    probability table
-    '''
-    res = x.copy()
-    ranges = [range(s) for s in res.shape[:-1]]
-    for s in product(*ranges):
-        res[s] = softmax(res[s])
+    def __init__(self, *shape):
+        self.shape = shape
 
-    return res
+    def __call__(self, seed=None):
+        '''
+        Generate non-negative random matrix of given 
+        shape such that sums over last dimension are 1
+        '''
+        if seed is not None:
+            np.random.seed(seed=seed)
+        res = np.random.rand(*self.shape)
+        res = self.make_cpt(res)
+        return res
+
+    def make_cpt(self, x):
+        '''
+        Convert numpy array x to conditional
+        probability table
+        '''
+        res = x.copy()
+        ranges = [range(s) for s in res.shape[:-1]]
+        for s in product(*ranges):
+            res[s] = softmax(res[s])
+
+        return res
 
