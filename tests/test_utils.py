@@ -56,6 +56,12 @@ class TestConditionalProbabilityLinearConstraints:
             0
         ) == [3, 4, 5]
 
+    def test_get_lin_equations_matrix(self):
+        A = self.linear_constraints.get_lin_equations_matrix()
+        np.testing.assert_almost_equal(
+            A,
+            np.array([[0., 0., 0., 0., 1., 2.]])
+        )
 
 
 multi_to_linear = ut.MapMultidimIndexToLinear(
