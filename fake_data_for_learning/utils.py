@@ -7,8 +7,8 @@ from scipy.special import softmax
 
 
 class RandomCpt:
-
-    def __init__(self, *shape):
+    """Generate random conditional probability table"""
+    def __init__(self, *shape, linear_constraints=None):
         self.shape = shape
 
     def __call__(self, seed=None):
