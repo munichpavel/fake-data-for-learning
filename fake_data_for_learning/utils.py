@@ -1,7 +1,9 @@
 '''Utility functions for fake_data_for_learning'''
-import numpy as np
 import string
 from itertools import product
+
+import numpy as np
+import pandas as pd
 
 from scipy.special import softmax
 
@@ -35,3 +37,19 @@ class RandomCpt:
 
         return res
 
+
+class MultidimIndexToLinearMapping:
+    """Convert multidimensional array indices to linear and back"""
+    def __init__(self, *multidim_index_values):
+        self.multidim_index_values = multidim_index_values
+        self.mapping = self._set_mapping(multidim_index_values)
+
+    def _set_mapping(self, multidim_index_values):
+        multidim_values = list(product(*multidim_index_values))
+        return pd.Series(range(len(multidim_values)), index=multidim_values)
+
+    def to_linear(self, multi_index_value):
+        return self.mapping[multi_index_value]
+
+    def to_multidim(self, linear_index_value):
+        return self.mapping.index[linear_index_value]

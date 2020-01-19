@@ -25,3 +25,15 @@ def test_make_cpt(test_input):
     ranges = [range(s) for s in cpt.shape[:-1]]
     for r in product(*ranges):
         np.testing.assert_almost_equal(sum(cpt[r]), 1)
+
+
+
+multi_to_linear = ut.MultidimIndexToLinearMapping(['hi', 'low'], range(3))
+
+def test_to_linear():
+    multi_to_linear.to_linear(('hi', 0)) == 0
+    multi_to_linear.to_linear(('low', 2)) == 5
+
+def test_to_multidim():
+    multi_to_linear.to_multidim(0) == ('hi', 0)
+    multi_to_linear.to_multidim(5) == ('low', 2)
