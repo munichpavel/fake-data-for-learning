@@ -52,7 +52,9 @@ class ConditionalProbabilityLinearConstraints:
 
     def _validate(self):
         if self.expect_on in flatten_list([c.keys() for c in self.constraints]):
-            raise ValueError(f"Constraints may not contain the final array dimension {self.expect_on}")
+            msg = f"Final array dimension {self.expect_on} is reserved " \
+                "for expectation, and may not be included in constraints"
+            raise ValueError(msg)
 
     def get_lin_equations_col_indices(self, constraint_index):
         sum_overs = self.get_sum_overs(constraint_index)
@@ -64,17 +66,44 @@ class ConditionalProbabilityLinearConstraints:
         return cols
 
     def get_sum_overs(self, constraint_index):
+        """
+        Parameters
+        ----------
+        constraint_index : int
+            Index of element of self.constraints
+
+        Returns
+        -------
+        : list
+        """
         sum_dims = self.get_sum_dims(constraint_index)
         sum_ranges = {dim: self.map_multidim_to_linear.coords[dim] \
             for dim in sum_dims}
         return list(product_dict(**sum_ranges))
 
     def get_sum_dims(self, constraint_index):
+        """
+        Parameters
+        ----------
+        constraint_index : int
+            Index of element of self.constraints
+
+        Returns
+        -------
+        res : tuple
+            Matrix dimension names not among constraint equations
+        """
         res = tuple([d for d in self.dims if d not in self.constraints[constraint_index].keys()])
         return res
 
     def get_lin_equations_matrix(self):
-        """Generate (linearly indexed) equation matrix from constraints"""
+        """
+        Generate (linearly indexed) equation matrix from constraints
+        
+        Returns
+        -------
+        A : numpy.array
+        """
         A = np.zeros((len(self.constraints), self.map_multidim_to_linear.dim))
         for idx in range(len(self.constraints)):
             cols = self.get_lin_equations_col_indices(idx)
@@ -82,6 +111,17 @@ class ConditionalProbabilityLinearConstraints:
         return A
 
     def get_lin_equations_row(self, constraint_index):
+        """
+        Parameters
+        ----------
+        constraint_index : int
+            Index of element of self.constraints
+
+        Returns
+        -------
+        : list of int
+            Values of self.expect_on in summand
+        """
         sum_overs = self.get_sum_overs(constraint_index)
         return [sum_over[self.expect_on] for sum_over in sum_overs]
 

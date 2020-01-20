@@ -39,27 +39,32 @@ class TestConditionalProbabilityLinearConstraints:
 
     linear_constraints = ut.ConditionalProbabilityLinearConstraints(
         [dict(input='low')],
-        ('input', 'output'),
-        dict(input=['hi', 'low'], output=range(3))
+        ('input', 'more_input', 'output'),
+        dict(input=['hi', 'low'], more_input=range(2), output=range(2))
     )
 
     def test_get_sum_dims(self):
-        self.linear_constraints.get_sum_dims(0) == ('output')
+        self.linear_constraints.get_sum_dims(0) == ('more_input', 'output')
 
     def test_get_sum_overs(self):
-        expected = [dict(output=0), dict(output=1), dict(output=2)]
+        expected = [
+            dict(more_input=0, output=0), 
+            dict(more_input=0, output=1), 
+            dict(more_input=1, output=0),
+            dict(more_input=1, output=1)
+        ]
         assert self.linear_constraints.get_sum_overs(0) == \
             expected
 
     def test_get_lin_eq_col_indices(self):
         assert self.linear_constraints.get_lin_equations_col_indices(
             0
-        ) == [3, 4, 5]
+        ) == [4, 5, 6, 7]
 
     def test_get_lin_equations_matrix(self):
         np.testing.assert_almost_equal(
             self.linear_constraints.get_lin_equations_matrix(),
-            np.array([[0., 0., 0., 0., 1., 2.]])
+            np.array([[0., 0., 0., 0., 0., 1., 0., 1.]])
         )
 
 
