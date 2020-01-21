@@ -27,24 +27,24 @@ def test_make_cpt(test_input):
         np.testing.assert_almost_equal(sum(cpt[r]), 1)
 
 
-class TestConditionalProbabilityLinearConstraints:
+class TestConditionalProbabilityConstrainExpectation:
     
     def test_init(self):
         with pytest.raises(ValueError):
-            ut.ConditionalProbabilityLinearConstraints(
+            ut.ConditionalProbabilityConstrainExpectation(
                 [dict(output=0)],
                 ('input', 'output'),
                 dict(input=['hi', 'low'], output=range(3))
             )
 
-    linear_constraints = ut.ConditionalProbabilityLinearConstraints(
+    constrain_expectation = ut.ConditionalProbabilityConstrainExpectation(
         [dict(input='low')],
         ('input', 'more_input', 'output'),
         dict(input=['hi', 'low'], more_input=range(2), output=range(2))
     )
 
     def test_get_sum_dims(self):
-        self.linear_constraints.get_sum_dims(0) == ('more_input', 'output')
+        self.constrain_expectation.get_sum_dims(0) == ('more_input', 'output')
 
     def test_get_sum_overs(self):
         expected = [
@@ -53,21 +53,21 @@ class TestConditionalProbabilityLinearConstraints:
             dict(more_input=1, output=0),
             dict(more_input=1, output=1)
         ]
-        assert self.linear_constraints.get_sum_overs(0) == \
+        assert self.constrain_expectation.get_sum_overs(0) == \
             expected
 
     def test_get_expect_eq_col_indices(self):
-        assert self.linear_constraints.get_expect_equations_col_indices(
+        assert self.constrain_expectation.get_expect_equations_col_indices(
             0
         ) == [4, 5, 6, 7]
 
     def test_get_expect_equations_matrix(self):
         np.testing.assert_almost_equal(
-            self.linear_constraints.get_expect_equations_matrix(),
+            self.constrain_expectation.get_expect_equations_matrix(),
             np.array([[0., 0., 0., 0., 0., 1., 0., 1.]])
         )
     def test_get_expect_equation_coefficient(self):
-        self.linear_constraints.get_expect_equation_coefficient(0) == \
+        self.constrain_expectation.get_expect_equation_coefficient(0) == \
             pytest.approx(1 / 2.)
 
 

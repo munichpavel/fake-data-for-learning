@@ -38,12 +38,12 @@ class RandomCpt:
 
         return res
 
-class ConditionalProbabilityLinearConstraints:
-    def __init__(self, constraints, dims, coords):
+class ConditionalProbabilityConstrainExpectation:
+    def __init__(self, expect_constraints, dims, coords):
         """
-        Expectation value of last element in dims subject to constraints
+        Expectation value of last element in dims subject to expect_constraints
         """
-        self.constraints = constraints
+        self.expect_constraints = expect_constraints
         self.dims = dims
         self.expect_on_dimension = dims[-1]
         self.map_multidim_to_linear = MapMultidimIndexToLinear(dims, coords)
@@ -51,16 +51,16 @@ class ConditionalProbabilityLinearConstraints:
         self._validate()
 
     def _validate(self):
-        if self.expect_on_dimension in flatten_list([c.keys() for c in self.constraints]):
+        if self.expect_on_dimension in flatten_list([c.keys() for c in self.expect_constraints]):
             msg = f"Final array dimension {self.expect_on_dimension} is reserved " \
-                "for expectation, and may not be included in constraints"
+                "for expectation, and may not be included in expect_constraints"
             raise ValueError(msg)
 
     def get_expect_equations_col_indices(self, constraint_index):
         sum_overs = self.get_sum_overs(constraint_index)
         cols = [self.map_multidim_to_linear.to_linear(
             self.map_multidim_to_linear.get_coord_tuple(
-                {**self.constraints[constraint_index], **sum_over}
+                {**self.expect_constraints[constraint_index], **sum_over}
             )
         ) for sum_over in sum_overs]
         return cols
@@ -70,7 +70,7 @@ class ConditionalProbabilityLinearConstraints:
         Parameters
         ----------
         constraint_index : int
-            Index of element of self.constraints
+            Index of element of self.expect_constraints
 
         Returns
         -------
@@ -86,26 +86,26 @@ class ConditionalProbabilityLinearConstraints:
         Parameters
         ----------
         constraint_index : int
-            Index of element of self.constraints
+            Index of element of self.expect_constraints
 
         Returns
         -------
         res : tuple
             Matrix dimension names not among constraint equations
         """
-        res = tuple([d for d in self.dims if d not in self.constraints[constraint_index].keys()])
+        res = tuple([d for d in self.dims if d not in self.expect_constraints[constraint_index].keys()])
         return res
 
     def get_expect_equations_matrix(self):
         """
-        Generate (linearly indexed) equation matrix from constraints
+        Generate (linearly indexed) equation matrix from expect_constraints
         
         Returns
         -------
         A : numpy.array
         """
-        A = np.zeros((len(self.constraints), self.map_multidim_to_linear.dim))
-        for idx in range(len(self.constraints)):
+        A = np.zeros((len(self.expect_constraints), self.map_multidim_to_linear.dim))
+        for idx in range(len(self.expect_constraints)):
             cols = self.get_expect_equations_col_indices(idx)
             A[idx, cols] = self.get_expect_equations_row(idx)
         return A
@@ -115,7 +115,7 @@ class ConditionalProbabilityLinearConstraints:
         Parameters
         ----------
         constraint_index : int
-            Index of element of self.constraints
+            Index of element of self.expect_constraints
 
         Returns
         -------
@@ -130,7 +130,7 @@ class ConditionalProbabilityLinearConstraints:
         Parameters
         ----------
         constraint_index : int
-            Index of element of self.constraints
+            Index of element of self.expect_constraints
 
         Returns
         -------
