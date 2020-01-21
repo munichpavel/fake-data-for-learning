@@ -66,6 +66,10 @@ class TestConditionalProbabilityLinearConstraints:
             self.linear_constraints.get_lin_equations_matrix(),
             np.array([[0., 0., 0., 0., 0., 1., 0., 1.]])
         )
+    def test_get_lin_equation_coefficient(self):
+        self.linear_constraints.get_lin_equation_coefficient(0) == \
+            pytest.approx(1 / 2.)
+
 
 
 multi_to_linear = ut.MapMultidimIndexToLinear(

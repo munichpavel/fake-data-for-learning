@@ -45,14 +45,14 @@ class ConditionalProbabilityLinearConstraints:
         """
         self.constraints = constraints
         self.dims = dims
-        self.expect_on = dims[-1]
+        self.expect_on_dimension = dims[-1]
         self.map_multidim_to_linear = MapMultidimIndexToLinear(dims, coords)
-        self.coords = self.map_multidim_to_linear.coords
+        self.coords = coords
         self._validate()
 
     def _validate(self):
-        if self.expect_on in flatten_list([c.keys() for c in self.constraints]):
-            msg = f"Final array dimension {self.expect_on} is reserved " \
+        if self.expect_on_dimension in flatten_list([c.keys() for c in self.constraints]):
+            msg = f"Final array dimension {self.expect_on_dimension} is reserved " \
                 "for expectation, and may not be included in constraints"
             raise ValueError(msg)
 
@@ -120,10 +120,30 @@ class ConditionalProbabilityLinearConstraints:
         Returns
         -------
         : list of int
-            Values of self.expect_on in summand
+            Values of self.expect_on_dimension in summand
         """
         sum_overs = self.get_sum_overs(constraint_index)
-        return [sum_over[self.expect_on] for sum_over in sum_overs]
+        return [sum_over[self.expect_on_dimension] for sum_over in sum_overs]
+
+    def get_lin_equation_coefficient(self, constraint_index):
+        """
+        Parameters
+        ----------
+        constraint_index : int
+            Index of element of self.constraints
+
+        Returns
+        -------
+        res : float
+        """
+        sum_dims = self.get_sum_dims(constraint_index)
+        normalization_dims = list(set(sum_dims) - {self.expect_on_dimension})
+        denom = 0
+        for d in normalization_dims:
+            denom *= len(self.coords[d])
+
+        denom = max(1, denom)
+        return 1/denom
 
 
 class MapMultidimIndexToLinear:
