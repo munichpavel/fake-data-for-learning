@@ -70,6 +70,25 @@ class TestConditionalProbabilityConstrainExpectation:
         self.constrain_expectation.get_expect_equation_coefficient(0) == \
             pytest.approx(1 / 2.)
 
+        small_expectation = ut.ConditionalProbabilityConstrainExpectation(
+                [dict(input=0)],
+                ('input', 'output'),
+                dict(input=['hi', 'low'], output=range(3))
+            )
+        small_expectation.get_expect_equation_coefficient(0) == pytest.approx(1.)
+
+    # def test_get_probability_constraint_matrix(self):
+    #     np.testing.assert_array_almost_equal(
+    #         self.get_probability_constrain_matrix,
+    #         np.array([
+    #             [1, 0, 0, 1, 1, 0, 0, 0],
+    #             [0, 0, 0, 1, 0, 0, 0, 1],
+    #             [0, 0, 0, 1, 0, 0, 0, 1],
+    #             [0, 0, 0, 1, 0, 0, 0, 1],
+    #         ])
+    #     )
+
+
 
 
 multi_to_linear = ut.MapMultidimIndexToLinear(
@@ -83,6 +102,7 @@ def test_dim():
 
 def test_to_linear():
     multi_to_linear.to_linear(('hi', 0)) == 0
+    multi_to_linear.to_linear(('hi', 1)) == 1
     multi_to_linear.to_linear(('low', 2)) == 5
 
 def test_to_multidim():
