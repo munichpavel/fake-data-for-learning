@@ -56,18 +56,18 @@ class TestConditionalProbabilityLinearConstraints:
         assert self.linear_constraints.get_sum_overs(0) == \
             expected
 
-    def test_get_lin_eq_col_indices(self):
-        assert self.linear_constraints.get_lin_equations_col_indices(
+    def test_get_expect_eq_col_indices(self):
+        assert self.linear_constraints.get_expect_equations_col_indices(
             0
         ) == [4, 5, 6, 7]
 
-    def test_get_lin_equations_matrix(self):
+    def test_get_expect_equations_matrix(self):
         np.testing.assert_almost_equal(
-            self.linear_constraints.get_lin_equations_matrix(),
+            self.linear_constraints.get_expect_equations_matrix(),
             np.array([[0., 0., 0., 0., 0., 1., 0., 1.]])
         )
-    def test_get_lin_equation_coefficient(self):
-        self.linear_constraints.get_lin_equation_coefficient(0) == \
+    def test_get_expect_equation_coefficient(self):
+        self.linear_constraints.get_expect_equation_coefficient(0) == \
             pytest.approx(1 / 2.)
 
 

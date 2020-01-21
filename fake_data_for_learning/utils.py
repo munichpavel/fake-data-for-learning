@@ -56,7 +56,7 @@ class ConditionalProbabilityLinearConstraints:
                 "for expectation, and may not be included in constraints"
             raise ValueError(msg)
 
-    def get_lin_equations_col_indices(self, constraint_index):
+    def get_expect_equations_col_indices(self, constraint_index):
         sum_overs = self.get_sum_overs(constraint_index)
         cols = [self.map_multidim_to_linear.to_linear(
             self.map_multidim_to_linear.get_coord_tuple(
@@ -96,7 +96,7 @@ class ConditionalProbabilityLinearConstraints:
         res = tuple([d for d in self.dims if d not in self.constraints[constraint_index].keys()])
         return res
 
-    def get_lin_equations_matrix(self):
+    def get_expect_equations_matrix(self):
         """
         Generate (linearly indexed) equation matrix from constraints
         
@@ -106,11 +106,11 @@ class ConditionalProbabilityLinearConstraints:
         """
         A = np.zeros((len(self.constraints), self.map_multidim_to_linear.dim))
         for idx in range(len(self.constraints)):
-            cols = self.get_lin_equations_col_indices(idx)
-            A[idx, cols] = self.get_lin_equations_row(idx)
+            cols = self.get_expect_equations_col_indices(idx)
+            A[idx, cols] = self.get_expect_equations_row(idx)
         return A
 
-    def get_lin_equations_row(self, constraint_index):
+    def get_expect_equations_row(self, constraint_index):
         """
         Parameters
         ----------
@@ -125,7 +125,7 @@ class ConditionalProbabilityLinearConstraints:
         sum_overs = self.get_sum_overs(constraint_index)
         return [sum_over[self.expect_on_dimension] for sum_over in sum_overs]
 
-    def get_lin_equation_coefficient(self, constraint_index):
+    def get_expect_equation_coefficient(self, constraint_index):
         """
         Parameters
         ----------
