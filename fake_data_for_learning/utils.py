@@ -141,10 +141,26 @@ class ConditionalProbabilityConstrainExpectation:
         denom = max(1, denom)
         return 1 / denom
 
+    def get_total_probability_constraint_matrix(self):
+        n_probability_constraints = np.prod(
+            [len(self.coords[d]) for d in self.dims if d != self.expect_on_dimension]
+        )
+
+        probability_constraints = self.get_total_probability_constraints()
+        A = np.zeros((
+            n_probability_constraints,
+            self.map_multidim_to_linear.dim 
+        ))
+        for idx, constraint in enumerate(probability_constraints):
+            cols = self.get_expect_equations_col_indices(constraint)
+            A[idx, cols] = self.get_expect_equations_row(constraint, 0)
+
+        return A
+
     def get_total_probability_constraints(self):
         """
         Get iterator of constraints for conditional probabilities summing to 1.
-        
+
         Returns
         -------
         : itertools.product
