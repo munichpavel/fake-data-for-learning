@@ -94,7 +94,7 @@ class ConditionalProbabilityConstrainExpectation:
         res = tuple([d for d in self.dims if d not in constraint.keys()])
         return res
 
-    def get_expect_equations_matrix(self):
+    def get_expect_equations_matrix(self, moment):
         """
         Generate (linearly indexed) equation matrix from expect_constraints
         
@@ -105,10 +105,10 @@ class ConditionalProbabilityConstrainExpectation:
         A = np.zeros((len(self.expect_constraints), self.map_multidim_to_linear.dim))
         for idx, constraint in enumerate(self.expect_constraints):
             cols = self.get_expect_equations_col_indices(constraint)
-            A[idx, cols] = self.get_expect_equations_row(constraint)
+            A[idx, cols] = self.get_expect_equations_row(constraint, moment)
         return A
 
-    def get_expect_equations_row(self, constraint):
+    def get_expect_equations_row(self, constraint, moment):
         """
         Parameters
         ----------
@@ -120,7 +120,7 @@ class ConditionalProbabilityConstrainExpectation:
             Values of self.expect_on_dimension in summand
         """
         sum_overs = self.get_sum_overs(constraint)
-        return [sum_over[self.expect_on_dimension] for sum_over in sum_overs]
+        return [sum_over[self.expect_on_dimension] ** moment for sum_over in sum_overs]
 
     def get_expect_equation_coefficient(self, constraint):
         """

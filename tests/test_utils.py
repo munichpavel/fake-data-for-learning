@@ -65,8 +65,15 @@ class TestConditionalProbabilityConstrainExpectation:
         ) == [4, 5, 6, 7]
 
     def test_get_expect_equations_matrix(self):
+        # Oth moment expectation
         np.testing.assert_almost_equal(
-            self.constrain_expectation.get_expect_equations_matrix(),
+            self.constrain_expectation.get_expect_equations_matrix(0),
+            np.array([[0., 0., 0., 0., 1., 1., 1., 1.]])
+        )
+
+        # First moment expectation
+        np.testing.assert_almost_equal(
+            self.constrain_expectation.get_expect_equations_matrix(1),
             np.array([[0., 0., 0., 0., 0., 1., 0., 1.]])
         )
     def test_get_expect_equation_coefficient(self):
