@@ -56,44 +56,42 @@ class ConditionalProbabilityConstrainExpectation:
                 "for expectation, and may not be included in expect_constraints"
             raise ValueError(msg)
 
-    def get_expect_equations_col_indices(self, constraint_index):
-        sum_overs = self.get_sum_overs(constraint_index)
+    def get_expect_equations_col_indices(self, constraint):
+        sum_overs = self.get_sum_overs(constraint)
         cols = [self.map_multidim_to_linear.to_linear(
             self.map_multidim_to_linear.get_coord_tuple(
-                {**self.expect_constraints[constraint_index], **sum_over}
+                {**constraint, **sum_over}
             )
         ) for sum_over in sum_overs]
         return cols
 
-    def get_sum_overs(self, constraint_index):
+    def get_sum_overs(self, constraint):
         """
         Parameters
         ----------
-        constraint_index : int
-            Index of element of self.expect_constraints
+        constraint : dict
 
         Returns
         -------
         : list
         """
-        sum_dims = self.get_sum_dims(constraint_index)
+        sum_dims = self.get_sum_dims(constraint)
         sum_ranges = {dim: self.map_multidim_to_linear.coords[dim] \
             for dim in sum_dims}
         return list(product_dict(**sum_ranges))
 
-    def get_sum_dims(self, constraint_index):
+    def get_sum_dims(self, constraint):
         """
         Parameters
         ----------
-        constraint_index : int
-            Index of element of self.expect_constraints
+        constraint : dict
 
         Returns
         -------
         res : tuple
             Matrix dimension names not among constraint equations
         """
-        res = tuple([d for d in self.dims if d not in self.expect_constraints[constraint_index].keys()])
+        res = tuple([d for d in self.dims if d not in constraint.keys()])
         return res
 
     def get_expect_equations_matrix(self):
@@ -105,45 +103,43 @@ class ConditionalProbabilityConstrainExpectation:
         A : numpy.array
         """
         A = np.zeros((len(self.expect_constraints), self.map_multidim_to_linear.dim))
-        for idx in range(len(self.expect_constraints)):
-            cols = self.get_expect_equations_col_indices(idx)
-            A[idx, cols] = self.get_expect_equations_row(idx)
+        for idx, constraint in enumerate(self.expect_constraints):
+            cols = self.get_expect_equations_col_indices(constraint)
+            A[idx, cols] = self.get_expect_equations_row(constraint)
         return A
 
-    def get_expect_equations_row(self, constraint_index):
+    def get_expect_equations_row(self, constraint):
         """
         Parameters
         ----------
-        constraint_index : int
-            Index of element of self.expect_constraints
+        constraint : dict
 
         Returns
         -------
         : list of int
             Values of self.expect_on_dimension in summand
         """
-        sum_overs = self.get_sum_overs(constraint_index)
+        sum_overs = self.get_sum_overs(constraint)
         return [sum_over[self.expect_on_dimension] for sum_over in sum_overs]
 
-    def get_expect_equation_coefficient(self, constraint_index):
+    def get_expect_equation_coefficient(self, constraint):
         """
         Parameters
         ----------
-        constraint_index : int
-            Index of element of self.expect_constraints
+        constraint_index : dict
 
         Returns
         -------
         res : float
         """
-        sum_dims = self.get_sum_dims(constraint_index)
+        sum_dims = self.get_sum_dims(constraint)
         normalization_dims = list(set(sum_dims) - {self.expect_on_dimension})
         denom = 0
         for d in normalization_dims:
             denom *= len(self.coords[d])
 
         denom = max(1, denom)
-        return 1/denom
+        return 1 / denom
 
 
 class MapMultidimIndexToLinear:

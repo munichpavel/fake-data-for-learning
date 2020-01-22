@@ -44,7 +44,9 @@ class TestConditionalProbabilityConstrainExpectation:
     )
 
     def test_get_sum_dims(self):
-        self.constrain_expectation.get_sum_dims(0) == ('more_input', 'output')
+        self.constrain_expectation.get_sum_dims(
+            dict(input='low')
+        ) == ('more_input', 'output')
 
     def test_get_sum_overs(self):
         expected = [
@@ -53,12 +55,13 @@ class TestConditionalProbabilityConstrainExpectation:
             dict(more_input=1, output=0),
             dict(more_input=1, output=1)
         ]
-        assert self.constrain_expectation.get_sum_overs(0) == \
-            expected
+        assert self.constrain_expectation.get_sum_overs(
+            dict(input='low')
+        ) == expected
 
     def test_get_expect_eq_col_indices(self):
         assert self.constrain_expectation.get_expect_equations_col_indices(
-            0
+            dict(input='low')
         ) == [4, 5, 6, 7]
 
     def test_get_expect_equations_matrix(self):
@@ -67,28 +70,18 @@ class TestConditionalProbabilityConstrainExpectation:
             np.array([[0., 0., 0., 0., 0., 1., 0., 1.]])
         )
     def test_get_expect_equation_coefficient(self):
-        self.constrain_expectation.get_expect_equation_coefficient(0) == \
-            pytest.approx(1 / 2.)
+        self.constrain_expectation.get_expect_equation_coefficient(
+            dict(input='low')
+        ) == pytest.approx(1 / 2.)
 
         small_expectation = ut.ConditionalProbabilityConstrainExpectation(
                 [dict(input=0)],
                 ('input', 'output'),
                 dict(input=['hi', 'low'], output=range(3))
             )
-        small_expectation.get_expect_equation_coefficient(0) == pytest.approx(1.)
-
-    # def test_get_probability_constraint_matrix(self):
-    #     np.testing.assert_array_almost_equal(
-    #         self.get_probability_constrain_matrix,
-    #         np.array([
-    #             [1, 0, 0, 1, 1, 0, 0, 0],
-    #             [0, 0, 0, 1, 0, 0, 0, 1],
-    #             [0, 0, 0, 1, 0, 0, 0, 1],
-    #             [0, 0, 0, 1, 0, 0, 0, 1],
-    #         ])
-    #     )
-
-
+        small_expectation.get_expect_equation_coefficient(
+            dict(input='low')
+        ) == pytest.approx(1.)
 
 
 multi_to_linear = ut.MapMultidimIndexToLinear(
