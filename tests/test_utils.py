@@ -89,6 +89,14 @@ class TestConditionalProbabilityConstrainExpectation:
         small_expectation.get_expect_equation_coefficient(
             dict(input='low')
         ) == pytest.approx(1.)
+    def test_get_total_probability_constriants(self):
+        assert list(self.constrain_expectation.get_total_probability_constraints()) == \
+            [
+                dict(input='hi', more_input=0),
+                dict(input='hi', more_input=1),
+                dict(input='low', more_input=0),
+                dict(input='low', more_input=1)
+            ]
 
 
 multi_to_linear = ut.MapMultidimIndexToLinear(

@@ -141,6 +141,19 @@ class ConditionalProbabilityConstrainExpectation:
         denom = max(1, denom)
         return 1 / denom
 
+    def get_total_probability_constraints(self):
+        """
+        Get iterator of constraints for conditional probabilities summing to 1.
+        
+        Returns
+        -------
+        : itertools.product
+        """
+        res = self.coords.copy()
+        res.pop(self.expect_on_dimension)
+        
+        return product_dict(**res)
+
 
 class MapMultidimIndexToLinear:
     """Convert multidimensional array indices to linear and back"""
