@@ -110,6 +110,31 @@ class TestConditionalProbabilityConstrainExpectation:
             ])
         )
 
+    def test_get_half_plane_rep_from_equations(self):
+        A = np.array([
+            [1., 0.],
+            [1., 1.]
+        ])
+        b = np.array([1, -1])
+
+        Ap, bp = ut.ConditionalProbabilityConstrainExpectation.get_half_plane_rep_from_equations(A, b)
+
+        np.testing.assert_array_almost_equal(
+            Ap,
+            np.array([
+                [1., 0.],
+                [1., 1.], 
+                [-1., 0.],
+                [-1., -1.], 
+            ])
+        )
+
+        np.testing.assert_array_almost_equal(
+            bp,
+            np.array([1, -1, -1, 1])
+        )
+
+
 multi_to_linear = ut.MapMultidimIndexToLinear(
     ('input', 'output'),
     dict(input=['hi', 'low'], output=range(3))

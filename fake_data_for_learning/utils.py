@@ -170,6 +170,26 @@ class ConditionalProbabilityConstrainExpectation:
         
         return product_dict(**res)
 
+    @staticmethod
+    def get_half_plane_rep_from_equations(A, b):
+        """
+        Convert equations of the form Ax = b to inequalties of the form
+        A' x' <= b'
+
+        Parameters
+        ----------
+        A : numpy.array of shape (m,n)
+        b : numpy.array of shape (n,)
+
+        Returns
+        -------
+        Ap : numpy.array of shape (2m, n)
+        bp : numpy.array of shape (2n,)
+        """
+        Ap = np.concatenate([A, -A], axis=0)
+        bp = np.concatenate([b, -b], axis=0)
+        return (Ap, bp)
+
 
 class MapMultidimIndexToLinear:
     """Convert multidimensional array indices to linear and back"""
