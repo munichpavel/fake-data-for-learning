@@ -44,6 +44,7 @@ class ConditionalProbabilityConstrainExpectation:
         Expectation value of last element in dims subject to expect_constraints
         """
         self.expect_constraints = expect_constraints
+        self.expect_constraint_values = [42.]
         self.dims = dims
         self.expect_on_dimension = dims[-1]
         self.map_multidim_to_linear = MapMultidimIndexToLinear(dims, coords)
@@ -189,6 +190,23 @@ class ConditionalProbabilityConstrainExpectation:
         Ap = np.concatenate([A, -A], axis=0)
         bp = np.concatenate([b, -b], axis=0)
         return (Ap, bp)
+
+
+    # def get_probability_polytope_half_plane_rep(self):
+    #     A_expect_constraints = self.get_expect_equations_matrix(moment=1)
+    #     b_expect_constraints = self.expect_constraint_vals
+
+    #     A_total_probability_constraints = self.get_total_probability_constraint_matrix()
+
+    #     b_total_probability_constraints = np.array(
+    #         # TODO refactor
+    #         A_total_probability_constraints.shape[0] * [1.]
+    #     )
+
+    #     return np.concat([A_expect_constraints, A_total_probability_constraints], axis=0), \
+    #         np.concat([b_expect_constraints, b_total_probability_constraints], axis=0)
+
+
 
 
 class MapMultidimIndexToLinear:

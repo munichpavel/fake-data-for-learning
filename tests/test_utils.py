@@ -135,31 +135,32 @@ class TestConditionalProbabilityConstrainExpectation:
         )
 
 
-multi_to_linear = ut.MapMultidimIndexToLinear(
-    ('input', 'output'),
-    dict(input=['hi', 'low'], output=range(3))
-)
+class TestMultidimIndexToLinear:
+    multi_to_linear = ut.MapMultidimIndexToLinear(
+        ('input', 'output'),
+        dict(input=['hi', 'low'], output=range(3))
+    )
 
-def test_dim():
-    print(multi_to_linear.dim)
-    assert multi_to_linear.dim == 6
+    def test_dim(self):
+        print(self.multi_to_linear.dim)
+        assert self.multi_to_linear.dim == 6
 
-def test_to_linear():
-    multi_to_linear.to_linear(('hi', 0)) == 0
-    multi_to_linear.to_linear(('hi', 1)) == 1
-    multi_to_linear.to_linear(('low', 2)) == 5
+    def test_to_linear(self):
+        self.multi_to_linear.to_linear(('hi', 0)) == 0
+        self.multi_to_linear.to_linear(('hi', 1)) == 1
+        self.multi_to_linear.to_linear(('low', 2)) == 5
 
-def test_to_multidim():
-    multi_to_linear.to_multidim(0) == ('hi', 0)
-    multi_to_linear.to_multidim(5) == ('low', 2)
+    def test_to_multidim(self):
+        self.multi_to_linear.to_multidim(0) == ('hi', 0)
+        self.multi_to_linear.to_multidim(5) == ('low', 2)
 
-@pytest.mark.parametrize(
-    "coord_index_dict,expected", 
-    [   
-        (dict(output=0, input='hi'), ('hi', 0)),
-        (dict(output=2, input='low'), ('low', 2))
-    ]
-)
-def test_get_coord_tuple(coord_index_dict, expected):
-    assert multi_to_linear.get_coord_tuple(coord_index_dict) == expected
+    @pytest.mark.parametrize(
+        "coord_index_dict,expected", 
+        [   
+            (dict(output=0, input='hi'), ('hi', 0)),
+            (dict(output=2, input='low'), ('low', 2))
+        ]
+    )
+    def test_get_coord_tuple(self, coord_index_dict, expected):
+        assert self.multi_to_linear.get_coord_tuple(coord_index_dict) == expected
 
