@@ -32,13 +32,13 @@ class TestConditionalProbabilityConstrainExpectation:
     def test_init(self):
         with pytest.raises(ValueError):
             ut.ConditionalProbabilityConstrainExpectation(
-                [dict(output=0)],
+                [ut.ExpectationConstraint(equation=dict(output=0), value=42)],
                 ('input', 'output'),
                 dict(input=['hi', 'low'], output=range(3))
             )
 
     constrain_expectation = ut.ConditionalProbabilityConstrainExpectation(
-        [dict(input='low')],
+        [ut.ExpectationConstraint(equation=dict(input='low'), value=42)],
         ('input', 'more_input', 'output'),
         dict(input=['hi', 'low'], more_input=range(2), output=range(2))
     )
@@ -82,7 +82,7 @@ class TestConditionalProbabilityConstrainExpectation:
         ) == pytest.approx(1 / 2.)
 
         small_expectation = ut.ConditionalProbabilityConstrainExpectation(
-                [dict(input=0)],
+                [ut.ExpectationConstraint(equation=dict(input=0), value=3)],
                 ('input', 'output'),
                 dict(input=['hi', 'low'], output=range(3))
             )
@@ -91,7 +91,7 @@ class TestConditionalProbabilityConstrainExpectation:
         ) == pytest.approx(1.)
 
     def test_get_total_probability_constriants(self):
-        assert list(self.constrain_expectation.get_total_probability_constraints()) == \
+        assert list(self.constrain_expectation.get_total_probability_constraint_equations()) == \
             [
                 dict(input='hi', more_input=0),
                 dict(input='hi', more_input=1),

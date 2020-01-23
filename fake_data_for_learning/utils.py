@@ -1,7 +1,7 @@
 '''Utility functions for fake_data_for_learning'''
 import string
 from itertools import product
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 
 import numpy as np
 import pandas as pd
@@ -38,13 +38,31 @@ class RandomCpt:
 
         return res
 
+
+ExpectationConstraint = namedtuple('ExpectationConstraint', ['equation', 'value'])
+
+
 class ConditionalProbabilityConstrainExpectation:
+    """
+    
+    Parameters
+    ----------
+     expect_constraints : list of utils.ExpectationConstraint
+        Expectation value constraints as list of namedtuples with keys
+        `equation` and `value`
+
+     dims : iterable of strings
+        Dimension names
+
+     coords : dict
+        Dict with keys dimension names and values dimension values
+    
+    """
     def __init__(self, expect_constraints, dims, coords):
         """
         Expectation value of last element in dims subject to expect_constraints
         """
         self.expect_constraints = expect_constraints
-        self.expect_constraint_values = [42.]
         self.dims = dims
         self.expect_on_dimension = dims[-1]
         self.map_multidim_to_linear = MapMultidimIndexToLinear(dims, coords)
@@ -52,47 +70,47 @@ class ConditionalProbabilityConstrainExpectation:
         self._validate()
 
     def _validate(self):
-        if self.expect_on_dimension in flatten_list([c.keys() for c in self.expect_constraints]):
+        if self.expect_on_dimension in flatten_list([c.equation.keys() for c in self.expect_constraints]):
             msg = f"Final array dimension {self.expect_on_dimension} is reserved " \
                 "for expectation, and may not be included in expect_constraints"
             raise ValueError(msg)
 
-    def get_expect_equations_col_indices(self, constraint):
-        sum_overs = self.get_sum_overs(constraint)
+    def get_expect_equations_col_indices(self, constraint_equation):
+        sum_overs = self.get_sum_overs(constraint_equation)
         cols = [self.map_multidim_to_linear.to_linear(
             self.map_multidim_to_linear.get_coord_tuple(
-                {**constraint, **sum_over}
+                {**constraint_equation, **sum_over}
             )
         ) for sum_over in sum_overs]
         return cols
 
-    def get_sum_overs(self, constraint):
+    def get_sum_overs(self, constraint_equation):
         """
         Parameters
         ----------
-        constraint : dict
+        constraint_equation : dict
 
         Returns
         -------
         : list
         """
-        sum_dims = self.get_sum_dims(constraint)
+        sum_dims = self.get_sum_dims(constraint_equation)
         sum_ranges = {dim: self.map_multidim_to_linear.coords[dim] \
             for dim in sum_dims}
         return list(product_dict(**sum_ranges))
 
-    def get_sum_dims(self, constraint):
+    def get_sum_dims(self, constraint_equation):
         """
         Parameters
         ----------
-        constraint : dict
+        constraint_equation : dict
 
         Returns
         -------
         res : tuple
             Matrix dimension names not among constraint equations
         """
-        res = tuple([d for d in self.dims if d not in constraint.keys()])
+        res = tuple([d for d in self.dims if d not in constraint_equation.keys()])
         return res
 
     def get_expect_equations_matrix(self, moment):
@@ -105,35 +123,35 @@ class ConditionalProbabilityConstrainExpectation:
         """
         A = np.zeros((len(self.expect_constraints), self.map_multidim_to_linear.dim))
         for idx, constraint in enumerate(self.expect_constraints):
-            cols = self.get_expect_equations_col_indices(constraint)
-            A[idx, cols] = self.get_expect_equations_row(constraint, moment)
+            cols = self.get_expect_equations_col_indices(constraint.equation)
+            A[idx, cols] = self.get_expect_equations_row(constraint.equation, moment)
         return A
 
-    def get_expect_equations_row(self, constraint, moment):
+    def get_expect_equations_row(self, constraint_equation, moment):
         """
         Parameters
         ----------
-        constraint : dict
+        constraint_equation : dict
 
         Returns
         -------
         : list of int
             Values of self.expect_on_dimension in summand
         """
-        sum_overs = self.get_sum_overs(constraint)
+        sum_overs = self.get_sum_overs(constraint_equation)
         return [sum_over[self.expect_on_dimension] ** moment for sum_over in sum_overs]
 
-    def get_expect_equation_coefficient(self, constraint):
+    def get_expect_equation_coefficient(self, constraint_equation):
         """
         Parameters
         ----------
-        constraint_index : dict
+        constraint_equation : dict
 
         Returns
         -------
         res : float
         """
-        sum_dims = self.get_sum_dims(constraint)
+        sum_dims = self.get_sum_dims(constraint_equation)
         normalization_dims = list(set(sum_dims) - {self.expect_on_dimension})
         denom = 0
         for d in normalization_dims:
@@ -147,18 +165,18 @@ class ConditionalProbabilityConstrainExpectation:
             [len(self.coords[d]) for d in self.dims if d != self.expect_on_dimension]
         )
 
-        probability_constraints = self.get_total_probability_constraints()
+        probability_constraint_equations = self.get_total_probability_constraint_equations()
         A = np.zeros((
             n_probability_constraints,
             self.map_multidim_to_linear.dim 
         ))
-        for idx, constraint in enumerate(probability_constraints):
-            cols = self.get_expect_equations_col_indices(constraint)
-            A[idx, cols] = self.get_expect_equations_row(constraint, 0)
+        for idx, equation in enumerate(probability_constraint_equations):
+            cols = self.get_expect_equations_col_indices(equation)
+            A[idx, cols] = self.get_expect_equations_row(equation, 0)
 
         return A
 
-    def get_total_probability_constraints(self):
+    def get_total_probability_constraint_equations(self):
         """
         Get iterator of constraints for conditional probabilities summing to 1.
 
@@ -190,21 +208,6 @@ class ConditionalProbabilityConstrainExpectation:
         Ap = np.concatenate([A, -A], axis=0)
         bp = np.concatenate([b, -b], axis=0)
         return (Ap, bp)
-
-
-    # def get_probability_polytope_half_plane_rep(self):
-    #     A_expect_constraints = self.get_expect_equations_matrix(moment=1)
-    #     b_expect_constraints = self.expect_constraint_vals
-
-    #     A_total_probability_constraints = self.get_total_probability_constraint_matrix()
-
-    #     b_total_probability_constraints = np.array(
-    #         # TODO refactor
-    #         A_total_probability_constraints.shape[0] * [1.]
-    #     )
-
-    #     return np.concat([A_expect_constraints, A_total_probability_constraints], axis=0), \
-    #         np.concat([b_expect_constraints, b_total_probability_constraints], axis=0)
 
 
 
