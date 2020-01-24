@@ -75,6 +75,20 @@ class ConditionalProbabilityConstrainExpectation:
                 "for expectation, and may not be included in expect_constraints"
             raise ValueError(msg)
 
+    def get_all_half_planes(self):
+        """
+        Get half plane representations of polytope defined by 
+            * the given expectation value constraints and 
+            * the probability polytope half planes due to 
+                + probabilities summing to one and 
+                + probabilities lying in [0, 1]
+
+        Returns
+        -------
+        A, b : tuple of np.array
+        """
+        A_total_prob = self.get_tot
+
     def get_expect_equations_col_indices(self, constraint_equation):
         sum_overs = self.get_sum_overs(constraint_equation)
         cols = [self.map_multidim_to_linear.to_linear(
@@ -198,8 +212,12 @@ class ConditionalProbabilityConstrainExpectation:
         -------
         A, b : tuple of np.array
         """
-        A = np.eye(self.map_multidim_to_linear.dim)
-        b = np.ones(self.map_multidim_to_linear.dim)
+        A = np.concatenate([
+            np.eye(self.map_multidim_to_linear.dim), -np.eye(self.map_multidim_to_linear.dim)
+        ])
+        b = np.concatenate([
+            np.ones(self.map_multidim_to_linear.dim), np.zeros(self.map_multidim_to_linear.dim)
+        ])
 
         return A, b
 
@@ -223,10 +241,6 @@ class ConditionalProbabilityConstrainExpectation:
         bp = np.concatenate([b, -b], axis=0)
 
         return Ap, bp
-
-
-
-
 
 
 class MapMultidimIndexToLinear:

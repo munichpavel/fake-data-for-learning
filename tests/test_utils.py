@@ -111,10 +111,13 @@ class TestConditionalProbabilityConstrainExpectation:
         )
     
     def test_get_probability_bounds_half_planes(self):
+        A_expected = np.concatenate([np.eye(2*2*2), -np.eye(2*2*2)], axis=0)
+        b_expected = np.concatenate([np.ones(2*2*2), np.zeros(2*2*2)], axis=0)
+        
         A, b = self.constrain_expectation.get_probability_bounds_half_planes()
-        np.testing.assert_array_almost_equal(A, np.eye(2*2*2))
-
-        np.testing.assert_array_almost_equal(b, np.ones(2*2*2))
+        
+        np.testing.assert_array_almost_equal(A_expected, A)
+        np.testing.assert_array_almost_equal(b_expected, b)
 
     def test_get_half_planes_from_equations(self):
         A = np.array([
@@ -139,8 +142,7 @@ class TestConditionalProbabilityConstrainExpectation:
             bp,
             np.array([1, -1, -1, 1])
         )
-    
-    
+
 
 
 class TestMultidimIndexToLinear:
