@@ -208,7 +208,7 @@ class ConditionalProbabilityConstrainExpectation:
         Ap = np.concatenate([A, -A], axis=0)
         bp = np.concatenate([b, -b], axis=0)
 
-        return (Ap, bp)
+        return Ap, bp
 
 
 

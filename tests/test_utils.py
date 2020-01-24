@@ -133,6 +133,8 @@ class TestConditionalProbabilityConstrainExpectation:
             bp,
             np.array([1, -1, -1, 1])
         )
+    
+    
 
 
 class TestMultidimIndexToLinear:
