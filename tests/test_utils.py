@@ -90,7 +90,7 @@ class TestConditionalProbabilityConstrainExpectation:
             dict(input='low')
         ) == pytest.approx(1.)
 
-    def test_get_total_probability_constriants(self):
+    def test_get_total_probability_constraint_equation(self):
         assert list(self.constrain_expectation.get_total_probability_constraint_equations()) == \
             [
                 dict(input='hi', more_input=0),
@@ -109,6 +109,7 @@ class TestConditionalProbabilityConstrainExpectation:
                 [0., 0., 0., 0., 0., 0., 1., 1.],
             ])
         )
+    
 
     def test_get_half_planes_from_equations(self):
         A = np.array([
