@@ -189,6 +189,20 @@ class ConditionalProbabilityConstrainExpectation:
         
         return product_dict(**res)
 
+    def get_probability_bounds_half_planes(self):
+        """
+        Get half-plane representation of bounds 0 <= p_I <= 1 for 
+        all possible value indices I
+
+        Returns
+        -------
+        A, b : tuple of np.array
+        """
+        A = np.eye(self.map_multidim_to_linear.dim)
+        b = np.ones(self.map_multidim_to_linear.dim)
+
+        return A, b
+
     @staticmethod
     def get_half_planes_from_equations(A, b):
         """
@@ -209,6 +223,8 @@ class ConditionalProbabilityConstrainExpectation:
         bp = np.concatenate([b, -b], axis=0)
 
         return Ap, bp
+
+
 
 
 

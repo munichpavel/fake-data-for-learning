@@ -110,6 +110,11 @@ class TestConditionalProbabilityConstrainExpectation:
             ])
         )
     
+    def test_get_probability_bounds_half_planes(self):
+        A, b = self.constrain_expectation.get_probability_bounds_half_planes()
+        np.testing.assert_array_almost_equal(A, np.eye(2*2*2))
+
+        np.testing.assert_array_almost_equal(b, np.ones(2*2*2))
 
     def test_get_half_planes_from_equations(self):
         A = np.array([
