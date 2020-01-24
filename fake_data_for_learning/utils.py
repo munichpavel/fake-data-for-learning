@@ -178,7 +178,7 @@ class ConditionalProbabilityConstrainExpectation:
 
     def get_total_probability_constraint_equations(self):
         """
-        Get iterator of constraints for conditional probabilities summing to 1.
+        Get iterator of constraint equation for conditional probabilities summing to 1.
 
         Returns
         -------
@@ -190,7 +190,7 @@ class ConditionalProbabilityConstrainExpectation:
         return product_dict(**res)
 
     @staticmethod
-    def get_half_plane_rep_from_equations(A, b):
+    def get_half_planes_from_equations(A, b):
         """
         Convert equations of the form Ax = b to inequalties of the form
         A' x' <= b'
@@ -207,6 +207,7 @@ class ConditionalProbabilityConstrainExpectation:
         """
         Ap = np.concatenate([A, -A], axis=0)
         bp = np.concatenate([b, -b], axis=0)
+
         return (Ap, bp)
 
 

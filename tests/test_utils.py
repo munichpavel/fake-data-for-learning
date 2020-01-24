@@ -110,14 +110,14 @@ class TestConditionalProbabilityConstrainExpectation:
             ])
         )
 
-    def test_get_half_plane_rep_from_equations(self):
+    def test_get_half_planes_from_equations(self):
         A = np.array([
             [1., 0.],
             [1., 1.]
         ])
         b = np.array([1, -1])
 
-        Ap, bp = ut.ConditionalProbabilityConstrainExpectation.get_half_plane_rep_from_equations(A, b)
+        Ap, bp = ut.ConditionalProbabilityConstrainExpectation.get_half_planes_from_equations(A, b)
 
         np.testing.assert_array_almost_equal(
             Ap,
