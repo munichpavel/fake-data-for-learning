@@ -75,6 +75,16 @@ class ConditionalProbabilityConstrainExpectation:
                 "for expectation, and may not be included in expect_constraints"
             raise ValueError(msg)
 
+        invalid_equations = []
+        for constraint in self.expect_constraints:
+            equation = constraint.equation
+            for k,v in equation.items():
+                if not v in self.coords[k]:
+                    invalid_equations.append(equation)
+        if invalid_equations:
+            msg = f"Invalid constraint equations {invalid_equations}"
+            raise ValueError(msg)
+
     def get_all_half_planes(self):
         """
         Get half plane representations of polytope defined by 

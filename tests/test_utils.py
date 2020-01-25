@@ -30,6 +30,17 @@ def test_make_cpt(test_input):
 class TestConditionalProbabilityConstrainExpectation:
     
     def test_init(self):
+
+        # Invalid expectation value constraint 
+        with pytest.raises(ValueError):
+            ut.ConditionalProbabilityConstrainExpectation(
+                [ut.ExpectationConstraint(equation=dict(input=0), value=42)],
+                ('input', 'output'),
+                dict(input=['hi', 'low'], output=range(3))
+            )
+
+        # Expectation constraint on dimension over which expectation
+        # value is calculated
         with pytest.raises(ValueError):
             ut.ConditionalProbabilityConstrainExpectation(
                 [ut.ExpectationConstraint(equation=dict(output=0), value=42)],
@@ -83,7 +94,7 @@ class TestConditionalProbabilityConstrainExpectation:
         ) == pytest.approx(1 / 2.)
 
         small_expectation = ut.ConditionalProbabilityConstrainExpectation(
-                [ut.ExpectationConstraint(equation=dict(input=0), value=3)],
+                [ut.ExpectationConstraint(equation=dict(input='hi'), value=3)],
                 ('input', 'output'),
                 dict(input=['hi', 'low'], output=range(3))
             )
