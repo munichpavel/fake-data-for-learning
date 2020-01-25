@@ -106,7 +106,11 @@ class ConditionalProbabilityConstrainExpectation:
         return A, b
 
     def get_total_probability_constraint_matrix(self):
-        
+        """
+        Returns
+        -------
+        A : np.array
+        """
         
         probability_constraint_equations = self.get_total_probability_constraint_equations()
         A = np.zeros((
@@ -258,6 +262,7 @@ class ConditionalProbabilityConstrainExpectation:
         sum_dims = self.get_sum_dims(constraint_equation)
         sum_ranges = {dim: self.map_multidim_to_linear.coords[dim] \
             for dim in sum_dims}
+
         return list(product_dict(**sum_ranges))
 
     def get_sum_dims(self, constraint_equation):

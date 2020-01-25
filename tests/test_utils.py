@@ -95,6 +95,7 @@ class TestConditionalProbabilityConstrainExpectation:
         assert self.constrain_expectation.get_n_probability_constraints() \
             == 2*2
 
+
     def test_get_total_probability_constraint_equation(self):
         assert list(self.constrain_expectation.get_total_probability_constraint_equations()) == \
             [
@@ -148,10 +149,44 @@ class TestConditionalProbabilityConstrainExpectation:
         )
 
     def test_get_all_half_planes(self):
+        # Test array sizes
         A, b = self.constrain_expectation.get_all_half_planes()
 
         assert A.shape[0] == len(b)
 
+        # Test results on smaller example
+        small_expectation = ut.ConditionalProbabilityConstrainExpectation(
+                [ut.ExpectationConstraint(equation=dict(input='hi'), value=0.7)],
+                ('input', 'output'),
+                dict(input=['hi', 'low'], output=range(2))
+            )
+        A_expect = np.concatenate([
+            # Total probability
+            np.array([
+                [1., 1., 0., 0.],
+                [0., 0., 1., 1.],
+            ]),
+            # 0 <= p <= 1
+            np.eye(4),
+            -1 * np.eye(4),
+            # Expectation constraint
+            np.array([
+                [1., 1., 0., 0.],
+                [-1., -1., 0., 0.]
+            ])
+        ], axis=0)
+
+        b_expect = np.concatenate([
+            np.array([1, 1]),
+            np.ones(4), np.zeros(4),
+            np.array([0.7, -0.7]),
+        ], axis=0)
+
+        A, b = small_expectation.get_all_half_planes()
+
+        np.testing.assert_array_almost_equal(A, A_expect)
+        np.testing.assert_array_almost_equal(b, b_expect)
+        
 
 class TestMultidimIndexToLinear:
     multi_to_linear = ut.MapMultidimIndexToLinear(
