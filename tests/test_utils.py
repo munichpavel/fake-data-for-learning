@@ -76,6 +76,7 @@ class TestConditionalProbabilityConstrainExpectation:
             self.constrain_expectation.get_expect_equations_matrix(1),
             np.array([[0., 0., 0., 0., 0., 1., 0., 1.]])
         )
+
     def test_get_expect_equation_coefficient(self):
         self.constrain_expectation.get_expect_equation_coefficient(
             dict(input='low')
@@ -90,6 +91,10 @@ class TestConditionalProbabilityConstrainExpectation:
             dict(input='low')
         ) == pytest.approx(1.)
 
+    def test_get_n_probability_constraints(self):
+        assert self.constrain_expectation.get_n_probability_constraints() \
+            == 2*2
+
     def test_get_total_probability_constraint_equation(self):
         assert list(self.constrain_expectation.get_total_probability_constraint_equations()) == \
             [
@@ -100,6 +105,7 @@ class TestConditionalProbabilityConstrainExpectation:
             ]
 
     def test_get_total_probability_constraint_matrix(self):
+        print(self.constrain_expectation.get_total_probability_constraint_matrix())
         np.testing.assert_array_almost_equal(
             self.constrain_expectation.get_total_probability_constraint_matrix(),
             np.array([
@@ -120,11 +126,11 @@ class TestConditionalProbabilityConstrainExpectation:
         np.testing.assert_array_almost_equal(b_expected, b)
 
     def test_get_half_planes_from_equations(self):
+
         A = np.array([
             [1., 0.],
-            [1., 1.]
         ])
-        b = np.array([1, -1])
+        b = np.array([1])
 
         Ap, bp = ut.ConditionalProbabilityConstrainExpectation.get_half_planes_from_equations(A, b)
 
@@ -132,17 +138,19 @@ class TestConditionalProbabilityConstrainExpectation:
             Ap,
             np.array([
                 [1., 0.],
-                [1., 1.], 
-                [-1., 0.],
-                [-1., -1.], 
+                [-1., 0.]
             ])
         )
 
         np.testing.assert_array_almost_equal(
             bp,
-            np.array([1, -1, -1, 1])
+            np.array([1, -1])
         )
 
+    def test_get_all_half_planes(self):
+        A, b = self.constrain_expectation.get_all_half_planes()
+
+        assert A.shape[0] == len(b)
 
 
 class TestMultidimIndexToLinear:

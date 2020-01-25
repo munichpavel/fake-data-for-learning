@@ -78,54 +78,94 @@ class ConditionalProbabilityConstrainExpectation:
     def get_all_half_planes(self):
         """
         Get half plane representations of polytope defined by 
-            * the given expectation value constraints and 
             * the probability polytope half planes due to 
-                + probabilities summing to one and 
-                + probabilities lying in [0, 1]
+                + probabilities summing to one, and 
+                + probabilities lying in [0, 1], pluz
+            * the given expectation value constraints
 
         Returns
         -------
         A, b : tuple of np.array
         """
-        A_total_prob = self.get_tot
+        A_total_prob, b_total_prob = self.get_total_probability_half_planes()
+        A_prob_bounds, b_prob_bounds = self.get_probability_bounds_half_planes()
+        A_expect, b_expect = self.get_expect_equations_half_planes()
 
-    def get_expect_equations_col_indices(self, constraint_equation):
-        sum_overs = self.get_sum_overs(constraint_equation)
-        cols = [self.map_multidim_to_linear.to_linear(
-            self.map_multidim_to_linear.get_coord_tuple(
-                {**constraint_equation, **sum_over}
-            )
-        ) for sum_over in sum_overs]
-        return cols
+        return np.concatenate([A_total_prob, A_prob_bounds, A_expect], axis=0), \
+            np.concatenate([b_total_prob, b_prob_bounds, b_expect], axis=0)
 
-    def get_sum_overs(self, constraint_equation):
+    def get_total_probability_half_planes(self):
         """
-        Parameters
-        ----------
-        constraint_equation : dict
-
         Returns
         -------
-        : list
+        A, b : tuple of np.array
         """
-        sum_dims = self.get_sum_dims(constraint_equation)
-        sum_ranges = {dim: self.map_multidim_to_linear.coords[dim] \
-            for dim in sum_dims}
-        return list(product_dict(**sum_ranges))
+        A = self.get_total_probability_constraint_matrix()
+        b = np.ones(self.get_n_probability_constraints())
 
-    def get_sum_dims(self, constraint_equation):
-        """
-        Parameters
-        ----------
-        constraint_equation : dict
+        return A, b
 
-        Returns
-        -------
-        res : tuple
-            Matrix dimension names not among constraint equations
-        """
-        res = tuple([d for d in self.dims if d not in constraint_equation.keys()])
+    def get_total_probability_constraint_matrix(self):
+        
+        
+        probability_constraint_equations = self.get_total_probability_constraint_equations()
+        A = np.zeros((
+            self.get_n_probability_constraints(),
+            self.map_multidim_to_linear.dim 
+        ))
+        for idx, equation in enumerate(probability_constraint_equations):
+            cols = self.get_expect_equations_col_indices(equation)
+            A[idx, cols] = self.get_expect_equations_row(equation, 0)
+
+        return A
+
+    def get_n_probability_constraints(self):
+        dim_cards = [len(self.coords[d]) for d in self.dims if d != self.expect_on_dimension]
+        res = np.prod(dim_cards)
         return res
+
+    def get_total_probability_constraint_equations(self):
+        """
+        Get iterator of constraint equation for conditional probabilities summing to 1.
+
+        Returns
+        -------
+        : itertools.product
+        """
+        res = self.coords.copy()
+        res.pop(self.expect_on_dimension)
+        
+        return product_dict(**res)
+
+    def get_probability_bounds_half_planes(self):
+        """
+        Get half-plane representation of bounds 0 <= p_I <= 1 for 
+        all possible value indices I
+
+        Returns
+        -------
+        A, b : tuple of np.array
+        """
+        A = np.concatenate([
+            np.eye(self.map_multidim_to_linear.dim), -np.eye(self.map_multidim_to_linear.dim)
+        ])
+        b = np.concatenate([
+            np.ones(self.map_multidim_to_linear.dim), np.zeros(self.map_multidim_to_linear.dim)
+        ])
+
+        return A, b
+
+    def get_expect_equations_half_planes(self):
+        """
+        """
+        A_equations = self.get_expect_equations_matrix(0)
+        b_equations = np.array([constraint.value for constraint in self.expect_constraints])
+
+        A_half_plane, b_half_plane = self.get_half_planes_from_equations(
+            A_equations, b_equations
+        )
+
+        return A_half_plane, b_half_plane
 
     def get_expect_equations_matrix(self, moment):
         """
@@ -174,52 +214,6 @@ class ConditionalProbabilityConstrainExpectation:
         denom = max(1, denom)
         return 1 / denom
 
-    def get_total_probability_constraint_matrix(self):
-        n_probability_constraints = np.prod(
-            [len(self.coords[d]) for d in self.dims if d != self.expect_on_dimension]
-        )
-
-        probability_constraint_equations = self.get_total_probability_constraint_equations()
-        A = np.zeros((
-            n_probability_constraints,
-            self.map_multidim_to_linear.dim 
-        ))
-        for idx, equation in enumerate(probability_constraint_equations):
-            cols = self.get_expect_equations_col_indices(equation)
-            A[idx, cols] = self.get_expect_equations_row(equation, 0)
-
-        return A
-
-    def get_total_probability_constraint_equations(self):
-        """
-        Get iterator of constraint equation for conditional probabilities summing to 1.
-
-        Returns
-        -------
-        : itertools.product
-        """
-        res = self.coords.copy()
-        res.pop(self.expect_on_dimension)
-        
-        return product_dict(**res)
-
-    def get_probability_bounds_half_planes(self):
-        """
-        Get half-plane representation of bounds 0 <= p_I <= 1 for 
-        all possible value indices I
-
-        Returns
-        -------
-        A, b : tuple of np.array
-        """
-        A = np.concatenate([
-            np.eye(self.map_multidim_to_linear.dim), -np.eye(self.map_multidim_to_linear.dim)
-        ])
-        b = np.concatenate([
-            np.ones(self.map_multidim_to_linear.dim), np.zeros(self.map_multidim_to_linear.dim)
-        ])
-
-        return A, b
 
     @staticmethod
     def get_half_planes_from_equations(A, b):
@@ -237,10 +231,48 @@ class ConditionalProbabilityConstrainExpectation:
         Ap : numpy.array of shape (2m, n)
         bp : numpy.array of shape (2n,)
         """
-        Ap = np.concatenate([A, -A], axis=0)
-        bp = np.concatenate([b, -b], axis=0)
+        Ap = np.concatenate([A, -1*A], axis=0)
+        bp = np.concatenate([b, -1*b], axis=0)
 
         return Ap, bp
+
+    def get_expect_equations_col_indices(self, constraint_equation):
+        sum_overs = self.get_sum_overs(constraint_equation)
+        cols = [self.map_multidim_to_linear.to_linear(
+            self.map_multidim_to_linear.get_coord_tuple(
+                {**constraint_equation, **sum_over}
+            )
+        ) for sum_over in sum_overs]
+        return cols
+
+    def get_sum_overs(self, constraint_equation):
+        """
+        Parameters
+        ----------
+        constraint_equation : dict
+
+        Returns
+        -------
+        : list
+        """
+        sum_dims = self.get_sum_dims(constraint_equation)
+        sum_ranges = {dim: self.map_multidim_to_linear.coords[dim] \
+            for dim in sum_dims}
+        return list(product_dict(**sum_ranges))
+
+    def get_sum_dims(self, constraint_equation):
+        """
+        Parameters
+        ----------
+        constraint_equation : dict
+
+        Returns
+        -------
+        res : tuple
+            Matrix dimension names not among constraint equations
+        """
+        res = tuple([d for d in self.dims if d not in constraint_equation.keys()])
+        return res
 
 
 class MapMultidimIndexToLinear:
