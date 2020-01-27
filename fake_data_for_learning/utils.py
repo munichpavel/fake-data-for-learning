@@ -110,8 +110,12 @@ class ConditionalProbabilityConstrainExpectation:
         -------
         A, b : tuple of np.array
         """
+        # Equality representation
         A = self.get_total_probability_constraint_matrix()
         b = np.ones(self.get_n_probability_constraints())
+
+        # Half-plane representation
+        A, b = self.get_half_planes_from_equations(A, b)
 
         return A, b
 

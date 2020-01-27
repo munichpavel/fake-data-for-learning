@@ -117,7 +117,6 @@ class TestConditionalProbabilityConstrainExpectation:
             ]
 
     def test_get_total_probability_constraint_matrix(self):
-        print(self.constrain_expectation.get_total_probability_constraint_matrix())
         np.testing.assert_array_almost_equal(
             self.constrain_expectation.get_total_probability_constraint_matrix(),
             np.array([
@@ -176,6 +175,8 @@ class TestConditionalProbabilityConstrainExpectation:
             np.array([
                 [1., 1., 0., 0.],
                 [0., 0., 1., 1.],
+                [-1., -1., 0., 0.],
+                [0., 0., -1., -1.]
             ]),
             # 0 <= p <= 1
             np.eye(4),
@@ -188,7 +189,7 @@ class TestConditionalProbabilityConstrainExpectation:
         ], axis=0)
 
         b_expect = np.concatenate([
-            np.array([1, 1]),
+            np.array([1., 1., -1., -1.]),
             np.ones(4), np.zeros(4),
             np.array([0.7, -0.7]),
         ], axis=0)
