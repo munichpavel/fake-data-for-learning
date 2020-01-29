@@ -127,9 +127,11 @@ class ConditionalProbabilityConstrainExpectation:
         """
         
         probability_constraint_equations = self.get_total_probability_constraint_equations()
+        print(self.get_n_probability_constraints(), self.map_multidim_to_linear.dim)
+
         A = np.zeros((
             self.get_n_probability_constraints(),
-            self.map_multidim_to_linear.dim 
+            self.map_multidim_to_linear.dim
         ))
         for idx, equation in enumerate(probability_constraint_equations):
             cols = self.get_expect_equations_col_indices(equation)
@@ -139,7 +141,7 @@ class ConditionalProbabilityConstrainExpectation:
 
     def get_n_probability_constraints(self):
         dim_cards = [len(self.coords[d]) for d in self.dims if d != self.expect_on_dimension]
-        res = np.prod(dim_cards)
+        res = int(np.prod(dim_cards))
         return res
 
     def get_total_probability_constraint_equations(self):

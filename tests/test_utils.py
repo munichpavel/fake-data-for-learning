@@ -103,9 +103,14 @@ class TestConditionalProbabilityConstrainExpectation:
         ) == pytest.approx(1.)
 
     def test_get_n_probability_constraints(self):
+
+        tertiary = ut.ConditionalProbabilityConstrainExpectation(
+            [], ('v'), dict(v=range(3))
+        )
+        assert isinstance(tertiary.get_n_probability_constraints(), int)
+
         assert self.constrain_expectation.get_n_probability_constraints() \
             == 2*2
-
 
     def test_get_total_probability_constraint_equation(self):
         assert list(self.constrain_expectation.get_total_probability_constraint_equations()) == \
@@ -126,6 +131,7 @@ class TestConditionalProbabilityConstrainExpectation:
                 [0., 0., 0., 0., 0., 0., 1., 1.],
             ])
         )
+
     
     def test_get_probability_bounds_half_planes(self):
         A_expected = np.concatenate([np.eye(2*2*2), -np.eye(2*2*2)], axis=0)
@@ -207,7 +213,6 @@ class TestMultidimIndexToLinear:
     )
 
     def test_dim(self):
-        print(self.multi_to_linear.dim)
         assert self.multi_to_linear.dim == 6
 
     def test_to_linear(self):
