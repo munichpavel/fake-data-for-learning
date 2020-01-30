@@ -127,7 +127,6 @@ class ConditionalProbabilityConstrainExpectation:
         """
         
         probability_constraint_equations = self.get_total_probability_constraint_equations()
-        print(self.get_n_probability_constraints(), self.map_multidim_to_linear.dim)
 
         A = np.zeros((
             self.get_n_probability_constraints(),
