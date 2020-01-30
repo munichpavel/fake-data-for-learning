@@ -299,10 +299,25 @@ class ConditionalProbabilityConstrainExpectation:
 class MapMultidimIndexToLinear:
     """Convert multidimensional array indices to linear and back"""
     def __init__(self, dims, coords):
-        self.dims = dims
+        self.dims = self._get_dims(dims)
         self.coords = self._get_coords(coords)
         self.mapping = self._get_mapping()
         self.dim = self._get_dim()
+
+    def _get_dims(self, dims):
+        """
+        Perform check(s) and type-fixing for dims
+
+
+        Parameters
+        ----------
+        dims : iterable
+        """
+        if isinstance(dims, str):
+            raise(ValueError(f'dims must be an iterable, you entered {dims}'))
+        
+        return dims
+        
 
     def _get_coords(self, coords):
         """Enforce ordering from self.dims"""

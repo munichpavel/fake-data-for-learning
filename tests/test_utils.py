@@ -105,7 +105,7 @@ class TestConditionalProbabilityConstrainExpectation:
     def test_get_n_probability_constraints(self):
 
         tertiary = ut.ConditionalProbabilityConstrainExpectation(
-            [], ('v'), dict(v=range(3))
+            [], ('v',), dict(v=range(3))
         )
         assert isinstance(tertiary.get_n_probability_constraints(), int)
 
@@ -207,6 +207,11 @@ class TestConditionalProbabilityConstrainExpectation:
         
 
 class TestMultidimIndexToLinear:
+
+    # Test instantiation
+    with pytest.raises(ValueError):
+        ut.MapMultidimIndexToLinear(('outcome'), dict(outcome=range(2)))
+    
     multi_to_linear = ut.MapMultidimIndexToLinear(
         ('input', 'output'),
         dict(input=['hi', 'low'], output=range(3))
