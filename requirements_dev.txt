@@ -13,7 +13,7 @@ matplotlib
 networkx
 numpy
 pylint
-rope
+pypoman
 scipy
 scikit-learn
 -e .

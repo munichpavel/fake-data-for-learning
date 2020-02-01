@@ -11,7 +11,7 @@ pytest
 pytest-runner
 networkx
 numpy
-pylint
+pypoman
 rope
 scipy
 scikit-learn
