@@ -39,18 +39,15 @@ class RandomCpt:
         return res
 
 
-ExpectationConstraint = namedtuple('ExpectationConstraint', ['equation', 'value'])
+ExpectationConstraint = namedtuple('ExpectationConstraint', ['equation', 'moment', 'value'])
 
 
-class ConditionalProbabilityConstrainExpectation:
+class ProbabilityPolytope:
     """
+    Polytope represenation and methods for discrete (conditional) probability distributions
     
     Parameters
     ----------
-     expect_constraints : list of utils.ExpectationConstraint
-        Expectation value constraints as list of namedtuples with keys
-        `equation` and `value`
-
      dims : iterable of strings
         Dimension names
 
@@ -58,34 +55,16 @@ class ConditionalProbabilityConstrainExpectation:
         Dict with keys dimension names and values dimension values
     
     """
-    def __init__(self, expect_constraints, dims, coords):
+    def __init__(self, dims, coords):
         """
         Expectation value of last element in dims subject to expect_constraints
         """
-        self.expect_constraints = expect_constraints
         self.dims = dims
         self.expect_on_dimension = dims[-1]
         self.map_multidim_to_linear = MapMultidimIndexToLinear(dims, coords)
         self.coords = coords
-        self._validate()
 
-    def _validate(self):
-        if self.expect_on_dimension in flatten_list([c.equation.keys() for c in self.expect_constraints]):
-            msg = f"Final array dimension {self.expect_on_dimension} is reserved " \
-                "for expectation, and may not be included in expect_constraints"
-            raise ValueError(msg)
-
-        invalid_equations = []
-        for constraint in self.expect_constraints:
-            equation = constraint.equation
-            for k,v in equation.items():
-                if not v in self.coords[k]:
-                    invalid_equations.append(equation)
-        if invalid_equations:
-            msg = f"Invalid constraint equations {invalid_equations}"
-            raise ValueError(msg)
-
-    def get_all_half_planes(self):
+    def get_probability_half_planes(self):
         """
         Get half plane representations of polytope defined by 
             * the probability polytope half planes due to 
@@ -99,10 +78,10 @@ class ConditionalProbabilityConstrainExpectation:
         """
         A_total_prob, b_total_prob = self.get_total_probability_half_planes()
         A_prob_bounds, b_prob_bounds = self.get_probability_bounds_half_planes()
-        A_expect, b_expect = self.get_expect_equations_half_planes()
+        # A_expect, b_expect = self.get_expect_equations_half_planes()
 
-        return np.concatenate([A_total_prob, A_prob_bounds, A_expect], axis=0), \
-            np.concatenate([b_total_prob, b_prob_bounds, b_expect], axis=0)
+        return np.concatenate([A_total_prob, A_prob_bounds], axis=0), \
+            np.concatenate([b_total_prob, b_prob_bounds], axis=0)
 
     def get_total_probability_half_planes(self):
         """
@@ -134,7 +113,7 @@ class ConditionalProbabilityConstrainExpectation:
         ))
         for idx, equation in enumerate(probability_constraint_equations):
             cols = self.get_expect_equations_col_indices(equation)
-            A[idx, cols] = self.get_expect_equations_row(equation, 0)
+            A[idx, cols] = self.get_expect_equations_row_entries(equation, 0)
 
         return A
 
@@ -174,10 +153,69 @@ class ConditionalProbabilityConstrainExpectation:
 
         return A, b
 
+    @staticmethod
+    def get_half_planes_from_equations(A, b):
+        """
+        Convert equations of the form Ax = b to inequalties of the form
+        A' x' <= b'
+
+        Parameters
+        ----------
+        A : numpy.array of shape (m,n)
+        b : numpy.array of shape (n,)
+
+        Returns
+        -------
+        Ap : numpy.array of shape (2m, n)
+        bp : numpy.array of shape (2n,)
+        """
+        Ap = np.concatenate([A, -1*A], axis=0)
+        bp = np.concatenate([b, -1*b], axis=0)
+
+        return Ap, bp
+
+    def set_expectation_constraints(self, constraints):
+        self._validate_expectation_constraint(constraints)
+        self.expect_constraints = constraints
+
+
+    def _validate_expectation_constraint(self, constraints):
+        if self.expect_on_dimension in flatten_list([c.equation.keys() for c in constraints]):
+            msg = f"Final array dimension {self.expect_on_dimension} is reserved " \
+                "for expectation, and may not be included in expect_constraints"
+            raise ValueError(msg)
+
+        invalid_equations = []
+        for constraint in constraints:
+            equation = constraint.equation
+            for k,v in equation.items():
+                if not v in self.coords[k]:
+                    invalid_equations.append(equation)
+        if invalid_equations:
+            msg = f"Invalid constraint equations {invalid_equations}"
+            raise ValueError(msg)
+
+    def get_all_half_planes(self):
+        """
+        Get half plane representations of polytope defined by 
+            * the probability polytope half planes due to 
+                + probabilities summing to one, and 
+                + probabilities lying in [0, 1], pluz
+            * the given expectation value constraints
+        Returns
+        -------
+        A, b : tuple of np.array
+        """
+        A_prob, b_prob = self.get_probability_half_planes()
+        A_expect, b_expect = self.get_expect_equations_half_planes()
+
+        return np.concatenate([A_prob, A_expect], axis=0), \
+            np.concatenate([b_prob, b_expect], axis=0)
+
     def get_expect_equations_half_planes(self):
         """
         """
-        A_equations = self.get_expect_equations_matrix(0)
+        A_equations = self.get_expect_equations_matrix()
         b_equations = np.array([constraint.value for constraint in self.expect_constraints])
 
         A_half_plane, b_half_plane = self.get_half_planes_from_equations(
@@ -186,7 +224,7 @@ class ConditionalProbabilityConstrainExpectation:
 
         return A_half_plane, b_half_plane
 
-    def get_expect_equations_matrix(self, moment):
+    def get_expect_equations_matrix(self):
         """
         Generate (linearly indexed) equation matrix from expect_constraints
         
@@ -197,10 +235,12 @@ class ConditionalProbabilityConstrainExpectation:
         A = np.zeros((len(self.expect_constraints), self.map_multidim_to_linear.dim))
         for idx, constraint in enumerate(self.expect_constraints):
             cols = self.get_expect_equations_col_indices(constraint.equation)
-            A[idx, cols] = self.get_expect_equations_row(constraint.equation, moment)
+            A[idx, cols] = self.get_expect_equations_row_entries(constraint.equation, constraint.moment)
+            
+            A[idx, :] = self.get_expect_equation_coefficient(constraint.equation) * A[idx, :]
         return A
 
-    def get_expect_equations_row(self, constraint_equation, moment):
+    def get_expect_equations_row_entries(self, constraint_equation, moment):
         """
         Parameters
         ----------
@@ -226,34 +266,11 @@ class ConditionalProbabilityConstrainExpectation:
         """
         sum_dims = self.get_sum_dims(constraint_equation)
         normalization_dims = list(set(sum_dims) - {self.expect_on_dimension})
-        denom = 0
+        denom = 1
         for d in normalization_dims:
             denom *= len(self.coords[d])
 
-        denom = max(1, denom)
-        return 1 / denom
-
-
-    @staticmethod
-    def get_half_planes_from_equations(A, b):
-        """
-        Convert equations of the form Ax = b to inequalties of the form
-        A' x' <= b'
-
-        Parameters
-        ----------
-        A : numpy.array of shape (m,n)
-        b : numpy.array of shape (n,)
-
-        Returns
-        -------
-        Ap : numpy.array of shape (2m, n)
-        bp : numpy.array of shape (2n,)
-        """
-        Ap = np.concatenate([A, -1*A], axis=0)
-        bp = np.concatenate([b, -1*b], axis=0)
-
-        return Ap, bp
+        return 1 / float(denom)
 
     def get_expect_equations_col_indices(self, constraint_equation):
         sum_overs = self.get_sum_overs(constraint_equation)

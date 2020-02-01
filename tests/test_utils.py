@@ -27,35 +27,19 @@ def test_make_cpt(test_input):
         np.testing.assert_almost_equal(sum(cpt[r]), 1)
 
 
-class TestConditionalProbabilityConstrainExpectation:
+class TestProbabilityPolytope:
     
     def test_init(self):
-
-        # Invalid expectation value constraint 
         with pytest.raises(ValueError):
-            ut.ConditionalProbabilityConstrainExpectation(
-                [ut.ExpectationConstraint(equation=dict(input=0), value=42)],
-                ('input', 'output'),
-                dict(input=['hi', 'low'], output=range(3))
-            )
+            ut.ProbabilityPolytope(('outcome'), dict(outcome=range(2)))
 
-        # Expectation constraint on dimension over which expectation
-        # value is calculated
-        with pytest.raises(ValueError):
-            ut.ConditionalProbabilityConstrainExpectation(
-                [ut.ExpectationConstraint(equation=dict(output=0), value=42)],
-                ('input', 'output'),
-                dict(input=['hi', 'low'], output=range(3))
-            )
-
-    constrain_expectation = ut.ConditionalProbabilityConstrainExpectation(
-        [ut.ExpectationConstraint(equation=dict(input='low'), value=42)],
+    polytope = ut.ProbabilityPolytope(
         ('input', 'more_input', 'output'),
         dict(input=['hi', 'low'], more_input=range(2), output=range(2))
     )
 
     def test_get_sum_dims(self):
-        self.constrain_expectation.get_sum_dims(
+        self.polytope.get_sum_dims(
             dict(input='low')
         ) == ('more_input', 'output')
 
@@ -66,54 +50,21 @@ class TestConditionalProbabilityConstrainExpectation:
             dict(more_input=1, output=0),
             dict(more_input=1, output=1)
         ]
-        assert self.constrain_expectation.get_sum_overs(
+        assert self.polytope.get_sum_overs(
             dict(input='low')
         ) == expected
 
-    def test_get_expect_eq_col_indices(self):
-        assert self.constrain_expectation.get_expect_equations_col_indices(
-            dict(input='low')
-        ) == [4, 5, 6, 7]
-
-    def test_get_expect_equations_matrix(self):
-        # Oth moment expectation
-        np.testing.assert_almost_equal(
-            self.constrain_expectation.get_expect_equations_matrix(0),
-            np.array([[0., 0., 0., 0., 1., 1., 1., 1.]])
-        )
-
-        # First moment expectation
-        np.testing.assert_almost_equal(
-            self.constrain_expectation.get_expect_equations_matrix(1),
-            np.array([[0., 0., 0., 0., 0., 1., 0., 1.]])
-        )
-
-    def test_get_expect_equation_coefficient(self):
-        self.constrain_expectation.get_expect_equation_coefficient(
-            dict(input='low')
-        ) == pytest.approx(1 / 2.)
-
-        small_expectation = ut.ConditionalProbabilityConstrainExpectation(
-                [ut.ExpectationConstraint(equation=dict(input='hi'), value=3)],
-                ('input', 'output'),
-                dict(input=['hi', 'low'], output=range(3))
-            )
-        small_expectation.get_expect_equation_coefficient(
-            dict(input='low')
-        ) == pytest.approx(1.)
 
     def test_get_n_probability_constraints(self):
 
-        tertiary = ut.ConditionalProbabilityConstrainExpectation(
-            [], ('v',), dict(v=range(3))
-        )
+        tertiary = ut.ProbabilityPolytope(('v',), dict(v=range(3)))
         assert isinstance(tertiary.get_n_probability_constraints(), int)
 
-        assert self.constrain_expectation.get_n_probability_constraints() \
+        assert self.polytope.get_n_probability_constraints() \
             == 2*2
 
     def test_get_total_probability_constraint_equation(self):
-        assert list(self.constrain_expectation.get_total_probability_constraint_equations()) == \
+        assert list(self.polytope.get_total_probability_constraint_equations()) == \
             [
                 dict(input='hi', more_input=0),
                 dict(input='hi', more_input=1),
@@ -123,7 +74,7 @@ class TestConditionalProbabilityConstrainExpectation:
 
     def test_get_total_probability_constraint_matrix(self):
         np.testing.assert_array_almost_equal(
-            self.constrain_expectation.get_total_probability_constraint_matrix(),
+            self.polytope.get_total_probability_constraint_matrix(),
             np.array([
                 [1., 1., 0., 0., 0., 0., 0., 0.], 
                 [0., 0., 1., 1., 0., 0., 0., 0.],
@@ -132,12 +83,11 @@ class TestConditionalProbabilityConstrainExpectation:
             ])
         )
 
-    
     def test_get_probability_bounds_half_planes(self):
         A_expected = np.concatenate([np.eye(2*2*2), -np.eye(2*2*2)], axis=0)
         b_expected = np.concatenate([np.ones(2*2*2), np.zeros(2*2*2)], axis=0)
         
-        A, b = self.constrain_expectation.get_probability_bounds_half_planes()
+        A, b = self.polytope.get_probability_bounds_half_planes()
         
         np.testing.assert_array_almost_equal(A_expected, A)
         np.testing.assert_array_almost_equal(b_expected, b)
@@ -149,7 +99,7 @@ class TestConditionalProbabilityConstrainExpectation:
         ])
         b = np.array([1])
 
-        Ap, bp = ut.ConditionalProbabilityConstrainExpectation.get_half_planes_from_equations(A, b)
+        Ap, bp = ut.ProbabilityPolytope.get_half_planes_from_equations(A, b)
 
         np.testing.assert_array_almost_equal(
             Ap,
@@ -164,15 +114,14 @@ class TestConditionalProbabilityConstrainExpectation:
             np.array([1, -1])
         )
 
-    def test_get_all_half_planes(self):
+    def test_get_probability_half_planes(self):
         # Test array sizes
-        A, b = self.constrain_expectation.get_all_half_planes()
+        A, b = self.polytope.get_probability_half_planes()
 
         assert A.shape[0] == len(b)
 
         # Test results on smaller example
-        small_expectation = ut.ConditionalProbabilityConstrainExpectation(
-                [ut.ExpectationConstraint(equation=dict(input='hi'), value=0.7)],
+        small_polytope = ut.ProbabilityPolytope(
                 ('input', 'output'),
                 dict(input=['hi', 'low'], output=range(2))
             )
@@ -187,24 +136,109 @@ class TestConditionalProbabilityConstrainExpectation:
             # 0 <= p <= 1
             np.eye(4),
             -1 * np.eye(4),
-            # Expectation constraint
+        ], axis=0)
+
+        b_expect = np.concatenate([
+            np.array([1., 1., -1., -1.]),
+            np.ones(4), np.zeros(4),
+        ], axis=0)
+
+        A, b = small_polytope.get_probability_half_planes()
+
+        np.testing.assert_array_almost_equal(A, A_expect)
+        np.testing.assert_array_almost_equal(b, b_expect)
+
+class TestAddPolytopeConstraints:
+    constrained_polytope = ut.ProbabilityPolytope(
+            ('input', 'output'),
+            dict(input=['hi', 'low'], output=range(2))
+        )
+
+    def test_add_expectation_constraint(self):
+        # ValueError: Invalid expectation value constraint 
+        with pytest.raises(ValueError):
+            self.constrained_polytope.set_expectation_constraints(
+                [ut.ExpectationConstraint(equation=dict(input=0), moment=1, value=0.5)]
+            )
+
+        # ValueError: Expectation constraint on dimension over which expectation
+        # value is calculated
+        with pytest.raises(ValueError):
+            self.constrained_polytope.set_expectation_constraints(
+                [ut.ExpectationConstraint(equation=dict(output=0), moment=1, value=42)],
+            )
+
+    # Add constraint
+    constrained_polytope.set_expectation_constraints(
+        [ut.ExpectationConstraint(equation=dict(input='low'), moment=1, value=0.5)]
+    )
+
+    # Conditional probability with two inputs
+    two_input_constrained_polytope = ut.ProbabilityPolytope(
+        ('input', 'more_input', 'output'),
+        dict(input=['hi', 'low'], more_input=range(2), output=range(2))
+    )
+    two_input_constrained_polytope.set_expectation_constraints(
+        [ut.ExpectationConstraint(equation=dict(more_input=0), moment=1, value=0.5)]
+    )
+
+    def test_get_expect_eq_col_indices(self):
+        assert self.constrained_polytope.get_expect_equations_col_indices(
+            dict(input='low')
+        ) == [2, 3]
+
+        assert self.two_input_constrained_polytope.get_expect_equations_col_indices(
+            dict(more_input=0)
+        ) == [0, 1, 4, 5]
+
+    def test_get_expect_equation_coefficient(self):
+        assert self.constrained_polytope.get_expect_equation_coefficient(
+            dict(input='low')
+        ) == pytest.approx(1.)
+        assert self.two_input_constrained_polytope.get_expect_equation_coefficient(
+            dict(input='low')
+        ) == pytest.approx(1 / 2.)
+
+    def test_get_expect_equations_matrix(self):
+        np.testing.assert_almost_equal(
+            self.constrained_polytope.get_expect_equations_matrix(),
+            np.array([[0, 0, 0, 1]])
+        )
+
+        np.testing.assert_array_almost_equal(
+            self.two_input_constrained_polytope.get_expect_equations_matrix(),
+             1 / 2. * np.array([[0., 1., 0., 0., 0., 1., 0., 0.]])
+        )
+
+    def test_get_all_halfplanes(self):
+        A_expect = np.concatenate([
+            # Total probability
             np.array([
                 [1., 1., 0., 0.],
-                [-1., -1., 0., 0.]
+                [0., 0., 1., 1.],
+                [-1., -1., 0., 0.],
+                [0., 0., -1., -1.]
+            ]),
+            # 0 <= p <= 1
+            np.eye(4),
+            -1 * np.eye(4),
+            # Expectation constraint
+            np.array([
+                [0., 0., 0., 1.],
+                [0., 0., 0., -1.]
             ])
         ], axis=0)
 
         b_expect = np.concatenate([
             np.array([1., 1., -1., -1.]),
             np.ones(4), np.zeros(4),
-            np.array([0.7, -0.7]),
+            np.array([0.5, -0.5])
         ], axis=0)
-
-        A, b = small_expectation.get_all_half_planes()
+        A, b = self.constrained_polytope.get_all_half_planes()
 
         np.testing.assert_array_almost_equal(A, A_expect)
         np.testing.assert_array_almost_equal(b, b_expect)
-        
+
 
 class TestMultidimIndexToLinear:
 
