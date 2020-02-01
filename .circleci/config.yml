@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run: 
           command: | 
-            echo gcc --version
+            gcc --version
 #            sudo pip install -r requirements.txt
       - run:
           command: |
