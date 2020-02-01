@@ -8,7 +8,8 @@ jobs:
       - checkout
       - run: 
           command: | 
-            sudo pip install -r requirements.txt
+            echo gcc --version
+#            sudo pip install -r requirements.txt
       - run:
           command: |
             pytest -vv
