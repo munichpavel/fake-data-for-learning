@@ -63,6 +63,7 @@ class ProbabilityPolytope:
         self.expect_on_dimension = dims[-1]
         self.map_multidim_to_linear = MapMultidimIndexToLinear(dims, coords)
         self.coords = coords
+        self.expect_constraints = []
 
     def get_probability_half_planes(self):
         """
@@ -78,8 +79,7 @@ class ProbabilityPolytope:
         """
         A_total_prob, b_total_prob = self.get_total_probability_half_planes()
         A_prob_bounds, b_prob_bounds = self.get_probability_bounds_half_planes()
-        # A_expect, b_expect = self.get_expect_equations_half_planes()
-
+ 
         return np.concatenate([A_total_prob, A_prob_bounds], axis=0), \
             np.concatenate([b_total_prob, b_prob_bounds], axis=0)
 
@@ -206,11 +206,19 @@ class ProbabilityPolytope:
         -------
         A, b : tuple of np.array
         """
+        As = []
+        bs = []
         A_prob, b_prob = self.get_probability_half_planes()
-        A_expect, b_expect = self.get_expect_equations_half_planes()
+        As.append(A_prob)
+        bs.append(b_prob)
 
-        return np.concatenate([A_prob, A_expect], axis=0), \
-            np.concatenate([b_prob, b_expect], axis=0)
+        if self.expect_constraints:
+            A_expect, b_expect = self.get_expect_equations_half_planes()
+            As.append(A_expect)
+            bs.append(b_expect)
+
+        return np.concatenate(As, axis=0), \
+            np.concatenate(bs, axis=0)
 
     def get_expect_equations_half_planes(self):
         """
@@ -221,7 +229,7 @@ class ProbabilityPolytope:
         A_half_plane, b_half_plane = self.get_half_planes_from_equations(
             A_equations, b_equations
         )
-
+         
         return A_half_plane, b_half_plane
 
     def get_expect_equations_matrix(self):
