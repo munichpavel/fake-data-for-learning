@@ -84,8 +84,8 @@ class TestProbabilityPolytope:
         )
 
     def test_get_probability_bounds_half_planes(self):
-        A_expected = np.concatenate([np.eye(2*2*2), -np.eye(2*2*2)], axis=0)
-        b_expected = np.concatenate([np.ones(2*2*2), np.zeros(2*2*2)], axis=0)
+        A_expected = np.vstack([np.eye(2*2*2), -np.eye(2*2*2)])
+        b_expected = np.hstack([np.ones(2*2*2), np.zeros(2*2*2)])
         
         A, b = self.polytope.get_probability_bounds_half_planes()
         
@@ -125,7 +125,7 @@ class TestProbabilityPolytope:
                 ('input', 'output'),
                 dict(input=['hi', 'low'], output=range(2))
             )
-        A_expect = np.concatenate([
+        A_expect = np.vstack([
             # Total probability
             np.array([
                 [1., 1., 0., 0.],
@@ -136,12 +136,12 @@ class TestProbabilityPolytope:
             # 0 <= p <= 1
             np.eye(4),
             -1 * np.eye(4),
-        ], axis=0)
+        ])
 
-        b_expect = np.concatenate([
+        b_expect = np.hstack([
             np.array([1., 1., -1., -1.]),
             np.ones(4), np.zeros(4),
-        ], axis=0)
+        ])
 
         A, b = small_polytope.get_probability_half_planes()
 
@@ -211,7 +211,7 @@ class TestAddPolytopeConstraints:
         )
 
     def test_get_all_halfplanes(self):
-        A_expect = np.concatenate([
+        A_expect = np.vstack([
             # Total probability
             np.array([
                 [1., 1., 0., 0.],
@@ -227,13 +227,13 @@ class TestAddPolytopeConstraints:
                 [0., 0., 0., 1.],
                 [0., 0., 0., -1.]
             ])
-        ], axis=0)
+        ])
 
-        b_expect = np.concatenate([
+        b_expect = np.hstack([
             np.array([1., 1., -1., -1.]),
             np.ones(4), np.zeros(4),
             np.array([0.5, -0.5])
-        ], axis=0)
+        ])
         A, b = self.constrained_polytope.get_all_half_planes()
 
         np.testing.assert_array_almost_equal(A, A_expect)

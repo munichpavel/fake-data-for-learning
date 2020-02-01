@@ -80,8 +80,8 @@ class ProbabilityPolytope:
         A_total_prob, b_total_prob = self.get_total_probability_half_planes()
         A_prob_bounds, b_prob_bounds = self.get_probability_bounds_half_planes()
  
-        return np.concatenate([A_total_prob, A_prob_bounds], axis=0), \
-            np.concatenate([b_total_prob, b_prob_bounds], axis=0)
+        return np.vstack([A_total_prob, A_prob_bounds]), \
+            np.hstack([b_total_prob, b_prob_bounds])
 
     def get_total_probability_half_planes(self):
         """
@@ -144,10 +144,10 @@ class ProbabilityPolytope:
         -------
         A, b : tuple of np.array
         """
-        A = np.concatenate([
+        A = np.vstack([
             np.eye(self.map_multidim_to_linear.dim), -np.eye(self.map_multidim_to_linear.dim)
         ])
-        b = np.concatenate([
+        b = np.hstack([
             np.ones(self.map_multidim_to_linear.dim), np.zeros(self.map_multidim_to_linear.dim)
         ])
 
@@ -169,8 +169,8 @@ class ProbabilityPolytope:
         Ap : numpy.array of shape (2m, n)
         bp : numpy.array of shape (2n,)
         """
-        Ap = np.concatenate([A, -1*A], axis=0)
-        bp = np.concatenate([b, -1*b], axis=0)
+        Ap = np.vstack([A, -1*A])
+        bp = np.hstack([b, -1*b])
 
         return Ap, bp
 
@@ -217,8 +217,8 @@ class ProbabilityPolytope:
             As.append(A_expect)
             bs.append(b_expect)
 
-        return np.concatenate(As, axis=0), \
-            np.concatenate(bs, axis=0)
+        return np.vstack(As), \
+            np.hstack(bs)
 
     def get_expect_equations_half_planes(self):
         """
