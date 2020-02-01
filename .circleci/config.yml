@@ -8,6 +8,7 @@ jobs:
       - checkout
       - run: 
           command: | 
+            sudo apt-get update
             sudo apt-get install libglpk-dev            
             sudo pip install -r requirements.txt
       - run:
