@@ -240,6 +240,19 @@ class TestAddPolytopeConstraints:
         np.testing.assert_array_almost_equal(b, b_expect)
 
 
+class TestGetUnitBoxSample:
+    def test_get_unit_box_sample(self):
+        sample = ut.get_non_neg_unit_box_sample(3)
+
+        # sample >= 0
+        assert np.all(sample >= 0)
+
+        # sample <= 1
+        assert np.all(sample <= 1)
+
+        # sample sums to 1
+        assert sample.sum() == pytest.approx(1.)
+
 class TestMultidimIndexToLinear:
 
     # Test instantiation
@@ -272,4 +285,3 @@ class TestMultidimIndexToLinear:
     )
     def test_get_coord_tuple(self, coord_index_dict, expected):
         assert self.multi_to_linear.get_coord_tuple(coord_index_dict) == expected
-

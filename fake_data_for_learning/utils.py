@@ -39,6 +39,26 @@ class RandomCpt:
         return res
 
 
+
+def get_non_neg_unit_box_sample(box_ambient_dimension):
+    """
+    Get random element of the non-negative quadrant of the unit box
+
+    Parameters
+    ----------
+    box_ambient_dimension : int
+
+    Returns
+    -------
+    res : np.array
+    """
+
+    res = np.random.uniform(size=box_ambient_dimension)
+    res = res / res.sum()
+
+    return res
+
+
 ExpectationConstraint = namedtuple('ExpectationConstraint', ['equation', 'moment', 'value'])
 
 
