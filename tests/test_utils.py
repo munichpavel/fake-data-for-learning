@@ -240,9 +240,9 @@ class TestAddPolytopeConstraints:
         np.testing.assert_array_almost_equal(b, b_expect)
 
 
-class TestGetUnitBoxSample:
+class TestGetSimplexSample:
     def test_get_unit_box_sample(self):
-        sample = ut.get_non_neg_unit_box_sample(3)
+        sample = ut.get_simplex_sample(3)
 
         # sample >= 0
         assert np.all(sample >= 0)

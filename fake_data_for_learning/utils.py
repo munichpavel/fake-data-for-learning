@@ -40,7 +40,7 @@ class RandomCpt:
 
 
 
-def get_non_neg_unit_box_sample(box_ambient_dimension):
+def get_simplex_sample(ambient_dimension):
     """
     Get random element of the non-negative quadrant of the unit box
 
@@ -53,7 +53,7 @@ def get_non_neg_unit_box_sample(box_ambient_dimension):
     res : np.array
     """
 
-    res = np.random.uniform(size=box_ambient_dimension)
+    res = np.random.uniform(size=ambient_dimension)
     res = res / res.sum()
 
     return res
