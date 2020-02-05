@@ -40,9 +40,9 @@ class RandomCpt:
 
 
 
-def get_simplex_sample(ambient_dimension):
+def get_simplex_sample(ambient_dimension, size=None):
     """
-    Get random element of the non-negative quadrant of the unit box
+    Get random element of the simplex of given ambient dimension
 
     Parameters
     ----------
@@ -53,8 +53,7 @@ def get_simplex_sample(ambient_dimension):
     res : np.array
     """
 
-    res = np.random.uniform(size=ambient_dimension)
-    res = res / res.sum()
+    res = np.random.dirichlet(np.ones(3), size=size)
 
     return res
 
