@@ -46,15 +46,15 @@ def get_simplex_sample(ambient_dimension, size=None):
 
     Parameters
     ----------
-    box_ambient_dimension : int
+    ambient_dimension : int
+        Dimension of ambient real vector space in which (probability) simplex is defined.
 
     Returns
     -------
     res : np.array
+        Random sample point from the simplex
     """
-
     res = np.random.dirichlet(np.ones(3), size=size)
-
     return res
 
 
