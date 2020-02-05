@@ -254,6 +254,30 @@ class TestAddPolytopeConstraints:
         np.testing.assert_array_almost_equal(b, b_expect)
 
 
+class TestPolytopeVertexRepresentation:
+    bernoulli = ut.ProbabilityPolytope(('outcome',), dict(outcome=range(2)))
+    conditional_bernoullis = ut.ProbabilityPolytope(
+        ('input', 'output'), dict(input=range(2), output=range(2))
+    )
+
+    def test_get_vertex_representation(self):
+        np.testing.assert_array_almost_equal(
+            self.bernoulli.get_vertex_representation(),
+            np.array([
+                [1., 0.],
+                [0., 1.]
+            ])
+        )
+        
+        np.testing.assert_array_almost_equal(
+            self.conditional_bernoullis.get_vertex_representation(),
+            np.array([
+                [1., 1., 0., 0.],
+                [0., 0., 1., 1.],
+                [1., 0., 0., 1.],
+                [0., 1., 1., 0.]
+            ])
+        )
 class TestMultidimIndexToLinear:
     # Test instantiation
     with pytest.raises(ValueError):

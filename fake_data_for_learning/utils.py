@@ -8,6 +8,7 @@ import pandas as pd
 
 from scipy.special import softmax
 
+from pypoman import compute_polytope_vertices
 
 class RandomCpt:
     """Generate random conditional probability table"""
@@ -338,6 +339,21 @@ class ProbabilityPolytope:
         res = tuple([d for d in self.dims if d not in constraint_equation.keys()])
         return res
 
+    def get_vertex_representation(self):
+        """
+        Calculate the vertex representation of the probability polytope.
+
+        Returns
+        -------
+        res : np.array
+            Matrix of shape self.dim, total number of constraints
+        """
+        A, b = self.get_all_half_planes()
+        verts = compute_polytope_vertices(A, b)
+        Vt = np.vstack(verts)
+        V = np.transpose(Vt)
+        return V
+
 
 class MapMultidimIndexToLinear:
     """Convert multidimensional array indices to linear and back"""
@@ -350,7 +366,6 @@ class MapMultidimIndexToLinear:
     def _get_dims(self, dims):
         """
         Perform check(s) and type-fixing for dims
-
 
         Parameters
         ----------
