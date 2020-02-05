@@ -27,6 +27,20 @@ def test_make_cpt(test_input):
         np.testing.assert_almost_equal(sum(cpt[r]), 1)
 
 
+class TestGetSimplexSample:
+    def test_get_unit_box_sample(self):
+        sample = ut.get_simplex_sample(3)
+
+        # sample >= 0
+        assert np.all(sample >= 0)
+
+        # sample <= 1
+        assert np.all(sample <= 1)
+
+        # sample sums to 1
+        assert sample.sum() == pytest.approx(1.)
+
+
 class TestProbabilityPolytope:
     
     def test_init(self):
@@ -240,21 +254,7 @@ class TestAddPolytopeConstraints:
         np.testing.assert_array_almost_equal(b, b_expect)
 
 
-class TestGetSimplexSample:
-    def test_get_unit_box_sample(self):
-        sample = ut.get_simplex_sample(3)
-
-        # sample >= 0
-        assert np.all(sample >= 0)
-
-        # sample <= 1
-        assert np.all(sample <= 1)
-
-        # sample sums to 1
-        assert sample.sum() == pytest.approx(1.)
-
 class TestMultidimIndexToLinear:
-
     # Test instantiation
     with pytest.raises(ValueError):
         ut.MapMultidimIndexToLinear(('outcome'), dict(outcome=range(2)))
