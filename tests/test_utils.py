@@ -316,8 +316,8 @@ class TestPolytopeVertexRepresentation:
         assert cpt.shape == (2, 2)
 
         # Test input=1 expectation value constraint
-        assert cpt[1, 0] == 0.5
-        assert cpt[1, 1] == 0.5
+        assert cpt[1, 0] == pytest.approx(0.5)
+        assert cpt[1, 1] == pytest.approx(0.5)
 
 class TestMultidimIndexToLinear:
     # Test instantiation
