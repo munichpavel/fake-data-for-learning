@@ -1,6 +1,7 @@
 pip
 pandas
 xarray
+matplotlib
 bumpversion
 wheel
 watchdog
