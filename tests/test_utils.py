@@ -31,6 +31,9 @@ class TestGetSimplexSample:
     def test_get_unit_box_sample(self):
         sample = ut.get_simplex_sample(3)
 
+        # length of sample correct
+        assert len(sample) == 3
+
         # sample >= 0
         assert np.all(sample >= 0)
 
@@ -44,6 +47,7 @@ class TestGetSimplexSample:
 class TestProbabilityPolytope:
     
     def test_init(self):
+        # dimensions must be an iterable
         with pytest.raises(ValueError):
             ut.ProbabilityPolytope(('outcome'), dict(outcome=range(2)))
 
@@ -68,6 +72,9 @@ class TestProbabilityPolytope:
             dict(input='low')
         ) == expected
 
+
+    def test_get_n_outcomes(self):
+        assert self.polytope.get_n_outcomes() == 8
 
     def test_get_n_probability_constraints(self):
 
@@ -278,6 +285,29 @@ class TestPolytopeVertexRepresentation:
                 [0., 1., 1., 0.]
             ])
         )
+
+        # Add expectation constraint
+        self.conditional_bernoullis.set_expectation_constraints(
+            [ut.ExpectationConstraint(equation=dict(input=1), moment=1, value=0.5)]
+        )
+
+        # Ensure dimension of vertices (column vectors) match ambient space
+        assert self.conditional_bernoullis.get_vertex_representation().shape[0] == 4
+
+    def test_get_linear_random_cpt(self):
+        cpt = self.conditional_bernoullis.get_flat_random_cpt()
+
+        idx_conditioned = [
+            self.conditional_bernoullis.map_multidim_to_linear.to_linear((1, 0)),
+            self.conditional_bernoullis.map_multidim_to_linear.to_linear((1, 1))
+        ]
+        np.testing.assert_array_almost_equal(
+            cpt[idx_conditioned],
+            np.array([0.5, 0.5])
+            
+        )
+
+
 class TestMultidimIndexToLinear:
     # Test instantiation
     with pytest.raises(ValueError):

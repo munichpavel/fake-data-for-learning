@@ -55,7 +55,7 @@ def get_simplex_sample(ambient_dimension, size=None):
     res : np.array
         Random sample point from the simplex
     """
-    res = np.random.dirichlet(np.ones(3), size=size)
+    res = np.random.dirichlet(np.ones(ambient_dimension), size=size)
     return res
 
 
@@ -138,8 +138,21 @@ class ProbabilityPolytope:
         return A
 
     def get_n_probability_constraints(self):
-        dim_cards = [len(self.coords[d]) for d in self.dims if d != self.expect_on_dimension]
+        """
+        Get the number of probability constraints involved in calculating
+        expectation values over self.expect_on_dimension
+
+        Returns
+        -------
+        res : int
+        """
+        res = int(self.get_n_outcomes() / len(self.coords[self.expect_on_dimension]))
+        return res
+
+    def get_n_outcomes(self):
+        dim_cards =  [len(self.coords[d]) for d in self.dims]
         res = int(np.prod(dim_cards))
+
         return res
 
     def get_total_probability_constraint_equations(self):
@@ -339,6 +352,26 @@ class ProbabilityPolytope:
         res = tuple([d for d in self.dims if d not in constraint_equation.keys()])
         return res
 
+
+    #def get_cpt(self):
+
+    def get_flat_random_cpt(self):
+        """
+        Generate flat (i.e. array with only 1 dimension) representation of a  
+        random (conditional) probability table from the polytope.
+
+        Returns
+        -------
+        res : np.array
+            Float array of shape (number of possible outcomes, )
+
+        """
+        V = self.get_vertex_representation()
+        t = get_simplex_sample(V.shape[1])
+        res = np.matmul(V, t)
+        return res
+
+    
     def get_vertex_representation(self):
         """
         Calculate the vertex representation of the probability polytope.
