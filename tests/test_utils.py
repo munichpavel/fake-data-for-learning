@@ -294,8 +294,8 @@ class TestPolytopeVertexRepresentation:
         # Ensure dimension of vertices (column vectors) match ambient space
         assert self.conditional_bernoullis.get_vertex_representation().shape[0] == 4
 
-    def test_get_flat_random_cpt(self):
-        flat_cpt = self.conditional_bernoullis.get_flat_random_cpt()
+    def test_generate_flat_random_cpt(self):
+        flat_cpt = self.conditional_bernoullis.generate_flat_random_cpt()
 
         # flat cpt must contain same number of entries as possible outcomes
         assert flat_cpt.shape[0] == self.conditional_bernoullis.get_n_outcomes()
