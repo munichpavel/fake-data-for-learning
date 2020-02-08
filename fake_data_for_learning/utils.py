@@ -389,7 +389,7 @@ class ProbabilityPolytope:
         t = get_simplex_sample(V.shape[1])
         res = np.matmul(V, t)
         return res
-    
+
     def get_vertex_representation(self):
         """
         Calculate the vertex representation of the probability polytope.
