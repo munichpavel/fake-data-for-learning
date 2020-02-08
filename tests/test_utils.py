@@ -315,6 +315,10 @@ class TestPolytopeVertexRepresentation:
 
         assert cpt.shape == (2, 2)
 
+        # Test probabilities sum to 1.
+        assert cpt[0,:].sum() == pytest.approx(1.)
+        assert cpt[1,:].sum() == pytest.approx(1.)
+
         # Test input=1 expectation value constraint
         assert cpt[1, 0] == pytest.approx(0.5)
         assert cpt[1, 1] == pytest.approx(0.5)
