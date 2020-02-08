@@ -236,6 +236,7 @@ class ProbabilityPolytope:
                 + probabilities summing to one, and 
                 + probabilities lying in [0, 1], pluz
             * the given expectation value constraints
+
         Returns
         -------
         A, b : tuple of np.array
@@ -251,8 +252,7 @@ class ProbabilityPolytope:
             As.append(A_expect)
             bs.append(b_expect)
 
-        return np.vstack(As), \
-            np.hstack(bs)
+        return np.vstack(As), np.hstack(bs)
 
     def get_expect_equations_half_planes(self):
         """
@@ -360,7 +360,7 @@ class ProbabilityPolytope:
         """
         res = self._initialize_cpt()
 
-        flat_cpt = self.get_flat_random_cpt()
+        flat_cpt = self.generate_flat_random_cpt()
         for flat_idx in range(flat_cpt.shape[0]):
             multi_idx = self.map_multidim_to_linear.to_multidim(flat_idx)
             res.loc[multi_idx] = flat_cpt[flat_idx]
@@ -374,7 +374,7 @@ class ProbabilityPolytope:
 
         return xr.DataArray(data, coords=self.coords, dims=self.dims)
 
-    def get_flat_random_cpt(self):
+    def generate_flat_random_cpt(self):
         """
         Generate flat (i.e. array with only 1 dimension) representation of a  
         random (conditional) probability table from the polytope.
