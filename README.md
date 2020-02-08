@@ -67,7 +67,9 @@ The method `fake_data_for_learning.utils.RandomCpt()` gives a random conditional
 
 ## Related packages
 
-This package exists because I became tired of googling for existing implementations of how I wanted to generate fake data. In the development process, however, I found other packages with overlapping functionality (plus other features), notably
+This package exists because I became tired of googling for existing implementations of how I wanted to generate fake data. In the development process, however, I found other packages for generating interesting fake data, notably
+
+* [pyro](https://pyro.ai/)
 
 * [pgmpy](http://pgmpy.org/index.html) has a large amount of overlapping functionality, noting that `pgmpy` has a significantly larger scope. One difference is the bookkeeping convention for conditional probability tables: `pgmpy` represents conditional probability tables as 2d matrices, whereas we give each of the *n*-1 conditioned variables its own dimension, resulting in an *n* dimensional matrix.
 
