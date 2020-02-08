@@ -354,18 +354,25 @@ class ProbabilityPolytope:
         return res
 
 
-    def get_random_cpt(self):
+    def generate_random_cpt(self):
         """
+        Generate random (conditional) probability table from the polytope
         """
-        #dims = ('input', 'output')
+        res = self._initialize_cpt()
+
+        flat_cpt = self.get_flat_random_cpt()
+        for flat_idx in range(flat_cpt.shape[0]):
+            multi_idx = self.map_multidim_to_linear.to_multidim(flat_idx)
+            res.loc[multi_idx] = flat_cpt[flat_idx]
+
+        return res.data
+
+    def _initialize_cpt(self):
         coord_values = [self.coords[d] for d in self.dims]
         shape = [len(coord_value) for coord_value in coord_values]
         data = np.zeros(shape=shape)
 
-        return np.array([
-            [0, 1.],
-            [0.5, 0.5]
-        ])
+        return xr.DataArray(data, coords=self.coords, dims=self.dims)
 
     def get_flat_random_cpt(self):
         """

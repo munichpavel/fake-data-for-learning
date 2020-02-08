@@ -264,7 +264,7 @@ class TestAddPolytopeConstraints:
 class TestPolytopeVertexRepresentation:
     bernoulli = ut.ProbabilityPolytope(('outcome',), dict(outcome=range(2)))
     conditional_bernoullis = ut.ProbabilityPolytope(
-        ('input', 'output'), dict(input=range(2), output=range(2))
+        ('input', 'output'), dict(input=['hi', 'low'], output=range(2))
     )
 
     def test_get_vertex_representation(self):
@@ -288,7 +288,7 @@ class TestPolytopeVertexRepresentation:
 
         # Add expectation constraint
         self.conditional_bernoullis.set_expectation_constraints(
-            [ut.ExpectationConstraint(equation=dict(input=1), moment=1, value=0.5)]
+            [ut.ExpectationConstraint(equation=dict(input='low'), moment=1, value=0.5)]
         )
 
         # Ensure dimension of vertices (column vectors) match ambient space
@@ -301,8 +301,8 @@ class TestPolytopeVertexRepresentation:
         assert flat_cpt.shape[0] == self.conditional_bernoullis.get_n_outcomes()
 
         idx_conditioned = [
-            self.conditional_bernoullis.map_multidim_to_linear.to_linear((1, 0)),
-            self.conditional_bernoullis.map_multidim_to_linear.to_linear((1, 1))
+            self.conditional_bernoullis.map_multidim_to_linear.to_linear(('low', 0)),
+            self.conditional_bernoullis.map_multidim_to_linear.to_linear(('low', 1))
         ]
         np.testing.assert_array_almost_equal(
             flat_cpt[idx_conditioned],
@@ -311,7 +311,7 @@ class TestPolytopeVertexRepresentation:
         )
 
     def test_get_random_cpt(self):
-        cpt = self.conditional_bernoullis.get_random_cpt()
+        cpt = self.conditional_bernoullis.generate_random_cpt()
 
         assert cpt.shape == (2, 2)
 
