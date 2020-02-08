@@ -1,5 +1,6 @@
 pip
 pandas
+xrarray
 bumpversion
 wheel
 watchdog
