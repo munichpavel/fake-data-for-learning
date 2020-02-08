@@ -5,6 +5,7 @@ from collections import OrderedDict, namedtuple
 
 import numpy as np
 import pandas as pd
+import xarray as xr
 
 from scipy.special import softmax
 
@@ -75,7 +76,7 @@ class ProbabilityPolytope:
         Dict with keys dimension names and values dimension values
     
     """
-    def __init__(self, dims, coords):
+    def __init__(self, dims=tuple(), coords=dict()):
         """
         Expectation value of last element in dims subject to expect_constraints
         """
@@ -353,7 +354,18 @@ class ProbabilityPolytope:
         return res
 
 
-    #def get_cpt(self):
+    def get_random_cpt(self):
+        """
+        """
+        #dims = ('input', 'output')
+        coord_values = [self.coords[d] for d in self.dims]
+        shape = [len(coord_value) for coord_value in coord_values]
+        data = np.zeros(shape=shape)
+
+        return np.array([
+            [0, 1.],
+            [0.5, 0.5]
+        ])
 
     def get_flat_random_cpt(self):
         """
@@ -370,7 +382,6 @@ class ProbabilityPolytope:
         t = get_simplex_sample(V.shape[1])
         res = np.matmul(V, t)
         return res
-
     
     def get_vertex_representation(self):
         """

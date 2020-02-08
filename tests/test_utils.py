@@ -52,8 +52,8 @@ class TestProbabilityPolytope:
             ut.ProbabilityPolytope(('outcome'), dict(outcome=range(2)))
 
     polytope = ut.ProbabilityPolytope(
-        ('input', 'more_input', 'output'),
-        dict(input=['hi', 'low'], more_input=range(2), output=range(2))
+        dims=('input', 'more_input', 'output'),
+        coords=dict(input=['hi', 'low'], more_input=range(2), output=range(2))
     )
 
     def test_get_sum_dims(self):
@@ -74,11 +74,11 @@ class TestProbabilityPolytope:
 
 
     def test_get_n_outcomes(self):
-        assert self.polytope.get_n_outcomes() == 8
+        assert self.polytope.get_n_outcomes() == 2*2*2
 
     def test_get_n_probability_constraints(self):
 
-        tertiary = ut.ProbabilityPolytope(('v',), dict(v=range(3)))
+        tertiary = ut.ProbabilityPolytope(dims=('v',), coords=dict(v=range(3)))
         assert isinstance(tertiary.get_n_probability_constraints(), int)
 
         assert self.polytope.get_n_probability_constraints() \
@@ -196,8 +196,8 @@ class TestAddPolytopeConstraints:
 
     # Conditional probability with two inputs
     two_input_constrained_polytope = ut.ProbabilityPolytope(
-        ('input', 'more_input', 'output'),
-        dict(input=['hi', 'low'], more_input=range(2), output=range(2))
+        dims=('input', 'more_input', 'output'),
+        coords=dict(input=['hi', 'low'], more_input=range(2), output=range(2))
     )
     two_input_constrained_polytope.set_expectation_constraints(
         [ut.ExpectationConstraint(equation=dict(more_input=0), moment=1, value=0.5)]
@@ -294,19 +294,30 @@ class TestPolytopeVertexRepresentation:
         # Ensure dimension of vertices (column vectors) match ambient space
         assert self.conditional_bernoullis.get_vertex_representation().shape[0] == 4
 
-    def test_get_linear_random_cpt(self):
-        cpt = self.conditional_bernoullis.get_flat_random_cpt()
+    def test_get_flat_random_cpt(self):
+        flat_cpt = self.conditional_bernoullis.get_flat_random_cpt()
+
+        # flat cpt must contain same number of entries as possible outcomes
+        assert flat_cpt.shape[0] == self.conditional_bernoullis.get_n_outcomes()
 
         idx_conditioned = [
             self.conditional_bernoullis.map_multidim_to_linear.to_linear((1, 0)),
             self.conditional_bernoullis.map_multidim_to_linear.to_linear((1, 1))
         ]
         np.testing.assert_array_almost_equal(
-            cpt[idx_conditioned],
+            flat_cpt[idx_conditioned],
             np.array([0.5, 0.5])
             
         )
 
+    def test_get_random_cpt(self):
+        cpt = self.conditional_bernoullis.get_random_cpt()
+
+        assert cpt.shape == (2, 2)
+
+        # Test input=1 expectation value constraint
+        assert cpt[1, 0] == 0.5
+        assert cpt[1, 1] == 0.5
 
 class TestMultidimIndexToLinear:
     # Test instantiation
