@@ -37,7 +37,9 @@ install_requirements = [
     'networkx>=2.4',
     'pandas>=0.25',
     'scikit-learn>=0.21.3',
-    'scipy>=1.3'
+    'scipy>=1.3',
+    'xarray',
+    'pypoman'
 ]
 
 setup_requirements = [
