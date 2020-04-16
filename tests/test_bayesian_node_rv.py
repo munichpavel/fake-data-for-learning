@@ -6,9 +6,9 @@ import pandas as pd
 
 from sklearn.preprocessing import LabelEncoder
 
-from fake_data_for_learning import BayesianNodeRV
-from fake_data_for_learning import SampleValue
-
+from fake_data_for_learning.fake_data_for_learning import (
+    BayesianNodeRV, SampleValue
+)
 
 # (Conditional) probability distributions
 @pytest.fixture

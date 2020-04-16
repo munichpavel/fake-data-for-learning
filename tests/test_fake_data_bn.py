@@ -8,9 +8,9 @@ import pandas as pd
 
 from numpy.testing import assert_almost_equal
 
-from fake_data_for_learning import BayesianNodeRV
-from fake_data_for_learning import FakeDataBayesianNetwork
-from fake_data_for_learning import SampleValue
+from fake_data_for_learning.fake_data_for_learning import (
+    BayesianNodeRV, FakeDataBayesianNetwork, SampleValue
+)
 
 from fake_data_for_learning import utils as ut
 

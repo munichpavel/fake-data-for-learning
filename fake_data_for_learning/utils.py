@@ -1,5 +1,4 @@
-'''Utility functions for fake_data_for_learning'''
-import string
+"""Utility functions for fake_data_for_learning"""
 from itertools import product
 from collections import OrderedDict, namedtuple
 
@@ -11,6 +10,7 @@ from scipy.special import softmax
 
 from pypoman import compute_polytope_vertices
 
+
 class RandomCpt:
     """Generate random conditional probability table"""
     def __init__(self, *shape):
@@ -18,8 +18,8 @@ class RandomCpt:
 
     def __call__(self, seed=None):
         """
-        Generate non-negative random matrix of given 
-        shape such that sums over last dimension are 1
+        Generate non-negative random matrix of given shape such that sums over
+        last dimension are 1.
         """
         if seed is not None:
             np.random.seed(seed=seed)
@@ -30,8 +30,7 @@ class RandomCpt:
     @staticmethod
     def make_cpt(x):
         """
-        Convert numpy array x to conditional
-        probability table
+        Convert numpy array x to conditional probability table.
         """
         res = x.copy()
         ranges = [range(s) for s in res.shape[:-1]]
@@ -41,7 +40,6 @@ class RandomCpt:
         return res
 
 
-
 def get_simplex_sample(ambient_dimension, size=None):
     """
     Get random element of the simplex of given ambient dimension
@@ -49,7 +47,8 @@ def get_simplex_sample(ambient_dimension, size=None):
     Parameters
     ----------
     ambient_dimension : int
-        Dimension of ambient real vector space in which (probability) simplex is defined.
+        Dimension of ambient real vector space in which (probability) simplex
+        is defined.
 
     Returns
     -------
@@ -60,13 +59,16 @@ def get_simplex_sample(ambient_dimension, size=None):
     return res
 
 
-ExpectationConstraint = namedtuple('ExpectationConstraint', ['equation', 'moment', 'value'])
+ExpectationConstraint = namedtuple(
+    'ExpectationConstraint', ['equation', 'moment', 'value']
+)
 
 
 class ProbabilityPolytope:
     """
-    Polytope represenation and methods for discrete (conditional) probability distributions
-    
+    Polytope represenation and methods for discrete (conditional) probability
+    distributions.
+
     Parameters
     ----------
      dims : iterable of strings
@@ -74,12 +76,8 @@ class ProbabilityPolytope:
 
      coords : dict
         Dict with keys dimension names and values dimension values
-    
     """
     def __init__(self, dims=tuple(), coords=dict()):
-        """
-        Expectation value of last element in dims subject to expect_constraints
-        """
         self.dims = dims
         self.expect_on_dimension = dims[-1]
         self.map_multidim_to_linear = MapMultidimIndexToLinear(dims, coords)
@@ -88,10 +86,10 @@ class ProbabilityPolytope:
 
     def get_probability_half_planes(self):
         """
-        Get half plane representations of polytope defined by 
-            * the probability polytope half planes due to 
-                + probabilities summing to one, and 
-                + probabilities lying in [0, 1], pluz
+        Get half plane representations of polytope defined by
+            * the probability polytope half planes due to
+                + probabilities summing to one, and
+                + probabilities lying in [0, 1], plus
             * the given expectation value constraints
 
         Returns
@@ -99,8 +97,9 @@ class ProbabilityPolytope:
         A, b : tuple of np.array
         """
         A_total_prob, b_total_prob = self.get_total_probability_half_planes()
-        A_prob_bounds, b_prob_bounds = self.get_probability_bounds_half_planes()
- 
+        A_prob_bounds, b_prob_bounds = \
+            self.get_probability_bounds_half_planes()
+
         return np.vstack([A_total_prob, A_prob_bounds]), \
             np.hstack([b_total_prob, b_prob_bounds])
 
@@ -125,8 +124,8 @@ class ProbabilityPolytope:
         -------
         A : np.array
         """
-        
-        probability_constraint_equations = self.get_total_probability_constraint_equations()
+        probability_constraint_equations = \
+            self.get_total_probability_constraint_equations()
 
         A = np.zeros((
             self.get_n_probability_constraints(),
@@ -141,24 +140,27 @@ class ProbabilityPolytope:
     def get_n_probability_constraints(self):
         """
         Get the number of probability constraints involved in calculating
-        expectation values over self.expect_on_dimension
+        expectation values over self.expect_on_dimension.
 
         Returns
         -------
         res : int
         """
-        res = int(self.get_n_outcomes() / len(self.coords[self.expect_on_dimension]))
+        res = int(
+            self.get_n_outcomes() / len(self.coords[self.expect_on_dimension])
+        )
         return res
 
     def get_n_outcomes(self):
-        dim_cards =  [len(self.coords[d]) for d in self.dims]
+        dim_cards = [len(self.coords[d]) for d in self.dims]
         res = int(np.prod(dim_cards))
 
         return res
 
     def get_total_probability_constraint_equations(self):
         """
-        Get iterator of constraint equation for conditional probabilities summing to 1.
+        Get iterator of constraint equation for conditional probabilities
+        summing to 1.
 
         Returns
         -------
@@ -166,23 +168,25 @@ class ProbabilityPolytope:
         """
         res = self.coords.copy()
         res.pop(self.expect_on_dimension)
-        
+
         return product_dict(**res)
 
     def get_probability_bounds_half_planes(self):
         """
-        Get half-plane representation of bounds 0 <= p_I <= 1 for 
-        all possible value indices I
+        Get half-plane representation of bounds 0 <= p_I <= 1 for all possible
+        value indices I.
 
         Returns
         -------
         A, b : tuple of np.array
         """
         A = np.vstack([
-            np.eye(self.map_multidim_to_linear.dim), -np.eye(self.map_multidim_to_linear.dim)
+            np.eye(self.map_multidim_to_linear.dim),
+            -np.eye(self.map_multidim_to_linear.dim)
         ])
         b = np.hstack([
-            np.ones(self.map_multidim_to_linear.dim), np.zeros(self.map_multidim_to_linear.dim)
+            np.ones(self.map_multidim_to_linear.dim),
+            np.zeros(self.map_multidim_to_linear.dim)
         ])
 
         return A, b
@@ -212,18 +216,22 @@ class ProbabilityPolytope:
         self._validate_expectation_constraint(constraints)
         self.expect_constraints = constraints
 
-
     def _validate_expectation_constraint(self, constraints):
-        if self.expect_on_dimension in flatten_list([c.equation.keys() for c in constraints]):
-            msg = f"Final array dimension {self.expect_on_dimension} is reserved " \
-                "for expectation, and may not be included in expect_constraints"
+        if self.expect_on_dimension in flatten_list(
+            [c.equation.keys() for c in constraints]
+        ):
+            msg = (
+                    f"Final array dimension {self.expect_on_dimension} "
+                    "reserved for expectation, and may not be included in "
+                    "expect_constraints"
+                )
             raise ValueError(msg)
 
         invalid_equations = []
         for constraint in constraints:
             equation = constraint.equation
-            for k,v in equation.items():
-                if not v in self.coords[k]:
+            for k, v in equation.items():
+                if v not in self.coords[k]:
                     invalid_equations.append(equation)
         if invalid_equations:
             msg = f"Invalid constraint equations {invalid_equations}"
@@ -231,10 +239,10 @@ class ProbabilityPolytope:
 
     def get_all_half_planes(self):
         """
-        Get half plane representations of polytope defined by 
-            * the probability polytope half planes due to 
-                + probabilities summing to one, and 
-                + probabilities lying in [0, 1], pluz
+        Get half plane representations of polytope defined by
+            * the probability polytope half planes due to
+                + probabilities summing to one, and
+                + probabilities lying in [0, 1], plus
             * the given expectation value constraints
 
         Returns
@@ -255,31 +263,37 @@ class ProbabilityPolytope:
         return np.vstack(As), np.hstack(bs)
 
     def get_expect_equations_half_planes(self):
-        """
-        """
         A_equations = self.get_expect_equations_matrix()
-        b_equations = np.array([constraint.value for constraint in self.expect_constraints])
+        b_equations = np.array(
+            [constraint.value for constraint in self.expect_constraints]
+        )
 
         A_half_plane, b_half_plane = self.get_half_planes_from_equations(
             A_equations, b_equations
         )
-         
+
         return A_half_plane, b_half_plane
 
     def get_expect_equations_matrix(self):
         """
         Generate (linearly indexed) equation matrix from expect_constraints
-        
+
         Returns
         -------
         A : numpy.array
         """
-        A = np.zeros((len(self.expect_constraints), self.map_multidim_to_linear.dim))
+        A = np.zeros(
+            (len(self.expect_constraints), self.map_multidim_to_linear.dim)
+        )
         for idx, constraint in enumerate(self.expect_constraints):
             cols = self.get_expect_equations_col_indices(constraint.equation)
-            A[idx, cols] = self.get_expect_equations_row_entries(constraint.equation, constraint.moment)
-            
-            A[idx, :] = self.get_expect_equation_coefficient(constraint.equation) * A[idx, :]
+            A[idx, cols] = self.get_expect_equations_row_entries(
+                constraint.equation, constraint.moment
+            )
+
+            A[idx, :] = self.get_expect_equation_coefficient(
+                constraint.equation
+            ) * A[idx, :]
         return A
 
     def get_expect_equations_row_entries(self, constraint_equation, moment):
@@ -294,7 +308,10 @@ class ProbabilityPolytope:
             Values of self.expect_on_dimension in summand
         """
         sum_overs = self.get_sum_overs(constraint_equation)
-        return [sum_over[self.expect_on_dimension] ** moment for sum_over in sum_overs]
+        return [
+            sum_over[self.expect_on_dimension] ** moment
+            for sum_over in sum_overs
+        ]
 
     def get_expect_equation_coefficient(self, constraint_equation):
         """
@@ -334,8 +351,9 @@ class ProbabilityPolytope:
         : list
         """
         sum_dims = self.get_sum_dims(constraint_equation)
-        sum_ranges = {dim: self.map_multidim_to_linear.coords[dim] \
-            for dim in sum_dims}
+        sum_ranges = {
+            dim: self.map_multidim_to_linear.coords[dim] for dim in sum_dims
+        }
 
         return list(product_dict(**sum_ranges))
 
@@ -350,9 +368,10 @@ class ProbabilityPolytope:
         res : tuple
             Matrix dimension names not among constraint equations
         """
-        res = tuple([d for d in self.dims if d not in constraint_equation.keys()])
+        res = tuple(
+            [d for d in self.dims if d not in constraint_equation.keys()]
+        )
         return res
-
 
     def generate_random_cpt(self):
         """
@@ -376,7 +395,7 @@ class ProbabilityPolytope:
 
     def generate_flat_random_cpt(self):
         """
-        Generate flat (i.e. array with only 1 dimension) representation of a  
+        Generate flat (i.e. array with only 1 dimension) representation of a
         random (conditional) probability table from the polytope.
 
         Returns
@@ -424,17 +443,18 @@ class MapMultidimIndexToLinear:
         """
         if isinstance(dims, str):
             raise(ValueError(f'dims must be an iterable, you entered {dims}'))
-        
+
         return dims
-        
 
     def _get_coords(self, coords):
         """Enforce ordering from self.dims"""
         return OrderedDict([(k, coords[k]) for k in self.dims])
-    
+
     def _get_mapping(self):
         flat_coord_values = list(product(*self.coords.values()))
-        return pd.Series(range(len(flat_coord_values)), index=flat_coord_values)
+        return pd.Series(
+            range(len(flat_coord_values)), index=flat_coord_values
+        )
 
     def _get_dim(self):
         """Calcuate dimension of space of array entries"""
@@ -455,7 +475,7 @@ class MapMultidimIndexToLinear:
 
 def product_dict(**kwargs):
     """
-    https://stackoverflow.com/questions/5228158/cartesian-product-of-a-dictionary-of-lists
+    From StackOverflow: 5228158/cartesian-product-of-a-dictionary-of-lists
     """
     keys = kwargs.keys()
     vals = kwargs.values()
@@ -465,6 +485,6 @@ def product_dict(**kwargs):
 
 def flatten_list(l):
     """
-    https://stackoverflow.com/questions/952914/how-to-make-a-flat-list-out-of-list-of-lists
+    From StackOverflow: 952914/how-to-make-a-flat-list-out-of-list-of-lists
     """
     return [item for sublist in l for item in sublist]
