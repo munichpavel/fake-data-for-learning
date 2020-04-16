@@ -65,9 +65,11 @@ To avoid having to enter all each value of a conditional probability array, ther
 
 The method `fake_data_for_learning.utils.RandomCpt()` gives a random conditional probability table, but if you want to constrain the entries to satisfy constraints on expectation values, this is done in the class `fake_data_for_learning.utils.ProbabilityPolytope`; see the example notebook [notebooks/conditional-probability-tables-with-constraints.ipynb](notebooks/conditional-probability-tables-with-constraints.ipynb).
 
-## External Dependencies
+## Installation
 
-The method `utils.ProbabilityPolytope.generate_random_cpt`that generates conditional probability tables subject to constraints on expectation value uses the non-pure-python library [pypoman](https://github.com/stephane-caron/pypoman). See the [installation instructions](https://github.com/stephane-caron/pypoman#installation) for external dependencies.
+See the [installation instructions](docs/source/install.rst).
+
+Note that the methods of `utils.ProbabilityPolytope` that use polytope calculatations to generate conditional probability tables subject to constraints on expectation value uses the non-pure-python library [pypoman](https://github.com/stephane-caron/pypoman). See the [installation instructions](https://github.com/stephane-caron/pypoman#installation) for external dependencies.
 
 ## Related packages
 
