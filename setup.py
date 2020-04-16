@@ -55,7 +55,11 @@ setup(
     version=find_version('fake_data_for_learning', '__init__.py'),
     author="Paul Larsen",
     author_email='munichpavel@gmail.com',
-    url='https://github.com/munichpavel/fake-data-for-learning',
+    project_urls={
+        "Bug Tracker": "https://github.com/munichpavel/fake-data-for-learning/issues",
+        "Documentation": "https://munichpavel.github.io/fake-data-for-learning/",
+        "Source Code": "https://github.com/munichpavel/fake-data-for-learning/",
+    },
     packages=find_packages(include=['fake_data_for_learning']),
     include_package_data=False,
     python_requires='>3.6',
