@@ -6,6 +6,8 @@ Python
 
 Install from GitHub: ``pip install git+https://github.com/munichpavel/fake-data-for-learning``
 
+Requires `libglpk-dev` for polyhedron vertex enumeration.
+
 
 For local development
 
