@@ -8,7 +8,6 @@ The goal of this package is to make it easy to generate interesting fake data. I
 
 * **Website**: [https://munichpavel.github.io/fake-data-for-learning](https://munichpavel.github.io/fake-data-for-learning)
 * **Documentation**: [https://munichpavel.github.io/fake-data-docs/](https://munichpavel.github.io/fake-data-docs/)
-* **Installation**: [docs/source/install.rst](docs/source/install.rst)
 
 ## Basic usage
 
