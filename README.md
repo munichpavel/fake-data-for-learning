@@ -48,7 +48,7 @@ samples = bn.rvs(size=5)
 samples['pmf'] = samples[['Gender', 'Y']].apply(lambda sample: round(bn.pmf(sample), 3), axis=1)
 ```
 
-![docs/graphics/network_sample.png](docs/graphics/network_sample.png)
+![docs/graphics/network_sample.png](https://github.com/munichpavel/fake-data-for-learning/blob/master/docs/graphics/network_sample.png)
 
 Visualize the Bayesian network
 
@@ -56,7 +56,7 @@ Visualize the Bayesian network
 bn.draw_graph()
 ```
 
-![docs/graphics/graph.png](docs/graphics/graph.png)
+![docs/graphics/graph.png](https://github.com/munichpavel/fake-data-for-learning/blob/master/docs/graphics/graph.png)
 
 See the demo notebook [notebooks/bayesian-network.ipynb](https://github.com/munichpavel/fake-data-for-learning/blob/master/notebooks/bayesian-network.ipynb) for feature examples.
 
