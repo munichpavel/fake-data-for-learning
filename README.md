@@ -59,11 +59,11 @@ bn.draw_graph()
 
 ![docs/graphics/graph.png](docs/graphics/graph.png)
 
-See the demo notebook [notebooks/bayesian-network.ipynb](notebooks/bayesian-network.ipynb) for feature examples.
+See the demo notebook [notebooks/bayesian-network.ipynb](https://github.com/munichpavel/fake-data-for-learning/blob/master/notebooks/bayesian-network.ipynb) for feature examples.
 
 To avoid having to enter all each value of a conditional probability array, there are also two methods to generate random conditional probability tables.
 
-The method `fake_data_for_learning.utils.RandomCpt()` gives a random conditional probability table, but if you want to constrain the entries to satisfy constraints on expectation values, this is done in the class `fake_data_for_learning.utils.ProbabilityPolytope`; see the example notebook [notebooks/conditional-probability-tables-with-constraints.ipynb](notebooks/conditional-probability-tables-with-constraints.ipynb).
+The method `fake_data_for_learning.utils.RandomCpt()` gives a random conditional probability table, but if you want to constrain the entries to satisfy constraints on expectation values, this is done in the class `fake_data_for_learning.utils.ProbabilityPolytope`; see the example notebook [notebooks/conditional-probability-tables-with-constraints.ipynb](https://github.com/munichpavel/fake-data-for-learning/blob/master/notebooks/conditional-probability-tables-with-constraints.ipynb).
 
 ## Installation
 
