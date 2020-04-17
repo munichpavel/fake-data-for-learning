@@ -30,43 +30,37 @@ def find_version(*file_paths):
 
     raise RuntimeError("Unable to find version string.")
 
-# with open('README.md') as readme_file:
-#     readme = readme_file.read()
+
+with open('README.md') as readme_file:
+    readme = readme_file.read()
+
 
 install_requirements = [
     'networkx>=2.4',
     'pandas>=0.25',
+    'numpy',
     'scikit-learn>=0.21.3',
     'scipy>=1.3',
     'xarray',
     'pypoman'
 ]
 
-setup_requirements = [
-    'pytest-runner',
-]
-
-test_requirements = [
-    'pytest',
-]
 
 setup(
     name='fake_data_for_learning',
     version=find_version('fake_data_for_learning', '__init__.py'),
-    author="Paul Larsen",
-    author_email='munichpavel@gmail.com',
+    long_description=readme,
+    long_description_content_type='text/markdown',
     project_urls={
+        "Homepage": "https://munichpavel.github.io/fake-data-for-learning/",
         "Bug Tracker": "https://github.com/munichpavel/fake-data-for-learning/issues",
-        "Documentation": "https://munichpavel.github.io/fake-data-for-learning/",
+        "Documentation": "https://munichpavel.github.io/fake-data-docs/html/index.html",
         "Source Code": "https://github.com/munichpavel/fake-data-for-learning/",
     },
     packages=find_packages(include=['fake_data_for_learning']),
     include_package_data=False,
     python_requires='>3.6',
     install_requires=install_requirements,
-    setup_requires=setup_requirements,
-    test_suite='tests',
-    tests_require=test_requirements,
     license="MIT license",
     zip_safe=False,
     classifiers=[
@@ -74,7 +68,9 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-    	'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
+    author="Paul Larsen",
+    author_email='munichpavel@gmail.com'
    )
