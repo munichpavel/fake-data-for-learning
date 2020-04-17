@@ -31,9 +31,22 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 
-with open('README.md') as readme_file:
-    readme = readme_file.read()
+description = """
+Interesting fake multivariate data is harder to generate than it should be.
+ Textbooks typically give definitions, two standard examples (multinomial and
+ multivariate normal) and then proceed to proving theorems and propositions.
+ True, one dimensional distributions can be combined, but here as well the
+ source of examples is also sparse, e.g. products of distributions or copulas
+ (typically Gaussian or t-copulas) applied to these 1-d examples.
 
+For machine learning experimentation, it is useful to have an unlimited supply
+ of interesting fake data, where by interesting I mean that we know certain
+ properties of the data and want to test if the algorithm can pick this up. A
+ great potential source of such data is graphical models.
+
+In the current release, we generate fake data with discrete Bayesian networks
+ (also known as directed graphical models).
+"""
 
 install_requirements = [
     'networkx>=2.4',
@@ -49,7 +62,7 @@ install_requirements = [
 setup(
     name='fake_data_for_learning',
     version=find_version('fake_data_for_learning', '__init__.py'),
-    long_description=readme,
+    long_description=description,
     long_description_content_type='text/markdown',
     project_urls={
         "Homepage": "https://munichpavel.github.io/fake-data-for-learning/",
