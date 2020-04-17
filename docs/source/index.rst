@@ -5,18 +5,35 @@ Interesting fake multivariate data is harder to generate than it should be. Text
 
 For machine learning experimentation, it is useful to have an unlimited supply of interesting fake data, where by interesting I mean that we know certain properties of the data and want to test if the algorithm can pick this up. A great potential source of such data is graphical models.
 
-The goal of this package is to make it easy to generate interesting fake data. We start with discrete Bayesian networks (also known as directed graphical models).
+In the current release, we generate fake data with discrete Bayesian networks (also known as directed graphical models).
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents
+   :caption: Contents:
 
    api
-   install
+
+Installation
+------------
+
+Install from `pypi`_: ``pip install fake-data-for-learning``
+
+.. _pypi: https://pypi.org/project/fake-data-for-learning/
+
+Note that the methods of `utils.ProbabilityPolytope` that use polytope calculatations to generate conditional probability tables subject to constraints on expectation value uses the non-pure-python library `pypoman`_. See the installation `instructions`_ for external dependencies.
+
+.. _pypoman: https://github.com/stephane-caron/pypoman
+.. _instructions: https://github.com/stephane-caron/pypoman#installation
+
+Links
+-----
 
 **Website**: https://munichpavel.github.io/fake-data-for-learning
 
 **GitHub Repository**: https://github.com/munichpavel/fake-data-for-learning
+
+**PyPI**: https://pypi.org/project/fake-data-for-learning/
+
 
 Indices and tables
 ==================
