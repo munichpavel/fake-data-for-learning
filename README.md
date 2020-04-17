@@ -67,9 +67,20 @@ The method `fake_data_for_learning.utils.RandomCpt()` gives a random conditional
 
 ## Installation
 
-See the [installation instructions](docs/source/install.rst).
+Install from [pypi](https://pypi.org/project/fake-data-for-learning/): `pip install fake-data-for-learning`
 
 Note that the methods of `utils.ProbabilityPolytope` that use polytope calculatations to generate conditional probability tables subject to constraints on expectation value uses the non-pure-python library [pypoman](https://github.com/stephane-caron/pypoman). See the [installation instructions](https://github.com/stephane-caron/pypoman#installation) for external dependencies.
+
+### Local development
+
+* ``git clone`` the repository and ``cd`` into the project directory
+* Create a virtual environment from the included ``requirements.txt`` file
+
+## Documentation
+
+To generate your own [Sphinx documentation](http://sphinx-doc.org/), you must set the environment variable ``LOCAL_BUILDDIR``.
+
+Convenience scripts for the case of a separate build directories (locally and remotely) are in [docs/scripts](https://github.com/munichpavel/fake-data-for-learning/tree/master/docs/scripts).
 
 ## Related packages
 
