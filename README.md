@@ -17,7 +17,7 @@ Defining and sampling from (discrete) conditional random variables:
 
 ```python
 import numpy as np
-from fake_data_for_learning import BayesianNodeRV, SampleValue
+from fake_data_for_learning.fake_data_for_learning import BayesianNodeRV, SampleValue
 
 # Gender -> Y
 # Define Gender with probability table, node label and value labels
@@ -42,7 +42,7 @@ Y.rvs({'Gender': SampleValue('male', label_encoder=Gender.label_encoder)}, seed=
 Combine into a Bayesian network. Sample and calculate the probability mass function of each sample.
 
 ```python
-from fake_data_for_learning import FakeDataBayesianNetwork
+from fake_data_for_learning.fake_data_for_learning import FakeDataBayesianNetwork
 samples = bn.rvs(size=5)
 # Rounding of pmf is only for display purposes
 samples['pmf'] = samples[['Gender', 'Y']].apply(lambda sample: round(bn.pmf(sample), 3), axis=1)
