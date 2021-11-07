@@ -5,14 +5,15 @@ from itertools import product
 
 from fake_data_for_learning import utils as ut
 
+
 @pytest.mark.parametrize(
-    "test_input", 
-    [   
+    "test_input",
+    [
         np.array([-1., 1.]),
         np.array([
             [1., 0.],
             [-1., 1.]]),
-        np.ones((2,3,4))
+        np.ones((2, 3, 4))
 
     ]
 )
@@ -45,7 +46,7 @@ class TestGetSimplexSample:
 
 
 class TestProbabilityPolytope:
-    
+
     def test_init(self):
         # dimensions must be an iterable
         with pytest.raises(ValueError):
@@ -63,15 +64,14 @@ class TestProbabilityPolytope:
 
     def test_get_sum_overs(self):
         expected = [
-            dict(more_input=0, output=0), 
-            dict(more_input=0, output=1), 
+            dict(more_input=0, output=0),
+            dict(more_input=0, output=1),
             dict(more_input=1, output=0),
             dict(more_input=1, output=1)
         ]
         assert self.polytope.get_sum_overs(
             dict(input='low')
         ) == expected
-
 
     def test_get_n_outcomes(self):
         assert self.polytope.get_n_outcomes() == 2*2*2
@@ -97,7 +97,7 @@ class TestProbabilityPolytope:
         np.testing.assert_array_almost_equal(
             self.polytope.get_total_probability_constraint_matrix(),
             np.array([
-                [1., 1., 0., 0., 0., 0., 0., 0.], 
+                [1., 1., 0., 0., 0., 0., 0., 0.],
                 [0., 0., 1., 1., 0., 0., 0., 0.],
                 [0., 0., 0., 0., 1., 1., 0., 0.],
                 [0., 0., 0., 0., 0., 0., 1., 1.],
@@ -107,9 +107,9 @@ class TestProbabilityPolytope:
     def test_get_probability_bounds_half_planes(self):
         A_expected = np.vstack([np.eye(2*2*2), -np.eye(2*2*2)])
         b_expected = np.hstack([np.ones(2*2*2), np.zeros(2*2*2)])
-        
+
         A, b = self.polytope.get_probability_bounds_half_planes()
-        
+
         np.testing.assert_array_almost_equal(A_expected, A)
         np.testing.assert_array_almost_equal(b_expected, b)
 
@@ -169,6 +169,7 @@ class TestProbabilityPolytope:
         np.testing.assert_array_almost_equal(A, A_expect)
         np.testing.assert_array_almost_equal(b, b_expect)
 
+
 class TestAddPolytopeConstraints:
     constrained_polytope = ut.ProbabilityPolytope(
             ('input', 'output'),
@@ -176,7 +177,7 @@ class TestAddPolytopeConstraints:
         )
 
     def test_add_expectation_constraint(self):
-        # ValueError: Invalid expectation value constraint 
+        # ValueError: Invalid expectation value constraint
         with pytest.raises(ValueError):
             self.constrained_polytope.set_expectation_constraints(
                 [ut.ExpectationConstraint(equation=dict(input=0), moment=1, value=0.5)]
@@ -228,7 +229,7 @@ class TestAddPolytopeConstraints:
 
         np.testing.assert_array_almost_equal(
             self.two_input_constrained_polytope.get_expect_equations_matrix(),
-             1 / 2. * np.array([[0., 1., 0., 0., 0., 1., 0., 0.]])
+            1 / 2. * np.array([[0., 1., 0., 0., 0., 1., 0., 0.]])
         )
 
     def test_get_all_halfplanes(self):
@@ -275,7 +276,7 @@ class TestPolytopeVertexRepresentation:
                 [0., 1.]
             ])
         )
-        
+
         np.testing.assert_array_almost_equal(
             self.conditional_bernoullis.get_vertex_representation(),
             np.array([
@@ -307,7 +308,7 @@ class TestPolytopeVertexRepresentation:
         np.testing.assert_array_almost_equal(
             flat_cpt[idx_conditioned],
             np.array([0.5, 0.5])
-            
+
         )
 
     def test_get_random_cpt(self):
@@ -316,18 +317,19 @@ class TestPolytopeVertexRepresentation:
         assert cpt.shape == (2, 2)
 
         # Test probabilities sum to 1.
-        assert cpt[0,:].sum() == pytest.approx(1.)
-        assert cpt[1,:].sum() == pytest.approx(1.)
+        assert cpt[0, :].sum() == pytest.approx(1.)
+        assert cpt[1, :].sum() == pytest.approx(1.)
 
         # Test input=1 expectation value constraint
         assert cpt[1, 0] == pytest.approx(0.5)
         assert cpt[1, 1] == pytest.approx(0.5)
 
+
 class TestMultidimIndexToLinear:
     # Test instantiation
     with pytest.raises(ValueError):
         ut.MapMultidimIndexToLinear(('outcome'), dict(outcome=range(2)))
-    
+
     multi_to_linear = ut.MapMultidimIndexToLinear(
         ('input', 'output'),
         dict(input=['hi', 'low'], output=range(3))
@@ -346,8 +348,8 @@ class TestMultidimIndexToLinear:
         self.multi_to_linear.to_multidim(5) == ('low', 2)
 
     @pytest.mark.parametrize(
-        "coord_index_dict,expected", 
-        [   
+        "coord_index_dict,expected",
+        [
             (dict(output=0, input='hi'), ('hi', 0)),
             (dict(output=2, input='low'), ('low', 2))
         ]
