@@ -1,16 +1,9 @@
-pip>=19.2
+bumpversion
+wheel
+
 pandas
 xarray
 matplotlib
-bumpversion
-wheel
-watchdog
-flake8
-tox
-coverage
-Sphinx
-pytest
-pytest-runner
 networkx
 numpy
 pypoman
@@ -18,4 +11,14 @@ pylint
 rope
 scipy
 scikit-learn
--e .
+
+flake8
+tox
+coverage
+Sphinx
+
+jupyter
+ipykernel
+pytest
+pytest-runner
+nbconvert

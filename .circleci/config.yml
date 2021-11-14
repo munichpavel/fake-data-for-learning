@@ -6,11 +6,14 @@ jobs:
       - image: circleci/python:3.6.4
     steps:
       - checkout
-      - run: 
-          command: | 
+      - run:
+          command: |
             sudo apt-get update
-            sudo apt-get install libglpk-dev            
-            sudo pip install -r requirements.txt
+            sudo apt-get install libglpk-dev
+            python -m venv env
+            source env/bin/activate
+            pip install -r requirements.txt
+            pip install .
       - run:
           command: |
             pytest -vv
