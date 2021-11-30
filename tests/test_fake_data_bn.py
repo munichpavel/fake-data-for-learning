@@ -1,24 +1,19 @@
 import pytest
 
-from itertools import product
-from collections import Counter
-
 import numpy as np
 import pandas as pd
 
 from numpy.testing import assert_almost_equal
 
 from fake_data_for_learning.fake_data_for_learning import (
-    BayesianNodeRV, FakeDataBayesianNetwork, SampleValue
+    BayesianNodeRV, FakeDataBayesianNetwork
 )
-
-from fake_data_for_learning import utils as ut
 
 
 # Test static methods
 def test_name_in_list():
-        assert FakeDataBayesianNetwork.name_in_list('bob', None) == 0
-        assert FakeDataBayesianNetwork.name_in_list('alice', ['alice', 'bob']) == 1
+    assert FakeDataBayesianNetwork.name_in_list('bob', None) == 0
+    assert FakeDataBayesianNetwork.name_in_list('alice', ['alice', 'bob']) == 1
 
 
 def test_parent_idx():
@@ -26,9 +21,9 @@ def test_parent_idx():
         [0, 0, 1],
         [0, 0, 1],
         [0, 0, 0]
-    ])    
+    ])
 
-    assert FakeDataBayesianNetwork.get_parent_idx(2, X) == [0,1]
+    assert FakeDataBayesianNetwork.get_parent_idx(2, X) == [0, 1]
     assert FakeDataBayesianNetwork.get_parent_idx(0, X) == []
 
 
@@ -36,16 +31,18 @@ def test_parent_idx():
 def rv_binary_X0():
     return BayesianNodeRV('X0', np.array([0.1, 0.9]))
 
+
 @pytest.fixture
 def rv_binary_child_X1(rv_binary_X0):
     return BayesianNodeRV(
-        'X1', 
+        'X1',
         np.array([
             [0.2, 0.8],
             [0.7, 0.3]
         ]),
-        parent_names = [rv_binary_X0.name]
+        parent_names=[rv_binary_X0.name]
     )
+
 
 def test_parents(rv_binary_X0, rv_binary_child_X1):
     # Test for missing parent variable
@@ -62,7 +59,7 @@ def test_parents(rv_binary_X0, rv_binary_child_X1):
                     [0.2, 0.8],
                     [0.7, 0.3]
                 ]),
-                parent_names = ['geoff']
+                parent_names=['geoff']
             )
         )
 
@@ -76,7 +73,7 @@ def non_binary_bayesian_network(rv_binary_X0):
         BayesianNodeRV(
             'X2',
             np.array([
-                [ 
+                [
                     [0., 1.0],
                     [0.2, 0.8],
                     [0.1, 0.9]
@@ -102,7 +99,7 @@ def thrifty_bayesian_network():
     '''
     age = BayesianNodeRV('age', np.array([0.2, 0.5, 0.3]), values=('20', '40', '60'))
     profession = BayesianNodeRV(
-        'profession', 
+        'profession',
         np.array([
             [0.3, 0.4, 0.2, 0.1],
             [0.05, 0.15, 0.3, 0.5],
@@ -115,22 +112,22 @@ def thrifty_bayesian_network():
         'thriftiness',
         np.array([
             [
-                [0.6, 0.4], #20, salaried
-                [0.1, 0.9], #20, self-employed
-                [0.2, 0.8], #20, student
-                [0.3, 0.7], #20, unemployed
+                [0.6, 0.4],  # 20, salaried
+                [0.1, 0.9],  # 20, self-employed
+                [0.2, 0.8],  # 20, student
+                [0.3, 0.7],  # 20, unemployed
             ],
             [
-                [0.2, 0.8], # 40 salaried
-                [0.3, 0.7], # 40, self-employed
-                [0.7, 0.3], #40, student
-                [0.4, 0.6], #40, unemployed                
+                [0.2, 0.8],  # 40, salaried
+                [0.3, 0.7],  # 40, self-employed
+                [0.7, 0.3],  # 40, student
+                [0.4, 0.6],  # 40, unemployed
             ],
             [
-                [0.25, 0.75], #60, salaried
-                [0.3, 0.7], #60, self-employed
-                [0.2, 0.8], #60, student
-                [0.1, 0.9], #60, unemployed
+                [0.25, 0.75],  # 60, salaried
+                [0.3, 0.7],  # 60, self-employed
+                [0.2, 0.8],  # 60, student
+                [0.1, 0.9],  # 60, unemployed
             ],
         ]),
         parent_names=['age', 'profession']
@@ -147,23 +144,23 @@ def test_expected_cpt_dims(
     bn = FakeDataBayesianNetwork(rv_binary_X0, rv_binary_child_X1)
     assert (
         bn.get_expected_cpt_dims([0], len(rv_binary_X0.values))
-        == (2,2)
+        == (2, 2)
     )
 
     # X0 -> X2 <- Y1 with Y1 ternary
     assert(
         non_binary_bayesian_network.get_expected_cpt_dims(
-            [0,1], len(non_binary_bayesian_network.bnrvs[2].values)
+            [0, 1], len(non_binary_bayesian_network.bnrvs[2].values)
         )
-        == (2,3,2)
+        == (2, 3, 2)
     )
 
     # Thriftiness Bayesian network
     assert (
         thrifty_bayesian_network.get_expected_cpt_dims(
-            [0,1], len(thrifty_bayesian_network.bnrvs[2].values)
+            [0, 1], len(thrifty_bayesian_network.bnrvs[2].values)
         )
-        ==  (3,4,2)
+        == (3, 4, 2)
     )
 
 
@@ -192,7 +189,7 @@ def test_adjacency_matrix(
         non_binary_bayesian_network.adjacency_matrix,
         expected_nonbinary_adj
     )
-   
+
     expected_thrifty_adj = np.array([
         [0, 1, 1],
         [0, 0, 1],
@@ -202,6 +199,7 @@ def test_adjacency_matrix(
         thrifty_bayesian_network.adjacency_matrix,
         expected_thrifty_adj
     )
+
 
 def test_topological_sort():
     eve_0 = BayesianNodeRV('E0', np.array([0.2, 0.8]))
@@ -220,7 +218,8 @@ def test_topological_sort():
         ]),
         parent_names=['E0', 'E1']
     )
-    further_descendent = BayesianNodeRV('FD', 
+    further_descendent = BayesianNodeRV(
+        'FD',
         np.array([
             [0.4, 0.6],
             [0.6, 0.4]
@@ -240,32 +239,32 @@ def test_rvs_boundary_cases():
     pt_always_0 = np.array([1., 0.])
     always_0 = BayesianNodeRV('X0', pt_always_0)
     always_1c0 = BayesianNodeRV(
-        'X1', 
+        'X1',
         np.array([
             [0., 1.],
             [1., 0.],
-        ]), 
+        ]),
         parent_names=['X0']
     )
 
     bn_1c0 = FakeDataBayesianNetwork(always_0, always_1c0)
     print(bn_1c0.rvs(size=1))
     pd.testing.assert_frame_equal(
-        bn_1c0.rvs(size=1), 
+        bn_1c0.rvs(size=1),
         pd.DataFrame.from_records([{'X0': 0, 'X1': 1}])
     )
 
     always_0c0 = BayesianNodeRV(
-        'X1', 
+        'X1',
         np.array([
             [1., 0.],
             [0., 1.],
-        ]), 
+        ]),
         parent_names=['X0']
     )
     bn_0c0 = FakeDataBayesianNetwork(always_0, always_0c0)
     pd.testing.assert_frame_equal(
-        bn_0c0.rvs(size=1), 
+        bn_0c0.rvs(size=1),
         pd.DataFrame.from_records([{'X0': 0, 'X1': 0}])
     )
 
@@ -273,40 +272,39 @@ def test_rvs_boundary_cases():
 def test_pmf():
     X0 = BayesianNodeRV('X0', np.array([0.1, 0.9]))
 
-
     X1cX0 = BayesianNodeRV(
-        'X1', 
+        'X1',
         np.array([
             [0.2, 0.8],
             [0.7, 0.3]
         ]),
-        parent_names = [X0.name]
+        parent_names=[X0.name]
     )
     bn = FakeDataBayesianNetwork(X0, X1cX0)
-    
+
     assert_almost_equal(
-        bn.pmf(pd.Series([0,0])),
-        X0.cpt[0] * X1cX0.cpt[0,0]
+        bn.pmf(pd.Series([0, 0])),
+        X0.cpt[0] * X1cX0.cpt[0, 0]
     )
     assert_almost_equal(
-        bn.pmf(pd.Series([1,0])),
-        X0.cpt[1] * X1cX0.cpt[1,0]
+        bn.pmf(pd.Series([1, 0])),
+        X0.cpt[1] * X1cX0.cpt[1, 0]
     )
     assert_almost_equal(
-        bn.pmf(pd.Series([0,1])),
-        X0.cpt[0] * X1cX0.cpt[0,1]
+        bn.pmf(pd.Series([0, 1])),
+        X0.cpt[0] * X1cX0.cpt[0, 1]
     )
     assert_almost_equal(
-        bn.pmf(pd.Series([1,1])),
-        X0.cpt[1] * X1cX0.cpt[1,1]
+        bn.pmf(pd.Series([1, 1])),
+        X0.cpt[1] * X1cX0.cpt[1, 1]
     )
+
 
 def test_pmf_non_default_values():
-
     level = BayesianNodeRV('Level', np.array([0.1, 0.9]), values=['high', 'low'])
 
     outcome = BayesianNodeRV(
-        'Outcome', 
+        'Outcome',
         np.array([
             [0.2, 0.5, 0.3],
             [0.3, 0.4, 0.3],
@@ -317,9 +315,9 @@ def test_pmf_non_default_values():
     bn = FakeDataBayesianNetwork(level, outcome)
 
     assert pytest.approx(bn.pmf(pd.Series(['high', 'bad']))) == \
-        pytest.approx(level.cpt[0] * outcome.cpt[0,0])
+        pytest.approx(level.cpt[0] * outcome.cpt[0, 0])
     assert pytest.approx(bn.pmf(pd.Series(['low', 'meltdown']))) == \
-        pytest.approx(level.cpt[1] * outcome.cpt[1,2])
+        pytest.approx(level.cpt[1] * outcome.cpt[1, 2])
 
 
 def test_rvs_counts_vs_pmf():
@@ -337,7 +335,7 @@ def test_rvs_counts_vs_pmf():
     sample_ratios = samples.groupby(['X0', 'X1']).size() / samples.shape[0]
 
     expected_index = pd.MultiIndex.from_tuples(
-        [(0,0), (0,1), (1,0), (1,1)],
+        [(0, 0), (0, 1), (1, 0), (1, 1)],
         names=['X0', 'X1'])
     expected_ratios = pd.Series(
         [0.125, 0.375, 0.375, 0.125],
