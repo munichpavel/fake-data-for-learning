@@ -1,6 +1,7 @@
 bumpversion
 wheel
 
+cython
 pandas
 xarray
 matplotlib

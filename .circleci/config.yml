@@ -12,8 +12,7 @@ jobs:
             sudo apt-get install libglpk-dev
             python -m venv env
             source env/bin/activate
+            python -m pip install --upgrade pip
             pip install -r requirements.txt
             pip install .
-      - run:
-          command: |
             pytest -vv
