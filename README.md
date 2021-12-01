@@ -92,3 +92,9 @@ This package exists because I became tired of googling for existing implementati
 * [pyagrum](https://pyagrum.readthedocs.io) is a Python wrapper around the C++ library [aGrUM](http://agrum.org/), and has similar funcionality with a larger scope. Unlike `pgmpy`, `pyagrum` has a similar API for specifying conditional probability tables to the one used here.
 
 * [causalgraphicalmodels](https://github.com/ijmbarr/causalgraphicalmodels)'s class `StructuralCausalModel` allows sampling from Bayesian network where the variables are related as functions of one another, rather than via the conditional probability tables used here.
+
+## Change log
+
+### v0.2.0
+
+This release adds a method for generating categorical data whose (multidimensional) contingency table equals a given one. The motivation is to generate fake data exhibiting [Simpson's paradox](https://en.wikipedia.org/wiki/Simpson%27s_paradox).
