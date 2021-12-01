@@ -95,6 +95,6 @@ This package exists because I became tired of googling for existing implementati
 
 ## Change log
 
-### v0.2.0
+### v0.4.0
 
 This release adds a method for generating categorical data whose (multidimensional) contingency table equals a given one. The motivation is to generate fake data exhibiting [Simpson's paradox](https://en.wikipedia.org/wiki/Simpson%27s_paradox).
