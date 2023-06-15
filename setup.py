@@ -39,7 +39,7 @@ install_requirements = [
 
 setup(
     name='fake_data_for_learning',
-    version='0.4.0',
+    version='0.4.1',
     long_description=description,
     long_description_content_type='text/markdown',
     project_urls={
