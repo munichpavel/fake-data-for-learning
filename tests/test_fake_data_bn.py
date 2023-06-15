@@ -342,6 +342,5 @@ def test_rvs_counts_vs_pmf():
         index=expected_index
     )
     pd.testing.assert_series_equal(
-        sample_ratios, expected_ratios,
-        check_exact=False, check_less_precise=0
+        sample_ratios, expected_ratios, check_exact=False, rtol=0.05
     )

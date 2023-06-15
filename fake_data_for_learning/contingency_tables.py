@@ -26,7 +26,7 @@ def generate_fake_data_for_contingency_table(
             raise NotImplementedError(msg)
 
     samples = []
-    for idx, count in flat_contingency_table.iteritems():
+    for idx, count in flat_contingency_table.items():
         samples += count * [idx]
     res = pd.DataFrame(samples, columns=dims)
     # Shuffle rows uniformly so it looks better

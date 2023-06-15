@@ -254,7 +254,7 @@ class SampleValue:
         """
         Check conditions that rule-out a default (i.e. natural number) value.
         """
-        if isinstance(x, np.int) or isinstance(x, np.int64):
+        if isinstance(x, int) or isinstance(x, np.int64):
             return x >= 0
         else:
             return False
@@ -380,7 +380,7 @@ class FakeDataBayesianNetwork:
         return res
 
     def get_graph(self):
-        g = nx.from_numpy_matrix(
+        g = nx.from_numpy_array(
             self.adjacency_matrix, create_using=nx.DiGraph
         )
         # Add node labels
