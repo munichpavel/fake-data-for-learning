@@ -33,8 +33,11 @@ install_requirements = [
     'scikit-learn>=0.21.3',
     'scipy>=1.3',
     'xarray',
-    'pypoman'
 ]
+
+extras_require = {
+        'probability_polytope':  ["pypoman"]
+    }
 
 
 setup(

@@ -25,9 +25,8 @@ jobs:
           python -VV
           python -m site
           python -m pip install --upgrade pip setuptools wheel
-          # python -m pip install --upgrade coverage[toml] virtualenv tox tox-gh-actions
-          python -m pip install --use-pep517 .
-          python -m pip install --use-pep517 -r requirements.txt
+          python -m pip install --use-pep517 .  # TODO pep517 flag; see #36
+          python -m pip install --use-pep517 -r requirements.txt  # TODO pep517 flag; see #36
 
       - name: "Run package tests for ${{ matrix.python-version }}, ${{ matrix.os }}"
         run: "python -m pytest -vv"

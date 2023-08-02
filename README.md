@@ -64,13 +64,17 @@ See the demo notebook [notebooks/bayesian-network.ipynb](notebooks/bayesian-netw
 
 To avoid having to enter all each value of a conditional probability array, there are also two methods to generate random conditional probability tables.
 
-The method `fake_data_for_learning.utils.RandomCpt()` gives a random conditional probability table, but if you want to constrain the entries to satisfy constraints on expectation values, this is done in the class `fake_data_for_learning.utils.ProbabilityPolytope`; see the example notebook [notebooks/conditional-probability-tables-with-constraints.ipynb](notebooks/conditional-probability-tables-with-constraints.ipynb).
+The method `fake_data_for_learning.utils.RandomCpt()` gives a random conditional probability table, but if you want to constrain the entries to satisfy constraints on expectation values, this is done in the class `fake_data_for_learning.utils.ProbabilityPolytope`; see the example notebook [notebooks/conditional-probability-tables-with-constraints.ipynb](notebooks/conditional-probability-tables-with-constraints.ipynb). See also [Optional Dependencies](#optional-dependencies) below.
 
 ## Installation
 
 Install from [pypi](https://pypi.org/project/fake-data-for-learning/): `pip install fake-data-for-learning`
 
-Note that the methods of `utils.ProbabilityPolytope` that use polytope calculatations to generate conditional probability tables subject to constraints on expectation value uses the non-pure-python library [pypoman](https://github.com/stephane-caron/pypoman). See the [installation instructions](https://github.com/stephane-caron/pypoman#installation) for external dependencies.
+### Optional dependencies
+
+Note that the methods of `utils.ProbabilityPolytope` that use polytope calculatations to generate conditional probability tables subject to constraints on expectation value use the non-pure-python library [pypoman](https://github.com/stephane-caron/pypoman). See the [installation instructions](https://github.com/stephane-caron/pypoman#installation) for external dependency instructions.
+
+By default the dependencies for `utils.ProbabilityPolytope` are not installed; to do so, run from your virtual environment `pip install 'fake-data-for-learning[probability_polytope]'`
 
 ### Local development
 
@@ -96,6 +100,10 @@ This package exists because I became tired of googling for existing implementati
 * [causalgraphicalmodels](https://github.com/ijmbarr/causalgraphicalmodels)'s class `StructuralCausalModel` allows sampling from Bayesian network where the variables are related as functions of one another, rather than via the conditional probability tables used here.
 
 ## Change log
+
+### v0.4.3
+
+Make non-python-dependencies from `utils.ProbabilityPolytope` an optional install.
 
 ### v0.4.2
 
