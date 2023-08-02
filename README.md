@@ -97,9 +97,13 @@ This package exists because I became tired of googling for existing implementati
 
 ## Change log
 
+### v0.4.2
+
+Fix mac os x dependency install issue.
+
 ### v0.4.1
 
-Fix dependencies' API changes
+Fix dependencies' API changes.
 
 ### v0.4.0
 
