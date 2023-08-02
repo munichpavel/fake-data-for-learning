@@ -101,6 +101,10 @@ This package exists because I became tired of googling for existing implementati
 
 ## Change log
 
+### v0.4.4
+
+Fix missing usage of optional dependency specification
+
 ### v0.4.3
 
 Make non-python-dependencies from `utils.ProbabilityPolytope` an optional install.

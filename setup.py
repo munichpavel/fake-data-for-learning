@@ -55,6 +55,7 @@ setup(
     include_package_data=False,
     python_requires='>3.6',
     install_requires=install_requirements,
+    extras_require=extras_require,
     license="MIT license",
     zip_safe=False,
     classifiers=[
