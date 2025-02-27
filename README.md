@@ -124,6 +124,10 @@ This package exists because I became tired of googling for existing implementati
 
 ## Change log
 
+### v0.4.5
+
+Add to Mac OS X optional install instructions.
+
 ### v0.4.4
 
 Fix missing usage of optional dependency specification

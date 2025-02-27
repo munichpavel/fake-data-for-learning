@@ -42,7 +42,7 @@ extras_require = {
 
 setup(
     name='fake_data_for_learning',
-    version='0.4.4',
+    version='0.4.5',
     long_description=description,
     long_description_content_type='text/markdown',
     project_urls={
