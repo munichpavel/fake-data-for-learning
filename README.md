@@ -72,9 +72,32 @@ Install from [pypi](https://pypi.org/project/fake-data-for-learning/): `pip inst
 
 ### Optional dependencies
 
-Note that the methods of `utils.ProbabilityPolytope` that use polytope calculatations to generate conditional probability tables subject to constraints on expectation value use the non-pure-python library [pypoman](https://github.com/stephane-caron/pypoman). See the [installation instructions](https://github.com/stephane-caron/pypoman#installation) for external dependency instructions.
+Note that the methods of `utils.ProbabilityPolytope` that use polytope calculations to generate conditional probability tables subject to constraints on expectation value require the non-pure-python library [pypoman](https://github.com/stephane-caron/pypoman). System dependencies include [`cython`](https://cython.org) and [`glpk`](https://www.gnu.org/software/glpk/). See the [installation instructions](https://github.com/stephane-caron/pypoman#installation) for external dependency instructions.
 
-By default the dependencies for `utils.ProbabilityPolytope` are not installed; to do so, run from your virtual environment `pip install 'fake-data-for-learning[probability_polytope]'`
+On Mac OS X, these can be installed with
+
+```console
+brew install cython glpk cddlib gmp
+```
+
+(see also the [pycddlib](https://github.com/mcmtroffaes/pycddlib) issue [Installation using pip on MacOS 11.6 #49](https://github.com/mcmtroffaes/pycddlib/issues/49), but beware the typo in the first comment dependency name).
+
+Follow the instructions regarding setting environment variables (e.g. in your `.bashrc` or `.zshrc` files). For example, your `.zshrc` file on Mac OS X might contain
+
+```bash
+# openblas
+export LDFLAGS="-L/opt/homebrew/opt/openblas/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/openblas/include"
+
+# pycddlib
+export CFLAGS="-I$(brew --prefix)/include -L$(brew --prefix)/lib"
+export PATH="/opt/homebrew/opt/cython/bin:$PATH"
+
+# For pkg-config to find openblas you may need to set:
+export PKG_CONFIG_PATH="/opt/homebrew/opt/openblas/lib/pkgconfig"
+```
+
+By default the python dependencies for `utils.ProbabilityPolytope` are not installed; to do so, run from your virtual environment `pip install 'fake-data-for-learning[probability_polytope]'`
 
 ### Local development
 
